@@ -98,8 +98,6 @@ export default function Collect({ args }: CollectProps) {
     generatePCD();
   }, [args, router]);
 
-  console.log("pcd", pcd);
-
   return (
     <div className="px-2 justify-start items-start inline-flex">
       <div className="w-[264px] flex-col justify-start items-center gap-8 inline-flex text-center">
