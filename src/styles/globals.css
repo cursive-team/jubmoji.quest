@@ -16,6 +16,10 @@
   }
 }
 
+html {
+  font-size: 10px;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
 }

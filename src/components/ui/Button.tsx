@@ -2,33 +2,39 @@ import { DerivedComponentType, classed } from "@tw-classed/react";
 import React, { ButtonHTMLAttributes, forwardRef } from "react";
 import type * as Classed from "@tw-classed/react";
 
-const ButtonComponent = classed("button", "", {
-  variants: {
-    size: {
-      sm: "sm",
-      md: "md",
-      lg: "lg",
+const ButtonComponent = classed(
+  "button",
+  "bg-woodsmoke-900 text-white text-base rounded-xl font-normal py-2 px-4",
+  {
+    variants: {
+      size: {
+        sm: "sm",
+        md: "md",
+        lg: "lg",
+      },
+      variant: {
+        primary: "primary",
+        secondary: "secondary",
+        transparent: "bg-transparent",
+      },
     },
-    variant: {
-      primary: "primary",
-      secondary: "secondary",
+    defaultVariants: {
+      size: "md",
+      variant: "primary",
     },
-  },
-  defaultVariants: {
-    size: "md",
-    variant: "primary",
-  },
-});
+  }
+);
 
 type ButtonComponentVariants = Classed.VariantProps<typeof ButtonComponent>;
 
 interface ButtonProps
   extends Omit<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    "size" | "ref" | "value" | "onChange"
-  >, ButtonComponentVariants {
-    loading?: boolean;
-  }
+      ButtonHTMLAttributes<HTMLButtonElement>,
+      "size" | "ref" | "value" | "onChange"
+    >,
+    ButtonComponentVariants {
+  loading?: boolean;
+}
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, children, loading, ...props }, ref) => {
@@ -42,4 +48,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = "Button";
 
-export { Button }
+export { Button };

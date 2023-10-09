@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <>
+    <div className="flex flex-col gap-2 text-base font-medium">
       <Link href="/" style={{ color: "black" }}>
         Home
       </Link>
@@ -16,6 +16,6 @@ export default function Footer() {
       <Link href="/quests" style={{ color: "black" }}>
         Quests
       </Link>
-    </>
+    </div>
   );
 }
