@@ -1,3 +1,4 @@
+import { APP_CONFIG } from "@/constants";
 import assert from "assert";
 import { NextApiRequest, NextApiResponse } from "next";
 import { PKPass } from "passkit-generator";
@@ -71,16 +72,20 @@ export default async function handler(
     }
   );
 
+  const collectedItemsLabel = `${number.toString()}/${
+    APP_CONFIG.COLLECTION_SIZE
+  }`;
+
   pkPass.headerFields.push({
     key: "collected",
     label: "Collected",
-    value: number + "/40",
+    value: collectedItemsLabel,
   });
 
   pkPass.backFields.push({
     key: "retrieve-link",
     label: "Retrieve your collection",
-    value: `http://nfctap.xyz/recover?collection=${collection}`,
+    value: APP_CONFIG.RECOVERY_URL(`${collection}`),
   });
 
   pkPass.secondaryFields.push({

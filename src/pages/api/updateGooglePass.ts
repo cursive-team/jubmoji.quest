@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { GoogleAuth } from "google-auth-library";
 import { NextApiRequest, NextApiResponse } from "next";
+import { APP_CONFIG } from "@/constants";
 
 const CREDENTIALS = {
   type: "service_account",
@@ -65,23 +65,23 @@ export default async function handler(
       {
         id: "location",
         header: "LOCATION",
-        body: "Berlin",
+        body: APP_CONFIG.LOCATION,
       },
       {
         id: "event",
         header: "EVENT",
-        body: "FtC",
+        body: APP_CONFIG.EVENT_NAME,
       },
       {
         id: "year",
         header: "YEAR",
-        body: "2023",
+        body: APP_CONFIG.YEAR,
       },
     ],
     linksModuleData: {
       uris: [
         {
-          uri: `http://nfctap.xyz/recover?collection=${collection}`,
+          uri: APP_CONFIG.RECOVERY_URL(`${collection}`),
           description: "Retrieve your collection",
           id: "official_site",
         },
