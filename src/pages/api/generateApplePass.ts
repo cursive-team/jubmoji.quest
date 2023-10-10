@@ -76,22 +76,50 @@ export default async function handler(
     APP_CONFIG.COLLECTION_SIZE
   }`;
 
-  pkPass.headerFields.push({
-    key: "collected",
-    label: "Collected",
-    value: collectedItemsLabel,
-  });
-
-  pkPass.backFields.push({
-    key: "retrieve-link",
-    label: "Retrieve your collection",
-    value: APP_CONFIG.RECOVERY_URL(`${collection}`),
+  // secondaryFields
+  pkPass.secondaryFields.push({
+    key: "collection",
+    label: "Collection",
+    value: APP_CONFIG.APP_NAME,
   });
 
   pkPass.secondaryFields.push({
     key: "score",
     label: "Score",
     value: score?.toString(),
+  });
+
+  // auxiliaryFields
+  pkPass.auxiliaryFields.push({
+    key: "location",
+    label: "Location",
+    value: APP_CONFIG.LOCATION,
+  });
+
+  pkPass.auxiliaryFields.push({
+    key: "event",
+    label: "Event",
+    value: APP_CONFIG.EVENT_NAME,
+  });
+
+  pkPass.auxiliaryFields.push({
+    key: "year",
+    label: "Year",
+    value: APP_CONFIG.YEAR,
+  });
+
+  // headerFields
+  pkPass.headerFields.push({
+    key: "collected",
+    label: "Collected",
+    value: collectedItemsLabel,
+  });
+
+  // backFields
+  pkPass.backFields.push({
+    key: "retrieve-link",
+    label: "Retrieve your collection",
+    value: APP_CONFIG.RECOVERY_URL(`${collection}`),
   });
 
   const buffer = pkPass.getAsBuffer();

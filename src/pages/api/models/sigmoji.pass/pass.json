@@ -21,30 +21,8 @@
   "eventTicket": {
     "headerFields": [],
     "primaryFields": [],
-    "secondaryFields": [
-      {
-        "key": "collection",
-        "label": "Collection",
-        "value": "Sigmojis"
-      }
-    ],
-    "auxiliaryFields": [
-      {
-        "key": "location",
-        "label": "Location",
-        "value": "Berlin"
-      },
-      {
-        "key": "event",
-        "label": "Event",
-        "value": "FtC"
-      },
-      {
-        "key": "year",
-        "label": "Year",
-        "value": "2023"
-      }
-    ],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
     "backFields": [
       {
         "key": "game-rules",
