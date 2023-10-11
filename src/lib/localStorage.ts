@@ -1,6 +1,11 @@
 import { BackupState, Sigmoji } from "@/types";
-import { deserializeBackupState, deserializeSigmoji, serializeBackupState, serializeSigmoji } from "./helper";
-
+import {
+  deserializeBackupState,
+  parseSerializedSigmoji,
+  serializeBackupState,
+  serializeSigmoji,
+  serializeSigmojisInLocalStorage,
+} from "./serialize";
 
 /**
  * Checks if the storage is empty.
@@ -9,26 +14,6 @@ import { deserializeBackupState, deserializeSigmoji, serializeBackupState, seria
 export async function isStorageEmpty(): Promise<boolean> {
   const sigmojis = await loadSigmojis();
   return sigmojis.length === 0;
-}
-
-/**
- * Parses a serialized string of Sigmojis.
- * @param {string} serializedStr - The serialized string to parse.
- * @returns {Promise<Sigmoji[]>} - A promise that resolves to an array of Sigmojis.
- */
-export async function parseSerializedSigmoji(
-  serializedStr: string
-): Promise<Sigmoji[]> {
-  if (serializedStr != null && serializedStr !== "") {
-    const serializedSigmojis = JSON.parse(serializedStr);
-    return await Promise.all(
-      serializedSigmojis.map((serializedSigmoji: string) =>
-        deserializeSigmoji(serializedSigmoji)
-      )
-    );
-  }
-
-  return [];
 }
 
 /**
@@ -97,17 +82,6 @@ export async function updateSigmojiList(newSigmojis: Sigmoji[]): Promise<void> {
   );
 
   serializeSigmojisInLocalStorage(updatedSigmojis);
-}
-
-/**
- * Serializes array of Sigmojis for localStorage backup.
- */
-export async function serializeSigmojisInLocalStorage(
-  sigmojis: Sigmoji[]
-): Promise<void> {
-  window.localStorage["sigmojis"] = JSON.stringify(
-    await Promise.all(sigmojis.map(serializeSigmoji))
-  );
 }
 
 /**
