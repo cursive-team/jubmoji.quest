@@ -4,7 +4,7 @@ import { extendHexString } from "./utils";
 
 // Recovers the message hash of an arbitrary message signature
 // https://github.com/arx-research/libhalo/blob/master/docs/halo-command-set.md#command-sign
-export const recoverArbitraryMessageHash = (msg: string): bigint => {
+export const recoverArbitraryMessageHash = (msg: string): string => {
   const msgString =
     "\x19Ethereum Signed Message:\n" + msg.length.toString() + msg;
 

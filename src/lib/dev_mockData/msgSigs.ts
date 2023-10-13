@@ -1,13 +1,10 @@
-export type MessageSignature = Record<
-  number,
-  {
-    message: string;
-    sig: string;
-    pubKeyIndex: number;
-  }
->;
+export type MessageSignature = {
+  message: string;
+  sig: string;
+  pubKeyIndex: number;
+};
 
-export const messageSignatures: MessageSignature = {
+export const messageSignatures: Record<string, MessageSignature> = {
   0: {
     message: "A random message",
     sig: "30440220026f68310f7ec028afbdae45558533a17e2a1d8bad0f66c700f44310e89a8ca90220000c663a91b1563aca45630a57af82d80b2eab85419d88cc717dff66f14dfe44",

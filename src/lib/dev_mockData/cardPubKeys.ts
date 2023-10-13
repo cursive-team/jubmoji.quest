@@ -1,15 +1,12 @@
-export type CardPubKey = Record<
-  number,
-  {
-    pubKeyWeierstrass: string;
-    pubKeyEdwards: string;
-    index: number;
-    name: string;
-    imagePath: string;
-  }
->;
+export type CardPubKey = {
+  pubKeyWeierstrass: string;
+  pubKeyEdwards: string;
+  index: number;
+  name: string;
+  imagePath: string;
+};
 
-export const cardPubKeys: CardPubKey = {
+export const cardPubKeys: Record<string, CardPubKey> = {
   0: {
     pubKeyWeierstrass:
       "042ead1f974bd008262022c1d30b01389c99ceb63b614a28a9d340b517a6d858bc2ee8241c4a0d8dcf9048ea97d124a60b16c9f27313178dceba434fc54ca10e23",

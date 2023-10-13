@@ -1,14 +1,11 @@
-export type NonceSignature = Record<
-  number,
-  {
-    nonce: number;
-    rand: string;
-    sig: string;
-    pubKeyIndex: number;
-  }
->;
+export type NonceSignature = {
+  nonce: number;
+  rand: string;
+  sig: string;
+  pubKeyIndex: number;
+};
 
-export const nonceSignatures: NonceSignature = {
+export const nonceSignatures: Record<string, NonceSignature> = {
   0: {
     nonce: 0,
     rand: "123456778987654324567865432abcda",
