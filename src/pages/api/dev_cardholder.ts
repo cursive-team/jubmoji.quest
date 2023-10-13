@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import prisma from "@/lib/prisma";
 import {
   derDecode,
   hexToBigInt,
@@ -18,5 +19,14 @@ export default async function handler(
 
   const verified = verifyEcdsaSignature(decodedSig, msgHashBigInt, pubKeyPoint);
 
-  res.status(200).json({ verified });
+  const log = await prisma.cardholderLog.create({
+    data: {
+      signature: sig,
+      messageHash: msgHash,
+      publicKey: pubKey,
+      verified: verified,
+    },
+  });
+
+  res.status(200).json({ verified: log.verified });
 }
