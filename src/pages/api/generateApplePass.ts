@@ -23,6 +23,7 @@ export default async function handler(
     collection,
     score = 0,
   } = request.query ?? ({} as any);
+  const { COLLECTION_SIZE } = APP_CONFIG;
 
   // Check for required params
   if (!number || !serial || !collection) {
@@ -35,11 +36,11 @@ export default async function handler(
     });
   }
 
-  if (parseInt(number as string) > 40) {
-    console.error("[/api/generateApplePass] number > 40");
+  if (parseInt(number as string) > COLLECTION_SIZE) {
+    console.error(`[/api/generateApplePass] number > ${COLLECTION_SIZE}`);
     return res.status(400).json({
       success: false,
-      message: `[/api/generateApplePass] number > 40`,
+      message: `[/api/generateApplePass] number > ${COLLECTION_SIZE}`,
     });
   }
 
