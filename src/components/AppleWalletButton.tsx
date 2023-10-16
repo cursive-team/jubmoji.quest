@@ -6,7 +6,6 @@ import {
 } from "@/lib/localStorage";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 export const AppleWalletButton = () => {
   const [serial, setSerial] = useState<string | undefined>(undefined);
@@ -28,7 +27,8 @@ export const AppleWalletButton = () => {
       if (backup !== undefined && backup.type === "apple") {
         setSerial(backup.serialNum);
       } else {
-        setSerial(uuidv4());
+        const uuid = crypto.randomUUID();
+        setSerial(uuid);
       }
     };
 

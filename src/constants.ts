@@ -1,6 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
-
-const GOOGLE_OBJECT_SUFFIX = uuidv4();
+const GOOGLE_OBJECT_SUFFIX = crypto.randomUUID();
 const GOOGLE_WALLET_ISSUER_ID = "3388000000022248072";
 
 export const GOOLE_PASS_CREDENTIALS = {
