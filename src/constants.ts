@@ -1,7 +1,7 @@
 const GOOGLE_OBJECT_SUFFIX = crypto.randomUUID();
 const GOOGLE_WALLET_ISSUER_ID = "3388000000022248072";
 
-export const GOOLE_PASS_CREDENTIALS = {
+export const GOOGLE_PASS_CREDENTIALS = {
   type: "service_account",
   project_id: "self-1590553424634",
   private_key_id: "594f80a47fa4286fd772f58c5f7bd5ec21d48d51",

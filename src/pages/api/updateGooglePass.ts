@@ -1,6 +1,6 @@
 import { GoogleAuth } from "google-auth-library";
 import { NextApiRequest, NextApiResponse } from "next";
-import { APP_CONFIG, GOOLE_PASS_CREDENTIALS } from "@/constants";
+import { APP_CONFIG, GOOGLE_PASS_CREDENTIALS } from "@/constants";
 
 export default async function handler(
   request: NextApiRequest,
@@ -31,7 +31,7 @@ export default async function handler(
   }
 
   const httpClient = new GoogleAuth({
-    credentials: GOOLE_PASS_CREDENTIALS,
+    credentials: GOOGLE_PASS_CREDENTIALS,
     scopes: "https://www.googleapis.com/auth/wallet_object.issuer",
   });
 

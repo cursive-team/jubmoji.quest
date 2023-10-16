@@ -1,4 +1,8 @@
-import { APP_CONFIG, GOOGLE_WALLET } from "@/constants";
+import {
+  APP_CONFIG,
+  GOOGLE_PASS_CREDENTIALS,
+  GOOGLE_WALLET,
+} from "@/constants";
 
 interface GetClaimsProps {
   sigmojiWalletBackup?: string;
@@ -98,7 +102,7 @@ export const useGoogleWallet = () => {
     };
 
     const claims = {
-      iss: "project-vinyl@self-1590553424634.iam.gserviceaccount.com",
+      iss: GOOGLE_PASS_CREDENTIALS.client_email,
       aud: "google",
       origins: [],
       typ: "savetowallet",
