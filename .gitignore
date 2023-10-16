@@ -27,6 +27,10 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# service worker
+sw.*
+workbox-*
+
 # vercel
 .vercel
 
