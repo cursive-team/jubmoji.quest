@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma migrate deploy && prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
@@ -20,7 +21,10 @@
     "google-auth-library": "^9.1.0",
     "jose": "^4.15.2",
     "next": "13.5.4",
-    "passkit-generator": "^3.1.11",
+    "@prisma/client": "^5.4.2",
+    "babyjubjub-ecdsa": "^1.1.2",
+    "js-sha256": "^0.10.1",
+    "prisma": "^5.4.2",
     "react": "^18",
     "react-dom": "^18",
     "react-query": "^3.39.3",
