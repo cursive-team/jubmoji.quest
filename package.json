@@ -6,12 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma migrate deploy && prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
+    "@prisma/client": "^5.4.2",
     "@tw-classed/react": "^1.5.2",
+    "babyjubjub-ecdsa": "^1.1.2",
+    "js-sha256": "^0.10.1",
     "next": "13.5.4",
+    "prisma": "^5.4.2",
     "react": "^18",
     "react-dom": "^18",
     "react-query": "^3.39.3"
