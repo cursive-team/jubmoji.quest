@@ -1,16 +1,22 @@
 import {
   EdwardsPoint,
   MembershipProof,
+  Signature,
   areAllBigIntsDifferent,
   areAllBigIntsTheSame,
   batchVerifyMembership,
   derDecodeSignature,
   getPublicSignalsFromMembershipZKP,
   proveMembership,
+  publicKeyFromString,
+  verifyEcdsaSignature,
   verifyMembership,
 } from "babyjubjub-ecdsa";
 import { getMerkleProofFromCache, getMerkleRootFromCache } from "./merkle";
-import { recoverCounterMessageHash } from "@/lib/dev_util/signature";
+import {
+  recoverArbitraryMessageHash,
+  recoverCounterMessageHash,
+} from "@/lib/dev_util/signature";
 import { Jubmoji } from "@/lib/dev_types";
 import {
   getCardPubKeyFromIndex,
@@ -277,6 +283,52 @@ export class NUniqueJubmojisInCollection {
       sigNullifierRandomness: this.sigNullifierRandomness,
       usedSigNullifiers,
       pathToCircuits: this.pathToCircuits,
+    });
+  }
+}
+
+export class PublicMessageSignature {
+  randStr?: string;
+
+  constructor(randStr?: string) {
+    this.randStr = randStr;
+  }
+
+  prove(
+    message: string,
+    sig: string,
+    pubKeyIndex: number
+  ): Promise<{
+    message: string;
+    sig: Signature;
+    pubKeyIndex: number;
+  }> {
+    return Promise.resolve({
+      message,
+      sig: derDecodeSignature(sig),
+      pubKeyIndex,
+    });
+  }
+
+  verify({
+    message,
+    sig,
+    pubKeyIndex,
+  }: {
+    message: string;
+    sig: Signature;
+    pubKeyIndex: number;
+  }): Promise<{
+    verified: boolean;
+    newSigNullifiers?: bigint[];
+  }> {
+    // If there is a randStr, prepend it to the message
+    const fullMessage = this.randStr ? this.randStr + message : message;
+    const msgHash = recoverArbitraryMessageHash(fullMessage);
+    const pubKey = publicKeyFromString(getCardPubKeyFromIndex(pubKeyIndex));
+
+    return Promise.resolve({
+      verified: verifyEcdsaSignature(sig, msgHash, pubKey),
     });
   }
 }
