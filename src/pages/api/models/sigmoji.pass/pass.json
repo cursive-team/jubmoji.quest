@@ -1,0 +1,39 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.example.jubmoji",
+  "teamIdentifier": "BV3BXTVJUF",
+  "serialNumber": "0000001",
+  "maxDistance": 1000,
+  "organizationName": "nfctap.xyz",
+  "description": "Sigmojis",
+  "logoText": "nfctap.xyz",
+  "barcodes": [
+    {
+      "format": "PKBarcodeFormatQR",
+      "message": "http://nfctap.xyz",
+      "messageEncoding": "iso-8859-1",
+      "altText": "nfctap.xyz"
+    }
+  ],
+  "foregroundColor": "rgb(246,246,246)",
+  "backgroundColor": "rgb(26,26,26)",
+  "labelColor": "rgb(119,119,119)",
+  "eventTicket": {
+    "headerFields": [],
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": [
+      {
+        "key": "game-rules",
+        "label": "Collect early sigmojis to win!",
+        "value": "A private digital collectible where the early editions are more valuable."
+      },
+      {
+        "key": "zk",
+        "label": "Safely reveal edition using ZK!",
+        "value": "Prove you have a valid signature on an edition without giving it away."
+      }
+    ]
+  }
+}
