@@ -1,21 +1,21 @@
 import {
+  EdwardsPoint,
   MembershipProof,
   areAllBigIntsDifferent,
   areAllBigIntsTheSame,
   batchVerifyMembership,
-  derDecode,
+  derDecodeSignature,
   getPublicSignalsFromMembershipZKP,
   proveMembership,
   verifyMembership,
 } from "babyjubjub-ecdsa";
-import { JubmojiData } from "./types";
-import {
-  getJubmojiPubKeyFromFullCollectionIndex,
-  getRandomNullifierRandomness,
-  hashMessage,
-  recoverMessageFromNonceAndRand,
-} from "./utils";
 import { getMerkleProofFromCache, getMerkleRootFromCache } from "./merkle";
+import { recoverCounterMessageHash } from "@/lib/dev_util/signature";
+import { Jubmoji } from "@/lib/dev_types";
+import {
+  getCardPubKeyFromIndex,
+  getRandomNullifierRandomness,
+} from "@/lib/dev_util/utils";
 
 export class JubmojiInCollection {
   collectionPubKeys: string[];
@@ -33,19 +33,17 @@ export class JubmojiInCollection {
   }
 
   async prove({
-    jubmojiIndex,
+    pubKeyIndex,
     sig,
     msgNonce,
     msgRand,
     R,
     T,
     U,
-  }: JubmojiData): Promise<MembershipProof> {
-    const decodedSig = derDecode(sig);
-    const msgHash = hashMessage(
-      recoverMessageFromNonceAndRand(msgNonce, msgRand)
-    );
-    const pubKey = getJubmojiPubKeyFromFullCollectionIndex(jubmojiIndex);
+  }: Jubmoji): Promise<MembershipProof> {
+    const decodedSig = derDecodeSignature(sig);
+    const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
+    const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
     const index = this.collectionPubKeys.indexOf(pubKey);
     const merkleProof = getMerkleProofFromCache(this.collectionPubKeys, index);
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
@@ -54,9 +52,9 @@ export class JubmojiInCollection {
       sig: decodedSig,
       msgHash,
       publicInputs: {
-        R,
-        T,
-        U,
+        R: EdwardsPoint.deserialize(R),
+        T: EdwardsPoint.deserialize(T),
+        U: EdwardsPoint.deserialize(U),
       },
       merkleProof,
       sigNullifierRandomness: this.sigNullifierRandomness,
@@ -107,23 +105,21 @@ export class JubmojiInCollectionWithNonce {
   }
 
   async prove({
-    jubmojiIndex,
+    pubKeyIndex,
     sig,
     msgNonce,
     msgRand,
     R,
     T,
     U,
-  }: JubmojiData): Promise<{
+  }: Jubmoji): Promise<{
     membershipProof: MembershipProof;
     msgNonce: number;
     msgRand: string;
   }> {
-    const decodedSig = derDecode(sig);
-    const msgHash = hashMessage(
-      recoverMessageFromNonceAndRand(msgNonce, msgRand)
-    );
-    const pubKey = getJubmojiPubKeyFromFullCollectionIndex(jubmojiIndex);
+    const decodedSig = derDecodeSignature(sig);
+    const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
+    const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
     const index = this.collectionPubKeys.indexOf(pubKey);
     const merkleProof = getMerkleProofFromCache(this.collectionPubKeys, index);
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
@@ -132,9 +128,9 @@ export class JubmojiInCollectionWithNonce {
       sig: decodedSig,
       msgHash,
       publicInputs: {
-        R,
-        T,
-        U,
+        R: EdwardsPoint.deserialize(R),
+        T: EdwardsPoint.deserialize(T),
+        U: EdwardsPoint.deserialize(U),
       },
       merkleProof,
       sigNullifierRandomness: this.sigNullifierRandomness,
@@ -164,8 +160,8 @@ export class JubmojiInCollectionWithNonce {
     newSigNullifiers?: bigint[];
   }> {
     // Check that the message hash is correct
-    const msg = recoverMessageFromNonceAndRand(msgNonce, msgRand);
-    if (hashMessage(msg) !== membershipProof.msgHash) {
+    const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
+    if (msgHash !== membershipProof.msgHash) {
       return { verified: false };
     }
 
@@ -205,25 +201,15 @@ export class NUniqueJubmojisInCollection {
   }
 
   // Todo: Let's use batch proving here
-  async prove(jubmojis: JubmojiData[]): Promise<MembershipProof[]> {
+  async prove(jubmojis: Jubmoji[]): Promise<MembershipProof[]> {
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
 
     return await Promise.all(
       jubmojis.map(
-        async ({
-          jubmojiIndex,
-          sig,
-          msgNonce,
-          msgRand,
-          R,
-          T,
-          U,
-        }: JubmojiData) => {
-          const decodedSig = derDecode(sig);
-          const msgHash = hashMessage(
-            recoverMessageFromNonceAndRand(msgNonce, msgRand)
-          );
-          const pubKey = getJubmojiPubKeyFromFullCollectionIndex(jubmojiIndex);
+        async ({ pubKeyIndex, sig, msgNonce, msgRand, R, T, U }: Jubmoji) => {
+          const decodedSig = derDecodeSignature(sig);
+          const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
+          const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
           const index = this.collectionPubKeys.indexOf(pubKey);
           const merkleProof = getMerkleProofFromCache(
             this.collectionPubKeys,
@@ -234,9 +220,9 @@ export class NUniqueJubmojisInCollection {
             sig: decodedSig,
             msgHash,
             publicInputs: {
-              R,
-              T,
-              U,
+              R: EdwardsPoint.deserialize(R),
+              T: EdwardsPoint.deserialize(T),
+              U: EdwardsPoint.deserialize(U),
             },
             merkleProof,
             sigNullifierRandomness: this.sigNullifierRandomness,

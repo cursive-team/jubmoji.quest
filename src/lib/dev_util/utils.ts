@@ -1,12 +1,8 @@
-import {
-  WeierstrassPoint,
-  bytesToBigInt,
-  publicKeyFromString,
-} from "babyjubjub-ecdsa";
+import { bytesToBigInt } from "babyjubjub-ecdsa";
 import { cardPubKeys } from "../dev_mockData/cardPubKeys";
 
-export const getCardPubKeyFromIndex = (index: number): WeierstrassPoint => {
-  return publicKeyFromString(cardPubKeys[index].pubKeyWeierstrass);
+export const getCardPubKeyFromIndex = (index: number): string => {
+  return cardPubKeys[index].pubKeyWeierstrass;
 };
 
 export const getRandomNullifierRandomness = (): bigint => {

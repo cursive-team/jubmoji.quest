@@ -9,7 +9,11 @@ import { Jubmoji } from "@/lib/dev_types";
 import { getJubmojiFromNonceSignature } from "@/lib/dev_util/proving";
 import { recoverCounterMessageHash } from "@/lib/dev_util/signature";
 import { getCardPubKeyFromIndex } from "@/lib/dev_util/utils";
-import { derDecodeSignature, verifyEcdsaSignature } from "babyjubjub-ecdsa";
+import {
+  derDecodeSignature,
+  publicKeyFromString,
+  verifyEcdsaSignature,
+} from "babyjubjub-ecdsa";
 import React, { useEffect, useState } from "react";
 
 export default function Dev_TapPage() {
@@ -48,7 +52,7 @@ export default function Dev_TapPage() {
 
     for (const { sig, msgNonce, msgRand, pubKeyIndex } of jubmojis) {
       const decodedSig = derDecodeSignature(sig);
-      const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
+      const pubKey = publicKeyFromString(getCardPubKeyFromIndex(pubKeyIndex));
       const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
 
       const verified = verifyEcdsaSignature(decodedSig, msgHash, pubKey);

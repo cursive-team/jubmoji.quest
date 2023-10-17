@@ -29,11 +29,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-query": "^3.39.3",
-<<<<<<< HEAD
     "styled-components": "^6.1.0"
-=======
-    "uuid": "^9.0.1"
->>>>>>> 314c39f (example proving/verification api)
   },
   "devDependencies": {
     "@types/elliptic": "^6.4.15",
@@ -42,11 +38,7 @@
     "@types/qr-image": "^3.2.7",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-<<<<<<< HEAD
     "@types/uuid": "^9.0.2",
-=======
-    "@types/uuid": "^9.0.5",
->>>>>>> 314c39f (example proving/verification api)
     "autoprefixer": "^10",
     "elliptic": "^6.5.4",
     "eslint": "^8",

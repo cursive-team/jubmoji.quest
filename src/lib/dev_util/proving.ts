@@ -1,6 +1,7 @@
 import {
   derDecodeSignature,
   getPublicInputsFromSignature,
+  publicKeyFromString,
 } from "babyjubjub-ecdsa";
 import { NonceSignature } from "../dev_mockData/nonceSigs";
 import { Jubmoji } from "../dev_types";
@@ -15,7 +16,7 @@ export const getJubmojiFromNonceSignature = ({
 }: NonceSignature): Jubmoji => {
   const decodedSig = derDecodeSignature(sig);
   const msgHash = recoverCounterMessageHash(nonce, rand);
-  const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
+  const pubKey = publicKeyFromString(getCardPubKeyFromIndex(pubKeyIndex));
   const { R, T, U } = getPublicInputsFromSignature(decodedSig, msgHash, pubKey);
 
   return {
