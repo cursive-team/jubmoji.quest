@@ -14,18 +14,10 @@ export const getMerkleRootFromTree = (tree: string[][]): bigint => {
   return BigInt(tree[-1][0]);
 };
 
-export const getMerkleRootFromCache = (pubKeyList: string[]): bigint => {
-  const tree = getMerkleTreeFromCache(pubKeyList);
-
-  return getMerkleRootFromTree(tree);
-};
-
-export const getMerkleProofFromCache = (
-  pubKeyList: string[],
+export const getMerkleProofFromTree = (
+  tree: string[][],
   leafIndex: number
 ): MerkleProof => {
-  const tree = getMerkleTreeFromCache(pubKeyList);
-
   let index = leafIndex;
   const pathIndices: number[] = [];
   const siblings: bigint[] = [];
@@ -45,4 +37,30 @@ export const getMerkleProofFromCache = (
     pathIndices,
     siblings,
   };
+};
+
+export const getMerkleRootFromCache = (pubKeyList: string[]): bigint => {
+  const tree = getMerkleTreeFromCache(pubKeyList);
+
+  return getMerkleRootFromTree(tree);
+};
+
+export const getMerkleProofFromCache = (
+  pubKeyList: string[],
+  leafIndex: number
+): MerkleProof => {
+  const tree = getMerkleTreeFromCache(pubKeyList);
+
+  return getMerkleProofFromTree(tree, leafIndex);
+};
+
+export const getMerkleProofListFromCache = (
+  pubKeyList: string[],
+  leafIndices: number[]
+): MerkleProof[] => {
+  const tree = getMerkleTreeFromCache(pubKeyList);
+
+  return leafIndices.map((leafIndex) =>
+    getMerkleProofFromTree(tree, leafIndex)
+  );
 };

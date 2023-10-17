@@ -1,91 +1,103 @@
 import {
-  EdwardsPoint,
-  MembershipProof,
-  Signature,
+  VerificationResult,
   areAllBigIntsDifferent,
   areAllBigIntsTheSame,
+  batchProveMembership,
   batchVerifyMembership,
   derDecodeSignature,
+  deserializeMembershipProof,
   getPublicSignalsFromMembershipZKP,
+  hexToBigInt,
   proveMembership,
   publicKeyFromString,
+  serializeMembershipProof,
   verifyEcdsaSignature,
   verifyMembership,
 } from "babyjubjub-ecdsa";
-import { getMerkleProofFromCache, getMerkleRootFromCache } from "./merkle";
+import {
+  getMerkleProofFromCache,
+  getMerkleProofListFromCache,
+  getMerkleRootFromCache,
+} from "./merkle";
 import {
   recoverArbitraryMessageHash,
   recoverCounterMessageHash,
 } from "@/lib/dev_util/signature";
-import { Jubmoji } from "@/lib/dev_types";
 import {
   getCardPubKeyFromIndex,
   getRandomNullifierRandomness,
 } from "@/lib/dev_util/utils";
+import {
+  ProofClass,
+  JubmojiInCollectionClassArgs,
+  JubmojiInCollectionProofArgs,
+  JubmojiInCollectionProof,
+  JubmojiInCollectionWithNonceClassArgs,
+  JubmojiInCollectionWithNonceProofArgs,
+  JubmojiInCollectionWithNonceProof,
+  NUniqueJubmojiInCollectionClassArgs,
+  NUniqueJubmojiInCollectionProofArgs,
+  NUniqueJubmojiInCollectionProof,
+  PublicMessageSignatureClassArgs,
+  PublicMessageSignatureProofArgs,
+  PublicMessageSignatureProof,
+} from "./types";
+import { getMembershipProofArgsFromJubmoji } from "./utils";
 
 export class JubmojiInCollection {
   collectionPubKeys: string[];
-  sigNullifierRandomness: bigint;
+  sigNullifierRandomness: string;
   pathToCircuits?: string;
 
-  constructor(
-    collectionPubKeys: string[],
-    sigNullifierRandomness: bigint,
-    pathToCircuits?: string
-  ) {
+  constructor({
+    collectionPubKeys,
+    sigNullifierRandomness,
+    pathToCircuits,
+  }: JubmojiInCollectionClassArgs) {
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
     this.pathToCircuits = pathToCircuits;
   }
 
   async prove({
-    pubKeyIndex,
-    sig,
-    msgNonce,
-    msgRand,
-    R,
-    T,
-    U,
-  }: Jubmoji): Promise<MembershipProof> {
-    const decodedSig = derDecodeSignature(sig);
-    const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
-    const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
+    jubmoji,
+  }: JubmojiInCollectionProofArgs): Promise<JubmojiInCollectionProof> {
+    const { sig, msgHash, pubKey, R, T, U } =
+      getMembershipProofArgsFromJubmoji(jubmoji);
     const index = this.collectionPubKeys.indexOf(pubKey);
     const merkleProof = getMerkleProofFromCache(this.collectionPubKeys, index);
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
 
-    return await proveMembership({
-      sig: decodedSig,
+    const membershipProof = await proveMembership({
+      sig,
       msgHash,
       publicInputs: {
-        R: EdwardsPoint.deserialize(R),
-        T: EdwardsPoint.deserialize(T),
-        U: EdwardsPoint.deserialize(U),
+        R,
+        T,
+        U,
       },
       merkleProof,
-      sigNullifierRandomness: this.sigNullifierRandomness,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
+
+    return {
+      serializedMembershipProof: serializeMembershipProof(membershipProof),
+    };
   }
 
   async verify({
-    membershipProof,
+    serializedMembershipProof,
     usedSigNullifiers,
-  }: {
-    membershipProof: MembershipProof;
-    usedSigNullifiers?: bigint[];
-  }): Promise<{
-    verified: boolean;
-    newSigNullifiers?: bigint[];
-  }> {
+  }: JubmojiInCollectionProof): Promise<VerificationResult> {
     const merkleRoot = getMerkleRootFromCache(this.collectionPubKeys);
 
     return await verifyMembership({
-      proof: membershipProof,
+      proof: deserializeMembershipProof(serializedMembershipProof),
       merkleRoot,
-      sigNullifierRandomness: this.sigNullifierRandomness,
-      usedSigNullifiers,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      usedSigNullifiers: usedSigNullifiers?.map(hexToBigInt),
       pathToCircuits: this.pathToCircuits,
     });
   }
@@ -94,85 +106,62 @@ export class JubmojiInCollection {
 // We must also pass the message nonce and random string along with the proof
 export class JubmojiInCollectionWithNonce {
   collectionPubKeys: string[];
-  sigNullifierRandomness: bigint;
-  nonces: number[];
+  sigNullifierRandomness: string;
   pathToCircuits?: string;
 
-  constructor(
-    collectionPubKeys: string[],
-    sigNullifierRandomness: bigint,
-    nonces: number[],
-    pathToCircuits?: string
-  ) {
+  constructor({
+    collectionPubKeys,
+    sigNullifierRandomness,
+    pathToCircuits,
+  }: JubmojiInCollectionWithNonceClassArgs) {
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
-    this.nonces = nonces;
     this.pathToCircuits = pathToCircuits;
   }
 
   async prove({
-    pubKeyIndex,
-    sig,
-    msgNonce,
-    msgRand,
-    R,
-    T,
-    U,
-  }: Jubmoji): Promise<{
-    membershipProof: MembershipProof;
-    msgNonce: number;
-    msgRand: string;
-  }> {
-    const decodedSig = derDecodeSignature(sig);
-    const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
-    const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
+    jubmoji,
+  }: JubmojiInCollectionWithNonceProofArgs): Promise<JubmojiInCollectionWithNonceProof> {
+    const { sig, msgHash, pubKey, R, T, U } =
+      getMembershipProofArgsFromJubmoji(jubmoji);
     const index = this.collectionPubKeys.indexOf(pubKey);
     const merkleProof = getMerkleProofFromCache(this.collectionPubKeys, index);
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
 
     const membershipProof = await proveMembership({
-      sig: decodedSig,
+      sig,
       msgHash,
       publicInputs: {
-        R: EdwardsPoint.deserialize(R),
-        T: EdwardsPoint.deserialize(T),
-        U: EdwardsPoint.deserialize(U),
+        R,
+        T,
+        U,
       },
       merkleProof,
-      sigNullifierRandomness: this.sigNullifierRandomness,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
 
     return {
-      membershipProof,
-      msgNonce,
-      msgRand,
+      serializedMembershipProof: serializeMembershipProof(membershipProof),
+      msgNonce: jubmoji.msgNonce,
+      msgRand: jubmoji.msgRand,
     };
   }
 
   async verify({
-    membershipProof,
+    serializedMembershipProof,
     msgNonce,
     msgRand,
     usedSigNullifiers,
-  }: {
-    membershipProof: MembershipProof;
-    msgNonce: number;
-    msgRand: string;
-    usedSigNullifiers?: bigint[];
-  }): Promise<{
-    verified: boolean;
-    newSigNullifiers?: bigint[];
-  }> {
+  }: JubmojiInCollectionWithNonceProof): Promise<VerificationResult> {
+    const membershipProof = deserializeMembershipProof(
+      serializedMembershipProof
+    );
+
     // Check that the message hash is correct
     const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
     if (msgHash !== membershipProof.msgHash) {
-      return { verified: false };
-    }
-
-    // Check that the message nonce is one of the valid nonces
-    if (!this.nonces.includes(msgNonce)) {
       return { verified: false };
     }
 
@@ -181,8 +170,8 @@ export class JubmojiInCollectionWithNonce {
     return await verifyMembership({
       proof: membershipProof,
       merkleRoot,
-      sigNullifierRandomness: this.sigNullifierRandomness,
-      usedSigNullifiers,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      usedSigNullifiers: usedSigNullifiers?.map(hexToBigInt),
       pathToCircuits: this.pathToCircuits,
     });
   }
@@ -190,72 +179,76 @@ export class JubmojiInCollectionWithNonce {
 
 export class NUniqueJubmojisInCollection {
   collectionPubKeys: string[];
-  sigNullifierRandomness: bigint;
+  sigNullifierRandomness: string;
   N: number;
   pathToCircuits?: string;
 
-  constructor(
-    collectionPubKeys: string[],
-    sigNullifierRandomness: bigint,
-    N: number,
-    pathToCircuits?: string
-  ) {
+  constructor({
+    collectionPubKeys,
+    sigNullifierRandomness,
+    N,
+    pathToCircuits,
+  }: NUniqueJubmojiInCollectionClassArgs) {
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
     this.N = N;
     this.pathToCircuits = pathToCircuits;
   }
 
-  // Todo: Let's use batch proving here
-  async prove(jubmojis: Jubmoji[]): Promise<MembershipProof[]> {
+  async prove({
+    jubmojis,
+  }: NUniqueJubmojiInCollectionProofArgs): Promise<NUniqueJubmojiInCollectionProof> {
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
 
-    return await Promise.all(
-      jubmojis.map(
-        async ({ pubKeyIndex, sig, msgNonce, msgRand, R, T, U }: Jubmoji) => {
-          const decodedSig = derDecodeSignature(sig);
-          const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
-          const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
-          const index = this.collectionPubKeys.indexOf(pubKey);
-          const merkleProof = getMerkleProofFromCache(
-            this.collectionPubKeys,
-            index
-          );
+    const sigs = [];
+    const msgHashes = [];
+    const publicInputs = [];
+    const indices = [];
+    for (const jubmoji of jubmojis) {
+      const { sig, msgHash, pubKey, R, T, U } =
+        getMembershipProofArgsFromJubmoji(jubmoji);
+      sigs.push(sig);
+      msgHashes.push(msgHash);
+      publicInputs.push({ R, T, U });
+      indices.push(this.collectionPubKeys.indexOf(pubKey));
+    }
 
-          return await proveMembership({
-            sig: decodedSig,
-            msgHash,
-            publicInputs: {
-              R: EdwardsPoint.deserialize(R),
-              T: EdwardsPoint.deserialize(T),
-              U: EdwardsPoint.deserialize(U),
-            },
-            merkleProof,
-            sigNullifierRandomness: this.sigNullifierRandomness,
-            pubKeyNullifierRandomness,
-            pathToCircuits: this.pathToCircuits,
-          });
-        }
-      )
+    const merkleProofs = getMerkleProofListFromCache(
+      this.collectionPubKeys,
+      indices
     );
+
+    const membershipProofs = await batchProveMembership({
+      sigs,
+      msgHashes,
+      publicInputs,
+      merkleProofs,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      pubKeyNullifierRandomness,
+      pathToCircuits: this.pathToCircuits,
+    });
+
+    return {
+      serializedMembershipProofs: membershipProofs.map(
+        serializeMembershipProof
+      ),
+    };
   }
 
   // Checks that all the membershipProofs are valid, and that their pubKeyNullifiers are unique
   // while having the same pubKeyNullifierRandomnessHash
   async verify({
-    membershipProofs,
+    serializedMembershipProofs,
     usedSigNullifiers,
-  }: {
-    membershipProofs: MembershipProof[];
-    usedSigNullifiers: bigint[];
-  }): Promise<{
-    verified: boolean;
-    newSigNullifiers?: bigint[];
-  }> {
+  }: NUniqueJubmojiInCollectionProof): Promise<VerificationResult> {
     // Must have at least N proofs
-    if (membershipProofs.length < this.N) {
+    if (serializedMembershipProofs.length < this.N) {
       return { verified: false };
     }
+
+    const membershipProofs = serializedMembershipProofs.map(
+      deserializeMembershipProof
+    );
 
     // Checks that all the pubKeyNullifiers are unique but all the
     // pubKeyNullifierRandomnessHashes are the same
@@ -280,55 +273,40 @@ export class NUniqueJubmojisInCollection {
     return await batchVerifyMembership({
       proofs: membershipProofs,
       merkleRoot,
-      sigNullifierRandomness: this.sigNullifierRandomness,
-      usedSigNullifiers,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      usedSigNullifiers: usedSigNullifiers?.map(hexToBigInt),
       pathToCircuits: this.pathToCircuits,
     });
   }
 }
 
-export class PublicMessageSignature {
+export class PublicMessageSignature
+  implements
+    ProofClass<PublicMessageSignatureProofArgs, PublicMessageSignatureProof>
+{
   randStr?: string;
 
-  constructor(randStr?: string) {
-    this.randStr = randStr;
+  constructor(classArgs: PublicMessageSignatureClassArgs) {
+    this.randStr = classArgs.randStr;
   }
 
-  prove(
-    message: string,
-    sig: string,
-    pubKeyIndex: number
-  ): Promise<{
-    message: string;
-    sig: Signature;
-    pubKeyIndex: number;
-  }> {
-    return Promise.resolve({
-      message,
-      sig: derDecodeSignature(sig),
-      pubKeyIndex,
-    });
+  prove(proofArgs: PublicMessageSignatureProofArgs) {
+    return Promise.resolve(proofArgs);
   }
 
   verify({
     message,
     sig,
     pubKeyIndex,
-  }: {
-    message: string;
-    sig: Signature;
-    pubKeyIndex: number;
-  }): Promise<{
-    verified: boolean;
-    newSigNullifiers?: bigint[];
-  }> {
+  }: PublicMessageSignatureProof): Promise<VerificationResult> {
     // If there is a randStr, prepend it to the message
     const fullMessage = this.randStr ? this.randStr + message : message;
     const msgHash = recoverArbitraryMessageHash(fullMessage);
+    const decodedSig = derDecodeSignature(sig);
     const pubKey = publicKeyFromString(getCardPubKeyFromIndex(pubKeyIndex));
 
     return Promise.resolve({
-      verified: verifyEcdsaSignature(sig, msgHash, pubKey),
+      verified: verifyEcdsaSignature(decodedSig, msgHash, pubKey),
     });
   }
 }
