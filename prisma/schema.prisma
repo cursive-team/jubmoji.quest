@@ -9,12 +9,3 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-model CardholderLog {
-  id            Int      @id @default(autoincrement())
-  signature     String   
-  messageHash   String   
-  publicKey     String   
-  verified      Boolean  
-  createdAt     DateTime @default(now())
-}

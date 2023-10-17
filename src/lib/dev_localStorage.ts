@@ -29,7 +29,7 @@ export const addJubmoji = async (jubmoji: Jubmoji): Promise<void> => {
 
   // We only allow users to store one of each card type
   if (jubmojis.find((j) => j.pubKeyIndex === jubmoji.pubKeyIndex)) {
-    return;
+    throw new Error("You may only store one Jubmoji of each card type!");
   }
 
   jubmojis.push(jubmoji);

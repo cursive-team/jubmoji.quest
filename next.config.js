@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config) => {
+    // Needed to make snarkJs work client side
     config.resolve.fallback = { fs: false, readline: false };
     return config;
   },

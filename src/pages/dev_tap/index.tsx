@@ -4,11 +4,12 @@ import {
   loadJubmojis,
 } from "@/lib/dev_localStorage";
 import { cardPubKeys } from "@/lib/dev_mockData/cardPubKeys";
-import { messageSignatures } from "@/lib/dev_mockData/msgSigs";
 import { nonceSignatures } from "@/lib/dev_mockData/nonceSigs";
 import { Jubmoji } from "@/lib/dev_types";
 import { getJubmojiFromNonceSignature } from "@/lib/dev_util/proving";
-import { recoverArbitraryMessageHash } from "@/lib/dev_util/signature";
+import { recoverCounterMessageHash } from "@/lib/dev_util/signature";
+import { getCardPubKeyFromIndex } from "@/lib/dev_util/utils";
+import { derDecodeSignature, verifyEcdsaSignature } from "babyjubjub-ecdsa";
 import React, { useEffect, useState } from "react";
 
 export default function Dev_TapPage() {
@@ -27,7 +28,11 @@ export default function Dev_TapPage() {
     console.log(`Adding Mock Jubmoji with index: ${index}`);
 
     const jubmoji = getJubmojiFromNonceSignature(nonceSignatures[index]);
-    await addJubmoji(jubmoji);
+    try {
+      await addJubmoji(jubmoji);
+    } catch (e) {
+      alert("Error: " + e);
+    }
     await fetchJubmojis();
   };
 
@@ -38,28 +43,22 @@ export default function Dev_TapPage() {
     await fetchJubmojis();
   };
 
-  const submitMockCardholderSignature = async () => {
-    console.log("Submitting Mock Cardholder Signature");
+  const verifyJubmojis = async () => {
+    const jubmojis = await loadJubmojis();
 
-    const msgSig = messageSignatures[0];
-    const msgHash = recoverArbitraryMessageHash(msgSig.message);
-    const pubKey = cardPubKeys[msgSig.pubKeyIndex].pubKeyWeierstrass;
+    for (const { sig, msgNonce, msgRand, pubKeyIndex } of jubmojis) {
+      const decodedSig = derDecodeSignature(sig);
+      const pubKey = getCardPubKeyFromIndex(pubKeyIndex);
+      const msgHash = recoverCounterMessageHash(msgNonce, msgRand);
 
-    const response = await fetch("/api/dev_cardholder", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sig: msgSig.sig,
-        msgHash: msgHash,
-        pubKey: pubKey,
-      }),
-    });
+      const verified = verifyEcdsaSignature(decodedSig, msgHash, pubKey);
+      if (!verified) {
+        alert("Failed to verify one or more Jubmojis!");
+        return;
+      }
+    }
 
-    const json = await response.json();
-
-    alert("Verified: " + json.verified.toString());
+    alert("Verified all Jubmojis in your collection!");
   };
 
   return (
@@ -73,7 +72,10 @@ export default function Dev_TapPage() {
             const card = cardPubKeys[jubmoji.pubKeyIndex];
             return (
               <li key={idx} className="mb-1">
-                {card.name + ": " + jubmoji.msgNonce.toString()}
+                {"Emoji: " +
+                  card.name +
+                  ", Nonce: " +
+                  jubmoji.msgNonce.toString()}
               </li>
             );
           })}
@@ -85,37 +87,37 @@ export default function Dev_TapPage() {
           onClick={() => addMockJubmoji(0)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Robot 0
+          Package 0
         </button>
         <button
           onClick={() => addMockJubmoji(1)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Robot 1
+          Package 1
         </button>
         <button
           onClick={() => addMockJubmoji(2)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Invader 0
+          Package 2
         </button>
         <button
           onClick={() => addMockJubmoji(3)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Invader 1
+          Amphora 0
         </button>
         <button
           onClick={() => addMockJubmoji(4)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Ninja 0
+          Amphora 1
         </button>
         <button
           onClick={() => addMockJubmoji(5)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Ninja 1
+          Amphora 2
         </button>
       </div>
 
@@ -127,10 +129,10 @@ export default function Dev_TapPage() {
       </button>
 
       <button
-        onClick={submitMockCardholderSignature}
+        onClick={verifyJubmojis}
         className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded shadow text-white mt-6"
       >
-        Mock Cardholder Signature
+        Verify Your Jubmojis
       </button>
     </div>
   );

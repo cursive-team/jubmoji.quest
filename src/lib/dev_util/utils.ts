@@ -1,15 +1,18 @@
-import { v4 as uuidv4, parse as uuidParse } from "uuid";
-import { bytesToBigInt } from "babyjubjub-ecdsa";
+import {
+  WeierstrassPoint,
+  bytesToBigInt,
+  publicKeyFromString,
+} from "babyjubjub-ecdsa";
 import { cardPubKeys } from "../dev_mockData/cardPubKeys";
 
-export const getJubmojiPubKeyFromIndex = (index: number): string => {
-  return cardPubKeys[index].pubKeyWeierstrass;
+export const getCardPubKeyFromIndex = (index: number): WeierstrassPoint => {
+  return publicKeyFromString(cardPubKeys[index].pubKeyWeierstrass);
 };
 
 export const getRandomNullifierRandomness = (): bigint => {
-  const uuid = uuidv4();
+  const randBytes = self.crypto.getRandomValues(new Uint8Array(32));
 
-  return bytesToBigInt(uuidParse(uuid));
+  return bytesToBigInt(randBytes);
 };
 
 // Adjusts a hex string to be a certain length by adding a leading 0 if necessary

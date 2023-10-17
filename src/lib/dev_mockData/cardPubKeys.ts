@@ -1,37 +1,34 @@
 export type CardPubKey = {
+  index: number;
   pubKeyWeierstrass: string;
   pubKeyEdwards: string;
-  index: number;
   name: string;
+  emoji: string;
+  unicode: string;
   imagePath: string;
 };
 
 export const cardPubKeys: Record<string, CardPubKey> = {
   0: {
-    pubKeyWeierstrass:
-      "042ead1f974bd008262022c1d30b01389c99ceb63b614a28a9d340b517a6d858bc2ee8241c4a0d8dcf9048ea97d124a60b16c9f27313178dceba434fc54ca10e23",
-    pubKeyEdwards:
-      "041f41270b21a6236fe77038c2ae95dfba5dc18b0075ce0d8774c05682da30b6052516e6ad11d596c1231dce1bee1c9e6763a95c5d57944478b4dabc3a8ad56a5c",
     index: 0,
-    name: "robot",
-    imagePath: "robot.png",
+    pubKeyWeierstrass:
+      "0407258C81D3DE9F17FFADFCD8CE1CBCAD83027A7FD0A3221FF03CFD1DFBE0CDDE04D68FC27A9F3F0A0BF480326CE5DCD2A9CBFCA34D4098E6A60DA4AE64281950",
+    pubKeyEdwards:
+      "0407db8c679bdc8b1a4db4965cd260e11081acbaf6e5d333d34a8b4d7129285bce22bda7ca19e6d7eadf3e87dea9ded3d85a50a632f7da0c40b81c0fe220d71bcd",
+    name: "package",
+    emoji: "📦",
+    unicode: "U+1F4E6",
+    imagePath: "package.png",
   },
   1: {
-    pubKeyWeierstrass:
-      "04084cf324ba282ce6dcdc02a45a34cc03ded34f04645f2e7757deef01d9d3d13c05b4565b3680e35f26f9bfb7d07f1b9880ace5c870b90ec758b2a08e3ad72ecd",
-    pubKeyEdwards:
-      "04197eab2816d5b87a1a86bbac17dc0e2b52985fd7a3226a22f26701f10632402c2092b99e12b519a33c9f6b031f4221ec0f3ad8c6cb4e79a9d68cc428e5396ae0",
     index: 1,
-    name: "invader",
-    imagePath: "invader.png",
-  },
-  2: {
     pubKeyWeierstrass:
-      "043033efb3b7a4881ba88a5b0d09ed2578a43ca4d437edfcfc9d754b3f13a0cc0a1c60a88f163b2af7ee1c3d369f74e0b43ddcd5323ca275b02117ed7bef52fe0d",
+      "040902129E2195B5DEDC2F9B060E846CE6FF6B6A32794A5BA22F3FA03B068F90A52635451C65448273303F2D403F92FF57FD10A67B1B956B3258A1AA5F4F88B5CB",
     pubKeyEdwards:
-      "04199d748a85b2f4e1978f9bd9b99423e71508220d8db602beddc942db360640b20965b98f3c4c7b23664064bf6afb79de663196833c76ce9573199ab529984b3d",
-    index: 2,
-    name: "ninja",
-    imagePath: "ninja.png",
+      "0407db8c679bdc8b1a4db4965cd260e11081acbaf6e5d333d34a8b4d7129285bce22bda7ca19e6d7eadf3e87dea9ded3d85a50a632f7da0c40b81c0fe220d71bcd",
+    name: "amphora",
+    emoji: "🏺",
+    unicode: "U+1F3FA",
+    imagePath: "amphora.png",
   },
 };
