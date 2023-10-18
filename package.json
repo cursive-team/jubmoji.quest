@@ -1,49 +1,5 @@
 {
-  "name": "jubmoji.quest",
+  "name": "jubmoji",
   "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "postinstall": "prisma migrate deploy && prisma generate"
-  },
-  "dependencies": {
-    "@headlessui/react": "^1.4.1",
-    "@pcd/halo-nonce-pcd": "^0.3.1",
-    "@pcd/passport-ui": "^0.7.1",
-    "@pcd/pcd-types": "^0.7.1",
-    "@pcd/util": "^0.1.1",
-    "@prisma/client": "^5.4.2",
-    "@tw-classed/react": "^1.5.2",
-    "babyjubjub-ecdsa": "^1.1.2",
-    "detectincognitojs": "^1.3.0",
-    "dotenv": "^16.3.1",
-    "google-auth-library": "^9.1.0",
-    "jose": "^4.15.2",
-    "js-sha256": "^0.10.1",
-    "next": "13.5.4",
-    "passkit-generator": "^3.1.11",
-    "prisma": "^5.4.2",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-query": "^3.39.3",
-    "styled-components": "^6.1.0"
-  },
-  "devDependencies": {
-    "@types/elliptic": "^6.4.15",
-    "@types/node": "^20",
-    "@types/pako": "^2.0.1",
-    "@types/qr-image": "^3.2.7",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10",
-    "elliptic": "^6.5.4",
-    "eslint": "^8",
-    "eslint-config-next": "13.5.4",
-    "postcss": "^8",
-    "tailwindcss": "^3",
-    "typescript": "^5"
-  }
+  "private": true
 }
