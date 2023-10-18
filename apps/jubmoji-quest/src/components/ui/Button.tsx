@@ -1,8 +1,8 @@
-import { DerivedComponentType, classed } from "@tw-classed/react";
-import React, { ButtonHTMLAttributes, forwardRef } from "react";
-import type * as Classed from "@tw-classed/react";
+import * as React from "react";
+import { VariantProps, cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
-const ButtonComponent = classed.button(
+const buttonVariants = cva(
   "flex items-center rounded-full font-medium px-4 w-full flex justify-center gap-2 focus:ring-0 focus:outline-none active:scale-95",
   {
     variants: {
@@ -24,30 +24,29 @@ const ButtonComponent = classed.button(
   }
 );
 
-type ButtonComponentVariants = Classed.VariantProps<typeof ButtonComponent>;
-
-interface ButtonProps
-  extends Omit<
-      ButtonHTMLAttributes<HTMLButtonElement>,
-      "size" | "ref" | "value" | "onChange" | "icon"
-    >,
-    ButtonComponentVariants {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   loading?: boolean;
   icon?: any;
 }
 
-const Button = forwardRef<any, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, children, loading, icon, ...props }, ref) => {
     return (
-      <ButtonComponent ref={ref} variant={variant} size={size} {...props}>
+      <button
+        ref={ref}
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      >
         {icon}
         <span className="text-base font-medium">
           {loading ? "Loading..." : children}
         </span>
-      </ButtonComponent>
+      </button>
     );
   }
-) as DerivedComponentType<typeof ButtonComponent, ButtonComponentVariants>;
+);
 
 Button.displayName = "Button";
 
