@@ -12,11 +12,12 @@
     "resolveJsonModule": true
   },
   "include": [
-    "./next-env.d.ts",
+    "next-env.d.ts",
+    "tailwind.config.ts",
     "**/*.ts",
     "**/*.tsx"
   ],
   "exclude": [
-    "./node_modules"
+    "node_modules"
   ]
 }

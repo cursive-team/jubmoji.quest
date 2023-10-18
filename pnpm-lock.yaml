@@ -1050,20 +1050,20 @@ packages:
     resolution: {integrity: sha512-7+K7zEQYu7NzOwQGLR91KwWXXDzmTFODRVizJyIALf6RfLv2GDpqpknX64pvRVILXCpXi7O/pua8NGk44dLvJw==}
     dependencies:
       '@types/prop-types': 15.7.9
-      '@types/scheduler': 0.16.4
+      '@types/scheduler': 0.16.5
       csstype: 3.1.2
     dev: true
 
-  /@types/scheduler@0.16.4:
-    resolution: {integrity: sha512-2L9ifAGl7wmXwP4v3pN4p2FLhD0O1qsJpvKmNin5VA8+UvNVb447UDaAEV6UdrkA+m/Xs58U1RFps44x6TFsVQ==}
+  /@types/scheduler@0.16.5:
+    resolution: {integrity: sha512-s/FPdYRmZR8SjLWGMCuax7r3qCWQw9QKHzXVukAuuIJkXkDRwp+Pu5LMIVFi0Fxbav35WURicYr8u1QsoybnQw==}
     dev: true
 
   /@types/stylis@4.2.2:
     resolution: {integrity: sha512-Rm17MsTpQQP5Jq4BF7CdrxJsDufoiL/q5IbJZYZmOZAJALyijgF7BzLgobXUqraNcQdqFYLYGeglDp6QzaxPpg==}
     dev: false
 
-  /@types/uuid@9.0.5:
-    resolution: {integrity: sha512-xfHdwa1FMJ082prjSJpoEI57GZITiQz10r3vEJCHa2khEFQjKy91aWKz6+zybzssCvXUwE1LQWgWVwZ4nYUvHQ==}
+  /@types/uuid@9.0.6:
+    resolution: {integrity: sha512-BT2Krtx4xaO6iwzwMFUYvWBWkV2pr37zD68Vmp1CDV196MzczBRxuEpD6Pr395HAgebC/co7hOphs53r8V7jew==}
     dev: false
 
   /@typescript-eslint/parser@6.8.0(eslint@8.0.0)(typescript@5.0.2):
@@ -1387,7 +1387,7 @@ packages:
   /babyjubjub-ecdsa@1.1.2:
     resolution: {integrity: sha512-50reVciWtMTZC4ACFKH1wqPwW+UBTqhNRR22cARkbpKLfQDuFpHtF72V7yNc67mhAPYWwimECJFJ7EWaSnsQrg==}
     dependencies:
-      '@types/uuid': 9.0.5
+      '@types/uuid': 9.0.6
       circomlibjs: 0.1.7
       elliptic: 6.5.4
       snarkjs: 0.7.1
@@ -1509,7 +1509,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001550
-      electron-to-chromium: 1.4.558
+      electron-to-chromium: 1.4.559
       node-releases: 2.0.13
       update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -1811,8 +1811,8 @@ packages:
       jake: 10.8.7
     dev: false
 
-  /electron-to-chromium@1.4.558:
-    resolution: {integrity: sha512-j9IcGmfkyN5MBH/0Xzg45GDHasXsnwEJDM6Xnr9H7GlGUni+JH4q6xp6Nk7NV5LjTmoEFBqhILIqg1McJrv6uA==}
+  /electron-to-chromium@1.4.559:
+    resolution: {integrity: sha512-iS7KhLYCSJbdo3rUSkhDTVuFNCV34RKs2UaB9Ecr7VlqzjjWW//0nfsFF5dtDmyXlZQaDYYtID5fjtC/6lpRug==}
 
   /elliptic@6.5.4:
     resolution: {integrity: sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==}
