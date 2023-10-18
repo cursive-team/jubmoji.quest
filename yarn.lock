@@ -3997,9 +3997,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"jubmoji.quest@workspace:packages/jubmoji-quest":
+"jubmoji.quest@workspace:apps/jubmoji-quest":
   version: 0.0.0-use.local
-  resolution: "jubmoji.quest@workspace:packages/jubmoji-quest"
+  resolution: "jubmoji.quest@workspace:apps/jubmoji-quest"
   dependencies:
     "@headlessui/react": ^1.4.1
     "@pcd/halo-nonce-pcd": ^0.3.1
