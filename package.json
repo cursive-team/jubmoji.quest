@@ -1,5 +1,9 @@
 {
   "name": "jubmoji",
   "version": "0.1.0",
-  "private": true
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@3.6.4"
 }

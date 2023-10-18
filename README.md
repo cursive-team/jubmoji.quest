@@ -4,9 +4,11 @@ Website v2 for use at Zuconnect &amp; Devconnect
 
 ## Development
 
-#### Pnpm
+#### Yarn
 
-Run `pnpm install` in root directory.
+Uses yarn version `3.6.4`.
+
+Run `yarn install` in root directory.
 
 #### Postgres
 
