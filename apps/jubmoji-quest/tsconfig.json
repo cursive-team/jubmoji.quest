@@ -7,9 +7,10 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
+      ]
     },
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
