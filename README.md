@@ -6,7 +6,7 @@ Website v2 for use at Zuconnect &amp; Devconnect
 
 #### Yarn
 
-Uses yarn version `3.6.4`.
+Install yarn: `corepack enable`.
 
 Run `yarn install` in root directory.
 
