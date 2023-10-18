@@ -1,8 +1,8 @@
-import { Jubmoji } from "../../../jubmoji-api/src/";
 import {
+  Jubmoji,
   deserializeJubmojiList,
   serializeJubmojiList,
-} from "../../../jubmoji-api/src/";
+} from "jubmoji-api";
 
 export const loadJubmojis = async (): Promise<Jubmoji[]> => {
   const jubmojis = window.localStorage["jubmojis"];

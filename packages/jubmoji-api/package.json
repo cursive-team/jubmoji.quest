@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "build/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --noEmit false --declaration"
   },
   "dependencies": {
     "babyjubjub-ecdsa": "^1.1.2",

@@ -10,7 +10,7 @@ import {
   getJubmojiFromNonceSignature,
   recoverCounterMessageHash,
   getCardPubKeyFromIndex,
-} from "../../../../jubmoji-api/src/";
+} from "jubmoji-api";
 import {
   derDecodeSignature,
   publicKeyFromString,
