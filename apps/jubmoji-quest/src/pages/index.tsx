@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useSigmojis } from "@/hooks/useSimojis";
 import Card from "@/components/Card";
 import Options from "@/components/Options";
-import { Quest, QuestOptionsMapping, quests } from "@/lib/dev_mockData/demo";
+import { Quest, QuestOptionsMapping, quests } from "@/lib/dev_demo";
 import Link from "next/link";
 import { useState } from "react";
 import { filterItems } from "@/lib/utils";
