@@ -1,7 +1,7 @@
 import AppHeader from "@/components/AppHeader";
 import Card from "@/components/Card";
 import Options from "@/components/Options";
-import { Power, PowerOptionsMapping, powers } from "@/lib/dev_mockData/demo";
+import { Power, PowerOptionsMapping, powers } from "@/lib/dev_demo";
 import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import React, { useState } from "react";
