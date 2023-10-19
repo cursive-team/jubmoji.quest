@@ -18,6 +18,11 @@ const backfaceVisibility = plugin(function ({ addUtilities }: any) {
     ".rotate-y-180": {
       transform: "rotateY(180deg)",
     },
+  });
+});
+
+const perspective = plugin(function ({ addUtilities }: any) {
+  addUtilities({
     ".perspective": {
       perspective: "1000px",
     },
@@ -95,6 +100,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [backfaceVisibility],
+  plugins: [backfaceVisibility, perspective],
 };
 export default config;
