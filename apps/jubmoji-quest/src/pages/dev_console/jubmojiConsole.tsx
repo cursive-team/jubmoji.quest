@@ -18,7 +18,7 @@ import {
 } from "babyjubjub-ecdsa";
 import React, { useEffect, useState } from "react";
 
-export default function Dev_TapPage() {
+export default function JubmojiConsole() {
   const [jubmojis, setJubmojis] = useState<Jubmoji[]>([]);
 
   const fetchJubmojis = async () => {

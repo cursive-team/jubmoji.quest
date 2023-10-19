@@ -26,7 +26,7 @@ model Quest {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  tags        CardTag[]?
+  tags        CardTag[]
   startTime   DateTime?
   endTime     DateTime?
   proofType   ProofType
@@ -39,11 +39,12 @@ model Quest {
 }
 
 model Power {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String
-  powerType   PowerType
-  powerParams Json   // params for the specific power type
+  id                     Int     @id @default(autoincrement())
+  name                   String
+  description            String
+  sigNullifierRandomness String? // used if we want unique nullifiers for each power
+  powerType              PowerType
+  powerParams            Json    // params for the specific power type
 
   // Relationship
   quest       Quest   @relation(fields: [questId], references: [id])
@@ -58,6 +59,7 @@ enum CardTag {
   DEV_TOOLS
   INFRASTRUCTURE
   PRIVACY
+  PERSONAL
 }
 
 enum ProofType {
