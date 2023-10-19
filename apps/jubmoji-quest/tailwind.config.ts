@@ -1,4 +1,28 @@
 import type { Config } from "tailwindcss";
+const plugin = require("tailwindcss/plugin");
+
+const backfaceVisibility = plugin(function ({ addUtilities }: any) {
+  addUtilities({
+    ".backface-visible": {
+      "backface-visibility": "visible",
+      "-moz-backface-visibility": "visible",
+      "-webkit-backface-visibility": "visible",
+      "-ms-backface-visibility": "visible",
+    },
+    ".backface-hidden": {
+      "backface-visibility": "hidden",
+      "-moz-backface-visibility": "hidden",
+      "-webkit-backface-visibility": "hidden",
+      "-ms-backface-visibility": "hidden",
+    },
+    ".rotate-y-180": {
+      transform: "rotateY(180deg)",
+    },
+    ".perspective": {
+      perspective: "1000px",
+    },
+  });
+});
 
 const config: Config = {
   content: [
@@ -71,6 +95,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [backfaceVisibility],
 };
 export default config;

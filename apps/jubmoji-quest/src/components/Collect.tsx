@@ -14,7 +14,7 @@ import { detectIncognito } from "detectincognitojs";
 import { Button } from "./ui/Button";
 import { Sigmoji } from "../types";
 import { attestationText } from "../lib/attestationData";
-import { useSigmojis } from "../hooks/useSimojis";
+import { useSigmojis } from "../hooks/useJubmojis";
 
 interface CollectProps {
   args: HaLoNoncePCDArgs;

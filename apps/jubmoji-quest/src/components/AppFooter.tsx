@@ -40,10 +40,10 @@ export default function AppFooter() {
       iconActive: Icons.folderSolid,
     },
     {
-      label: "Home",
+      label: "Quests",
       href: "/",
-      icon: Icons.home,
-      iconActive: Icons.homeSolid,
+      icon: Icons.quest,
+      iconActive: Icons.questSolid,
     },
     {
       label: "Powers",

@@ -3,26 +3,42 @@ import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "flex items-center rounded-full font-medium px-4 w-full flex justify-center gap-2 focus:ring-0 focus:outline-none active:scale-95",
+  "flex items-center font-medium w-full flex justify-center focus:ring-0 focus:outline-none active:scale-95",
   {
     variants: {
       size: {
-        sm: "text-[13px] py-2",
-        md: "text-[16px] py-3 leading-none",
-        lg: "",
+        sm: "text-[13px] leading-none gap-1 p-2",
+        md: "text-[16px] py-3 leading-none gap-2 px-4",
+        lg: "text-[16px] py-3 leading-none gap-2 px-4",
       },
       variant: {
         primary: "primary border border-white text-white ",
         secondary: "secondary bg-white text-black border border-shark-400",
+        blue: "bg-[#92D7FE] text-shark-970",
         transparent: "bg-transparent",
+      },
+      rounded: {
+        true: "rounded-full",
+        false: "rounded-[4px]",
       },
     },
     defaultVariants: {
       size: "md",
       variant: "primary",
+      rounded: false,
     },
   }
 );
+
+const iconVariants = cva("", {
+  variants: {
+    size: {
+      sm: "text-[9px]",
+      md: "text-base",
+      lg: "text-base",
+    },
+  },
+});
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -32,17 +48,18 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, children, loading, icon, ...props }, ref) => {
+  (
+    { className, variant, size, children, loading, icon, rounded, ...props },
+    ref
+  ) => {
     return (
       <button
         ref={ref}
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, className, rounded }))}
         {...props}
       >
-        {icon}
-        <span className="text-base font-medium">
-          {loading ? "Loading..." : children}
-        </span>
+        <div className={cn(iconVariants({ size }))}>{icon}</div>
+        <span>{loading ? "Loading..." : children}</span>
       </button>
     );
   }

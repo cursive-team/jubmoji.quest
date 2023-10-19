@@ -8,12 +8,10 @@ const queryClient = new QueryClient();
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="relative min-h-[100vh] bg-shark-970 pb-28">
-        <div className="container">
-          <Component {...pageProps} />
-        </div>
-        <AppFooter />
+      <div className="container relative min-h-[100vh] bg-shark-970 pb-28">
+        <Component {...pageProps} />
       </div>
+      <AppFooter />
     </QueryClientProvider>
   );
 }

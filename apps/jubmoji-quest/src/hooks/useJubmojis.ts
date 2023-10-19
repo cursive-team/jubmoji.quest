@@ -1,13 +1,13 @@
-import { loadSigmojis } from "../lib/localStorage";
 import { Sigmoji } from "../types";
 import { useQuery } from "react-query";
+import { loadJubmojis } from "../lib/dev_localStorage";
 
-export const useSigmojis = () => {
+export const useJubmojis = () => {
   return useQuery(
-    ["sigmojis"],
+    ["jubmojis"],
     async (): Promise<Sigmoji[]> => {
-      const sigmojis = await loadSigmojis();
-      return sigmojis;
+      const jubmojis = await loadJubmojis();
+      return jubmojis;
     },
     {
       refetchOnWindowFocus: false,
