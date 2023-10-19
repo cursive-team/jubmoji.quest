@@ -14,7 +14,7 @@ import { detectIncognito } from "detectincognitojs";
 import { Button } from "./ui/Button";
 import { Sigmoji } from "../types";
 import { attestationText } from "../lib/attestationData";
-import { useSigmojis } from "../hooks/useJubmojis";
+import { useJubmojis } from "../hooks/useJubmojis";
 
 interface CollectProps {
   args: HaLoNoncePCDArgs;
@@ -25,7 +25,7 @@ export default function Collect({ args }: CollectProps) {
   const [pcd, setPCD] = useState<HaLoNoncePCD | undefined>(undefined);
   const [imageLink, setImageLink] = useState<string | undefined>(undefined);
   const [alreadyCollected, setAlreadyCollected] = useState(false);
-  const { data: sigmojis = [] } = useSigmojis();
+  const { data: sigmojis = [] } = useJubmojis();
 
   const alertIncognito = async () => {
     const isIncognito = await detectIncognito();
