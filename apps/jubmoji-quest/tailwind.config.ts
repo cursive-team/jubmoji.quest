@@ -7,16 +7,18 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    fontSize: {
-      xs: ["1.1rem", "140%"],
-      sm: ["1.2rem", "140%"],
-      base: ["1.6rem", "140%"],
-      h1: ["3.3rem", "140%"],
-      h2: ["2.8rem", "140%"],
-      h3: ["2.3rem", "140%"],
-      h4: ["1.9rem", "140%"],
+    container: {
+      center: true,
+      padding: "1.6rem",
     },
     extend: {
+      fontSize: {
+        base: ["16px", "140%"],
+        tiny: ["11px", "140%"],
+      },
+      fontFamily: {
+        "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],
+      },
       colors: {
         dark: {
           default: "#1a1a1a",
@@ -51,6 +53,15 @@ const config: Config = {
           800: "#2c670d",
           900: "#265710",
           950: "#0f3102",
+        },
+        shark: {
+          50: "#F5F5F6",
+          400: "#85878B",
+          600: "#5a5b60",
+          700: "#4D4D51",
+          900: "#3B3B3E",
+          950: "#252527",
+          970: "#1E1E1F",
         },
       },
       backgroundImage: {
