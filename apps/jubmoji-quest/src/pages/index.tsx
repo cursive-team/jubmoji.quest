@@ -15,12 +15,12 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/modals/Modal";
 
 const BackupSection = () => {
-  const { isLoading: isLoadingSigmojis, data: sigmojis } = useJubmojis();
+  const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
 
-  const hasSigmojis = sigmojis && sigmojis.length > 0 && !isLoadingSigmojis;
+  const hasJubmojis = jubmojis && jubmojis.length > 0 && !isLoadingJubmojis;
 
-  if (isLoadingSigmojis) return <div>Loading...</div>;
-  if (!hasSigmojis) return null;
+  if (isLoadingJubmojis) return <div>Loading...</div>;
+  if (!hasJubmojis) return null;
   return (
     <div className="flex flex-col gap-2">
       <GoogleWalletButton />
