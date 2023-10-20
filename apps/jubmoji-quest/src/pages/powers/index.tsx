@@ -1,5 +1,4 @@
 import AppHeader from "@/components/AppHeader";
-import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
 import Options from "@/components/Options";
 import { Modal } from "@/components/modals/Modal";
@@ -8,6 +7,7 @@ import { Power, PowerOptionsMapping, powers } from "@/lib/dev_demo";
 import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import React, { useState } from "react";
+import { PowerCard } from "@/components/cards/PowerCard";
 
 export default function PowersPage() {
   const [selectedOption, setSelectedOption] = useState("all");
@@ -57,12 +57,11 @@ export default function PowersPage() {
                 {filteredItems?.map(
                   ({ id, name, description, image }: Power) => {
                     return (
-                      <Card
+                      <PowerCard
                         key={id}
                         title={name}
                         description={description}
-                        image={image}
-                        percentageProgress={67}
+                        proofType="group"
                       />
                     );
                   }

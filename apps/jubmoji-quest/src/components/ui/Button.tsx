@@ -14,7 +14,7 @@ const buttonVariants = cva(
       variant: {
         primary: "primary border border-white text-white ",
         secondary: "secondary bg-white text-black border border-shark-400",
-        blue: "bg-[#92D7FE] text-shark-970",
+        blue: "bg-baby-blue-default text-shark-970",
         transparent: "bg-transparent",
       },
       rounded: {
