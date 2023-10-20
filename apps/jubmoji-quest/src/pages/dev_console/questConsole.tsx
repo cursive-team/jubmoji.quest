@@ -1,20 +1,7 @@
-// src/components/QuestForm.tsx
+import { JubmojiQuest } from "@/types";
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-interface QuestData {
-  id?: number;
-  name: string;
-  description: string;
-  tags: string[];
-  startTime: Date;
-  endTime: Date;
-  proofType: string;
-  proofParams: string;
-  prerequisiteCardIndices: number[];
-  collectionCardIndices: number[];
-}
 
 export default function QuestConsole() {
   const [name, setName] = useState("");
@@ -28,8 +15,8 @@ export default function QuestConsole() {
     useState<string>("");
   const [proofType, setProofType] = useState("IN_COLLECTION");
   const [N, setN] = useState<number>();
-  const [quests, setQuests] = useState<QuestData[]>([]);
-  // Fetch the card tags from the backend or a constant
+  const [quests, setQuests] = useState<JubmojiQuest[]>([]);
+
   const availableTags = [
     "OFFICIAL",
     "ROLES",
@@ -39,11 +26,10 @@ export default function QuestConsole() {
     "INFRASTRUCTURE",
     "PRIVACY",
     "PERSONAL",
-  ]; // Replace this with a real fetch request if necessary
+  ];
 
   useEffect(() => {
     const fetchQuests = async () => {
-      // Replace with your actual quests API endpoint
       const response = await fetch("/api/quests");
       const quests = await response.json();
       setQuests(quests);
@@ -169,6 +155,7 @@ export default function QuestConsole() {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
+
         {/* Input for Prerequisite Card Indices */}
         <div className="mb-4">
           <label
@@ -232,6 +219,7 @@ export default function QuestConsole() {
           Create Quest
         </button>
       </div>
+
       {/* List of quests */}
       <div>
         <h2 className="text-lg font-bold mb-3">Quests</h2>
@@ -241,13 +229,23 @@ export default function QuestConsole() {
               <h3>{`Quest ID: ${quest.id} - ${quest.name}`}</h3>
               <p>Description: {quest.description}</p>
               <p>Tags: {quest.tags.join(", ")}</p>
-              <p>Start Time: {new Date(quest.startTime).toLocaleString()}</p>
-              <p>End Time: {new Date(quest.endTime).toLocaleString()}</p>
+              <p>
+                Start Time:{" "}
+                {quest.startTime && new Date(quest.startTime).toLocaleString()}
+              </p>
+              <p>
+                End Time:{" "}
+                {quest.endTime && new Date(quest.endTime).toLocaleString()}
+              </p>
               <p>Proof Type: {quest.proofType}</p>
               <p>
-                Prerequisite Cards: {quest.prerequisiteCardIndices.join(", ")}
+                Prerequisite Cards:{" "}
+                {quest.prerequisiteCards.map((card) => card.index).join(", ")}
               </p>
-              <p>Collection Cards: {quest.collectionCardIndices.join(", ")}</p>
+              <p>
+                Collection Cards:{" "}
+                {quest.collectionCards.map((card) => card.index).join(", ")}
+              </p>
             </div>
           ))}
         </div>

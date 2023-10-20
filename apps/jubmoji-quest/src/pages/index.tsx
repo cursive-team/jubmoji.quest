@@ -14,6 +14,7 @@ import { Modal } from "@/components/modals/Modal";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { JubmojiQuest } from "@/types";
 import { $Enums } from "@prisma/client";
+import { questImageMap } from "@/lib/dev_imageMaps";
 
 export const QuestTagMapping: Record<
   $Enums.CardTag | "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED",
@@ -141,16 +142,14 @@ export default function Home() {
                         ).length /
                           collectionCardIndices.length) *
                         100;
+                      const questImagePath = questImageMap[id];
 
                       return (
                         <Link key={id} href={questPageUrl}>
                           <QuestCard
                             title={name}
                             description={description}
-                            image={
-                              // Todo: Logic for fetching quest images
-                              "https://media.ouest-france.fr/v1/pictures/MjAyMDExNjM1YzM2YmMwMDFhMWU4OGIyZWZmZWE4NDFjNjE1OGM?width=1260&height=708&focuspoint=50%2C25&cropresize=1&client_id=bpeditorial&sign=02df95003367f42bb49fd488be9f07a97e5294d1f3f8f9d3a28180aec795da6e"
-                            }
+                            image={questImagePath}
                             percentageProgress={percentageProgress}
                             showProgress
                           />

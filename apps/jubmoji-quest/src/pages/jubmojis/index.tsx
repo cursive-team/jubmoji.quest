@@ -4,7 +4,7 @@ import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { cardImageMap } from "@/lib/dev_cardImageMap";
+import { cardImageMap } from "@/lib/dev_imageMaps";
 import { JubmojiCard } from "@/types";
 import { classed } from "@tw-classed/react";
 import { cardPubKeys } from "jubmoji-api";

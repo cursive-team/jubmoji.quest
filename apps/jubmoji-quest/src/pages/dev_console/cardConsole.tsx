@@ -1,25 +1,13 @@
+import { JubmojiCard } from "@/types";
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
-type Card = {
-  index: number;
-  name: string;
-  description: string;
-  owner: string;
-};
-
 export default function CardConsole() {
-  // State to keep track of the card being created
-  const [cardData, setCardData] = useState<Card>({
-    index: 0,
-    name: "",
-    description: "",
-    owner: "",
-  });
+  const [index, setIndex] = useState<number>(0);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [owner, setOwner] = useState("");
+  const [cards, setCards] = useState<JubmojiCard[]>([]);
 
-  // State to keep the list of existing cards
-  const [cards, setCards] = useState<Card[]>([]);
-
-  // Fetch the list of cards when component mounts
   useEffect(() => {
     const getCards = async () => {
       try {
@@ -34,19 +22,6 @@ export default function CardConsole() {
     getCards();
   }, []);
 
-  // Handler for input changes
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    if (name == "index") {
-      setCardData({ ...cardData, [name]: parseInt(value) });
-    } else {
-      setCardData({ ...cardData, [name]: value });
-    }
-  };
-
-  // Handler for form submission
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
@@ -56,7 +31,12 @@ export default function CardConsole() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(cardData),
+        body: JSON.stringify({
+          index,
+          name,
+          description,
+          owner,
+        }),
       });
 
       if (!response.ok) {
@@ -64,10 +44,19 @@ export default function CardConsole() {
       }
 
       // Clear the form after successful submission
-      setCardData({ index: 0, name: "", description: "", owner: "" });
+      setIndex(0);
+      setName("");
+      setDescription("");
+      setOwner("");
 
-      const newCard = await response.json();
-      setCards([...cards, newCard]);
+      // After successful creation, re-fetch the list of cards
+      const fetchCards = async () => {
+        const response = await fetch("/api/cards");
+        const cards = await response.json();
+        setCards(cards);
+      };
+
+      fetchCards();
     } catch (error) {
       console.error("There was an error creating the card:", error);
     }
@@ -82,8 +71,8 @@ export default function CardConsole() {
           <input
             type="number"
             name="index"
-            value={cardData.index}
-            onChange={handleChange}
+            value={index}
+            onChange={(e) => setIndex(parseInt(e.target.value))}
             required
             className="text-black w-full px-3 py-2 border border-gray-300 rounded mt-1"
           />
@@ -93,8 +82,8 @@ export default function CardConsole() {
           <input
             type="text"
             name="name"
-            value={cardData.name}
-            onChange={handleChange}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
             className="text-black w-full px-3 py-2 border border-gray-300 rounded mt-1"
           />
@@ -103,8 +92,8 @@ export default function CardConsole() {
           <label className="block">Description:</label>
           <textarea
             name="description"
-            value={cardData.description}
-            onChange={handleChange}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             required
             className="text-black w-full px-3 py-2 border border-gray-300 rounded mt-1"
           />
@@ -114,8 +103,8 @@ export default function CardConsole() {
           <input
             type="text"
             name="owner"
-            value={cardData.owner}
-            onChange={handleChange}
+            value={owner}
+            onChange={(e) => setOwner(e.target.value)}
             required
             className="text-black w-full px-3 py-2 border border-gray-300 rounded mt-1"
           />
