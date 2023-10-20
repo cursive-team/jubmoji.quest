@@ -10,9 +10,12 @@ Install yarn: `corepack enable`.
 
 Run `yarn install` in root directory.
 
-#### Postgres
+#### Postgres & Prisma
 
-To run the app locally, you must have Postgres running and set the DATABASE_URL env variable to be a URL pointing to your local database.
+1.  Install and run Postgres locally.
+2.  Set the DATABASE_URL env variable to be a URL pointing to your local database.
+3.  Run `npx prisma migrate dev --name [name]` to create a dev migration.
+4.  Run `npx prisma generate` to regenerate the prisma client.
 
 #### Localhost
 

@@ -42,6 +42,8 @@ model Power {
   id                     Int     @id @default(autoincrement())
   name                   String
   description            String
+  startTime              DateTime?
+  endTime                DateTime?
   sigNullifierRandomness String? // used if we want unique nullifiers for each power
   powerType              PowerType
   powerParams            Json    // params for the specific power type

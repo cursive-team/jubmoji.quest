@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
-import { getRandomNullifierRandomness } from "jubmoji-api";
-import { bigIntToHex } from "babyjubjub-ecdsa";
 
 export default async function handler(
   req: NextApiRequest,

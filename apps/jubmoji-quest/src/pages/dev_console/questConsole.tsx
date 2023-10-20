@@ -26,7 +26,7 @@ export default function QuestConsole() {
     useState<string>("");
   const [collectionCardIndices, setCollectionCardIndices] =
     useState<string>("");
-  const [proofType, setProofType] = useState("");
+  const [proofType, setProofType] = useState("IN_COLLECTION");
   const [N, setN] = useState<number>();
   const [quests, setQuests] = useState<QuestData[]>([]);
   // Fetch the card tags from the backend or a constant
