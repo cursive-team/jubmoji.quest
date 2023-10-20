@@ -16,7 +16,7 @@ import { JubmojiQuest } from "@/types";
 import { $Enums } from "@prisma/client";
 
 export const QuestTagMapping: Record<
-  $Enums.CardTag & "ALL" & "IN_PROGRESS" & "COMPLETED" & "STARRED",
+  $Enums.CardTag | "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED",
   string
 > = {
   ALL: "All",

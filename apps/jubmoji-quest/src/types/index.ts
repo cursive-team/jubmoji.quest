@@ -35,4 +35,10 @@ export type JubmojiQuest = Quest & {
   }[];
 };
 
-export type JubmojiPower = Power;
+export type JubmojiPower = Power & {
+  quest: {
+    id: number;
+    name: string;
+    description: string;
+  };
+};

@@ -3,20 +3,46 @@ import { Icons } from "@/components/Icons";
 import Options from "@/components/Options";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
-import { Power, PowerOptionsMapping, powers } from "@/lib/dev_demo";
-import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PowerCard } from "@/components/cards/PowerCard";
+import { JubmojiPower } from "@/types";
+import Link from "next/link";
+
+export const PowerOptionsMapping: Record<
+  "ALL" | "STARRED" | "NEW" | "LOCKED",
+  string
+> = {
+  ALL: "All",
+  STARRED: "Starred",
+  NEW: "New",
+  LOCKED: "Locked",
+};
 
 export default function PowersPage() {
   const [selectedOption, setSelectedOption] = useState("all");
   const [infoModalOpen, setIsModalOpen] = useState(false);
+  const [powers, setPowers] = useState<JubmojiPower[]>([]);
 
-  const filteredItems =
-    selectedOption === "all" ? powers : filterItems(powers, selectedOption);
+  useEffect(() => {
+    const fetchPowers = async () => {
+      const response = await fetch("/api/powers");
 
-  const hasItemsForActiveOption = filteredItems?.length > 0;
+      if (!response.ok) {
+        console.error("Could not fetch powers.");
+        setPowers([]);
+      }
+
+      const powers: JubmojiPower[] = await response.json();
+      setPowers(powers);
+    };
+
+    fetchPowers();
+  }, []);
+
+  // const filteredItems =
+  //   selectedOption === "all" ? powers : filterItems(powers, selectedOption);
+  // const hasItemsForActiveOption = filteredItems?.length > 0;
 
   return (
     <>
@@ -48,21 +74,22 @@ export default function PowersPage() {
             onChange={setSelectedOption}
           />
           <div className="flex flex-col gap-2">
-            {!hasItemsForActiveOption ? (
+            {powers.length === 0 ? (
               <span className="text-base font-normal">
                 {MESSAGES.NO_RESULTS}
               </span>
             ) : (
               <>
-                {filteredItems?.map(
-                  ({ id, name, description, image }: Power) => {
+                {powers?.map(
+                  ({ id, name, description, powerType }: JubmojiPower) => {
                     return (
-                      <PowerCard
-                        key={id}
-                        title={name}
-                        description={description}
-                        proofType="group"
-                      />
+                      <Link key={id} href={`/powers/${id}`}>
+                        <PowerCard
+                          title={name}
+                          description={description}
+                          powerType={powerType}
+                        />
+                      </Link>
                     );
                   }
                 )}

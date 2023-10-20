@@ -30,6 +30,8 @@ export default function QuestDetailPage() {
     fetchQuest();
   }, [questId]);
 
+  if (!quest) return null;
+
   return (
     <div>
       <AppHeader
@@ -42,24 +44,24 @@ export default function QuestDetailPage() {
         }
       />
       <div className="grid grid-cols-1 gap-4">
-        {quest && (
+        {
           // Todo: Add image logic
-          <QuestCard
-            image={""}
-            title={quest.name}
-            description={quest.description}
-          />
-        )}
-        {quest?.powers.map((power) => {
+        }
+        <QuestCard
+          image={""}
+          title={quest.name}
+          description={quest.description}
+        />
+        {quest.powers.map((power) => {
           return (
-            <div key={power.id}>
+            <Link key={power.id} href={`/powers/${power.id}`}>
               <PowerCard
                 title={power.name}
                 description={power.description}
                 powerType={power.powerType}
                 disabled={true} // Todo: Logic for enabling powers
               />
-            </div>
+            </Link>
           );
         })}
         <Button variant="secondary">Update team score</Button>

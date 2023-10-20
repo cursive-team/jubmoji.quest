@@ -48,7 +48,7 @@ export default function PowerConsole() {
     e.preventDefault();
     // You'll need to replace the URL with your actual endpoint
     try {
-      const response = await fetch("/api/powers", {
+      const response = await fetch("/api/dev_powers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
