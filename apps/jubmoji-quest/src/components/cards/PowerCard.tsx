@@ -8,6 +8,7 @@ interface PowerCardProps {
   title: string;
   description?: string;
   proofType: ProofType;
+  disabled?: boolean;
 }
 
 const ProofTypeIconMapping: Record<ProofType, any> = {
@@ -21,11 +22,12 @@ const PowerCard = ({
   title,
   description,
   proofType = "group",
+  disabled = false,
 }: PowerCardProps) => {
   const powerIcon = ProofTypeIconMapping[proofType];
 
   return (
-    <Card.Base>
+    <Card.Base disabled={disabled}>
       <Card.Content spacing="sm">
         <div className="flex gap-6 items-start self-stretch">
           <div className="flex items-start gap-2 h-12">{powerIcon}</div>
