@@ -1,30 +1,30 @@
 import React from "react";
 import { Card } from "./Card";
-import { ProofIcons } from "../icons/ProofIcons";
-
-type ProofType = "group" | "access" | "twitter" | "telegram";
+import { PowerIcons } from "../icons/PowerIcons";
+import { $Enums } from "@prisma/client";
 
 interface PowerCardProps {
   title: string;
   description?: string;
-  proofType: ProofType;
+  powerType: $Enums.PowerType;
   disabled?: boolean;
 }
 
-const ProofTypeIconMapping: Record<ProofType, any> = {
-  group: <ProofIcons.group />,
-  access: <ProofIcons.access />,
-  twitter: <ProofIcons.twitter />,
-  telegram: <ProofIcons.telegram />,
+const PowerTypeIconMapping: Record<$Enums.PowerType, any> = {
+  // "GROUP": <PowerIcons.group />,
+  // "ACCESS": <PowerIcons.access />,
+  QR_CODE: <PowerIcons.group />, // Todo: QR code icon
+  TWITTER: <PowerIcons.twitter />,
+  TELEGRAM: <PowerIcons.telegram />,
 };
 
 const PowerCard = ({
   title,
   description,
-  proofType = "group",
+  powerType,
   disabled = false,
 }: PowerCardProps) => {
-  const powerIcon = ProofTypeIconMapping[proofType];
+  const powerIcon = PowerTypeIconMapping[powerType];
 
   return (
     <Card.Base disabled={disabled}>

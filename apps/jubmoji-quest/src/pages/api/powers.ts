@@ -42,6 +42,8 @@ export default async function handler(
       return res.status(400).json({ error: "Required fields missing" });
     }
 
+    // Todo: Need validations for data
+
     try {
       const newPower = await prisma.power.create({
         data: {

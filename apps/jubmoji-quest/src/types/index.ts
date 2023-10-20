@@ -1,5 +1,5 @@
 import { HaLoNoncePCD } from "@pcd/halo-nonce-pcd";
-import { Card, Quest, Power } from "@prisma/client";
+import { Card, Quest, Power, $Enums } from "@prisma/client";
 
 export type InputSize = "sm" | "md" | "lg";
 
@@ -23,6 +23,7 @@ export type JubmojiQuest = Quest & {
     id: number;
     name: string;
     description: string;
+    powerType: $Enums.PowerType;
   }[];
 };
 

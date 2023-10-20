@@ -58,6 +58,7 @@ export default function Home() {
     const fetchQuests = async () => {
       const response = await fetch("/api/quests");
       if (!response.ok) {
+        // Todo: error handling
         console.error("Error while trying to fetch quests.");
         setQuests([]);
       } else {
@@ -147,6 +148,7 @@ export default function Home() {
                             title={name}
                             description={description}
                             image={
+                              // Todo: Logic for fetching quest images
                               "https://media.ouest-france.fr/v1/pictures/MjAyMDExNjM1YzM2YmMwMDFhMWU4OGIyZWZmZWE4NDFjNjE1OGM?width=1260&height=708&focuspoint=50%2C25&cropresize=1&client_id=bpeditorial&sign=02df95003367f42bb49fd488be9f07a97e5294d1f3f8f9d3a28180aec795da6e"
                             }
                             percentageProgress={percentageProgress}
