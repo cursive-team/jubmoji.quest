@@ -1,13 +1,13 @@
 import AppHeader from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import JumboCard from "@/components/JumboCard";
+import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-const JubmoNavItem = classed.div(
+const JubmojiNavItem = classed.div(
   "block p-2 w-[32px] h-16 rounded cursor-pointer",
   {
     variants: {
@@ -19,11 +19,11 @@ const JubmoNavItem = classed.div(
   }
 );
 
-const JumboNavWrapper = classed.div(
+const JubmojiNavWrapper = classed.div(
   "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 rigth-0 bottom-[80px] w-full overflow-scroll"
 );
 
-const JumbojiNav = () => {
+const JubmojiNav = () => {
   const [active, setActive] = React.useState<number | undefined>(undefined);
 
   const jubmojis = Array.from(Array(12).keys());
@@ -33,19 +33,19 @@ const JumbojiNav = () => {
   };
 
   return (
-    <JumboNavWrapper>
+    <JubmojiNavWrapper>
       {jubmojis?.map((jubmoji, index) => {
         const isActive = index === active;
 
         return (
-          <JubmoNavItem
+          <JubmojiNavItem
             key={index}
             active={isActive}
             onClick={() => onSelectJubmoji(jubmoji, index)}
           />
         );
       })}
-    </JumboNavWrapper>
+    </JubmojiNavWrapper>
   );
 };
 export default function JubmojisPage() {
@@ -71,7 +71,7 @@ export default function JubmojisPage() {
         />
         <Input placeholder="Search your private collection" />
         <div className="my-4">
-          <JumboCard
+          <CollectionCard
             label="Meaning of Jummoji"
             icon="🎉"
             edition={10}
@@ -82,7 +82,7 @@ export default function JubmojisPage() {
           />
         </div>
         <div className="mt-auto">
-          <JumbojiNav />
+          <JubmojiNav />
         </div>
       </div>
     </>

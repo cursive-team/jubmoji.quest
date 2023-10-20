@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Icons } from "./Icons";
+import React, { useState } from "react";
+import { Icons } from "../Icons";
 import { classed } from "@tw-classed/react";
-import { Button } from "./ui/Button";
+import { Button } from "../ui/Button";
 
 interface Quest {
   label: string;
   url: string;
 }
 
-interface JumboCardProps {
+interface CollectionCardProps {
   icon: string; // jubmoji icon
   label: string; // meaning of the jubmoji
   cardBackImage?: string;
@@ -43,7 +43,7 @@ const BackCard = classed(
   "bg-cover bg-center bg-slate-200 transform rotate-y-180"
 );
 
-export default function JumboCard({
+const CollectionCard = ({
   icon,
   label,
   edition,
@@ -53,7 +53,7 @@ export default function JumboCard({
   actions,
   linkToQuest = "#",
   cardBackImage,
-}: JumboCardProps) {
+}: CollectionCardProps) => {
   const [flipped, setFlip] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
 
@@ -68,7 +68,7 @@ export default function JumboCard({
       }
     : {};
 
-  const JumboContent = () => {
+  const CollectionContent = () => {
     if (!showQuest) {
       return (
         <>
@@ -106,7 +106,7 @@ export default function JumboCard({
               {showQuest ? "Quests" : label}
             </div>
             <div className="flex flex-col gap-3">
-              <JumboContent />
+              <CollectionContent />
             </div>
           </div>
 
@@ -128,4 +128,8 @@ export default function JumboCard({
       </FlipCardWrapper>
     </FlipCard>
   );
-}
+};
+
+CollectionCard.displayName = "CollectionCard";
+
+export { CollectionCard };

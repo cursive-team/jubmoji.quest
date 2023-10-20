@@ -4,7 +4,7 @@ import { GoogleWalletButton } from "@/components/GoogleWalletButton";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import Card from "@/components/Card";
+import { Card } from "@/components/cards/Card";
 import Options from "@/components/Options";
 import { Quest, QuestOptionsMapping, quests } from "@/lib/dev_demo";
 import Link from "next/link";
@@ -41,28 +41,16 @@ export default function Home() {
   return (
     <>
       <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
-        Info for Jumbo quest
+        Info for Jubmoji quest
       </Modal>
       <div>
         <AppHeader
           title={
-            <div className="grid grid-cols-[1fr_48px] w-full items-center py-4">
+            <div className="flex justify-between w-full items-center">
               <Link href="/">
-                <div className="flex items-center">
-                  <div className="w-[48px]">
-                    {/*
-                    TODO: Replace with logo when is ready
-                    <Image
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSixW4vgBDs47UIhecXICevBKR6m-uNNUHprLkyGNYlCyT4gFqZtlPiSJtzmqc&s"
-                      height={48}
-                      width={48}
-                    />
-                  */}
-                  </div>
-                  <div className="mx-auto">
-                    <Icons.logo />
-                  </div>
-                </div>
+                <span className="uppercase text-lg font-semibold text-white">
+                  Quests
+                </span>
               </Link>
               <button
                 onClick={() => setIsModalOpen(!infoModalOpen)}

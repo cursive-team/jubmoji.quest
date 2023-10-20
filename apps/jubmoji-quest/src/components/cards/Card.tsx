@@ -1,5 +1,5 @@
 import React from "react";
-import { Icons } from "./Icons";
+import { Icons } from "../Icons";
 import { classed } from "@tw-classed/react";
 
 interface CardProps {
@@ -14,14 +14,14 @@ interface CardProps {
 const CardImage = classed.div(
   "bg-cover w-full h-24 rounded-tl rounded-tr bg-shark-600"
 );
-export default function Card({
+const Card = ({
   image,
   title,
   description,
   bookmarked = false,
   percentageProgress = 0,
   showProgress = false,
-}: CardProps) {
+}: CardProps) => {
   return (
     <div className="flex flex-col justify-center items-center rounded border border-shark-900 bg-shark-950">
       <CardImage
@@ -53,4 +53,8 @@ export default function Card({
       </div>
     </div>
   );
-}
+};
+
+Card.displayName = "Card";
+
+export { Card };

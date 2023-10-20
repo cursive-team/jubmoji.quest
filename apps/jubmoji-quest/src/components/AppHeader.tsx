@@ -13,7 +13,7 @@ export default function AppHeader({ title, actions }: AppHeaderProps) {
       <div className="flex items-center justify-between py-3">
         <div className="flex items-center gap-2 w-full">
           {typeof title === "string" ? (
-            <div className="flex items-center sh-8 text-lg font-semibold text-white">
+            <div className="flex items-center h-8 text-lg font-semibold text-white">
               {title}
             </div>
           ) : (

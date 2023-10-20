@@ -1,5 +1,5 @@
 import AppHeader from "@/components/AppHeader";
-import Card from "@/components/Card";
+import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
 import Options from "@/components/Options";
 import { Modal } from "@/components/modals/Modal";

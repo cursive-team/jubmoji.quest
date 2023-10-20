@@ -25,13 +25,13 @@ export default function Collect({ args }: CollectProps) {
   const [pcd, setPCD] = useState<HaLoNoncePCD | undefined>(undefined);
   const [imageLink, setImageLink] = useState<string | undefined>(undefined);
   const [alreadyCollected, setAlreadyCollected] = useState(false);
-  const { data: sigmojis = [] } = useJubmojis();
+  const { data: jubmojis = [] } = useJubmojis();
 
   const alertIncognito = async () => {
     const isIncognito = await detectIncognito();
     if (isIncognito.isPrivate) {
       alert(
-        "Please copy this link into a non-incognito tab in order to save your Sigmojis!"
+        "Please copy this link into a non-incognito tab in order to save your Jubmojis!"
       );
     }
   };
@@ -55,7 +55,7 @@ export default function Collect({ args }: CollectProps) {
       }
 
       // make sure we haven't already collected this sigmoji if it isn't an event one
-      for (const sigmoji of sigmojis) {
+      for (const sigmoji of jubmojis) {
         if (
           sigmoji.PCD.claim.pubkeyHex.toLowerCase() ===
             "04cf92e6ba430b9850fb9d32f37205cd0824ffacf9d67db38dada0e38a22722556b376390fecda5c3672e1b1a96d10c758841623f709420bb4c778d8620aa21694" &&
