@@ -49,14 +49,17 @@ const config: Config = {
         "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],
       },
       colors: {
-        dark: {
-          default: "#1a1a1a",
-          100: "#282828",
+        "baby-blue": {
+          default: "#92D7FE",
         },
         shark: {
           50: "#F5F5F6",
+          100: "#E6E6E7",
+          200: "#CFD0D2",
+          300: "#AEAFB2",
           400: "#85878B",
-          600: "#5a5b60",
+          500: "#6A6B70",
+          600: "#5A5B60",
           700: "#4D4D51",
           900: "#3B3B3E",
           950: "#252527",

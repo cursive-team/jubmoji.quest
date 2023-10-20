@@ -4,7 +4,6 @@ import { GoogleWalletButton } from "@/components/GoogleWalletButton";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { Card } from "@/components/cards/Card";
 import Options from "@/components/Options";
 import { Quest, QuestOptionsMapping, quests } from "@/lib/dev_demo";
 import Link from "next/link";
@@ -13,6 +12,7 @@ import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/modals/Modal";
+import { QuestCard } from "@/components/cards/QuestCard";
 
 const BackupSection = () => {
   const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
@@ -88,15 +88,18 @@ export default function Home() {
                 <>
                   {filteredItems?.map(
                     ({ id, name, description, image }: Quest) => {
+                      const questPageUrl = `/quests/${id}`;
+
                       return (
-                        <Card
-                          key={id}
-                          title={name}
-                          description={description}
-                          image={image}
-                          percentageProgress={67}
-                          showProgress
-                        />
+                        <Link key={id} href={questPageUrl}>
+                          <QuestCard
+                            title={name}
+                            description={description}
+                            image={image}
+                            percentageProgress={67}
+                            showProgress
+                          />
+                        </Link>
                       );
                     }
                   )}
