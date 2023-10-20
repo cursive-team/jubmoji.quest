@@ -18,7 +18,7 @@ export const GOOGLE_PASS_CREDENTIALS = {
 };
 
 export const APP_CONFIG = {
-  APP_NAME: "Sigmojis",
+  APP_NAME: "Jubmojis",
   APP_SLUG: "nfctap.xyz",
   WEBSITE_URI: "http://nfctap.xyz",
   EVENT_NAME: "Devconnect 2023",
