@@ -51,7 +51,7 @@ export default function CardConsole() {
     event.preventDefault();
 
     try {
-      const response = await fetch("/api/cards", {
+      const response = await fetch("/api/dev_cards", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

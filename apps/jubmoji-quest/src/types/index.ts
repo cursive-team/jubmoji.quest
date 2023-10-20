@@ -14,7 +14,15 @@ export interface BackupState {
   serialNum: string;
 }
 
-export type JubmojiCard = Card;
+export type JubmojiCard = Card & {
+  collectsFor: {
+    id: number;
+    name: string;
+    description: string;
+    startTime: Date | null;
+    endTime: Date | null;
+  }[];
+};
 
 export type JubmojiQuest = Quest & {
   prerequisiteCards: { index: number }[];
