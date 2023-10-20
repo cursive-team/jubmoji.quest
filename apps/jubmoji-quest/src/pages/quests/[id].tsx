@@ -18,9 +18,9 @@ const getPowersByIdMock = (id: string): any => {
 
 export default function QuestDetailPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: QUEST_ID } = router.query;
 
-  const quest = getQuestDetailsByIdMock(id as string);
+  const quest = getQuestDetailsByIdMock(QUEST_ID as string);
   const power = getPowersByIdMock("POWER_ID");
 
   return (
