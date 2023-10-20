@@ -18,7 +18,7 @@ import {
 } from "babyjubjub-ecdsa";
 import React, { useEffect, useState } from "react";
 
-export default function Dev_TapPage() {
+export default function JubmojiConsole() {
   const [jubmojis, setJubmojis] = useState<Jubmoji[]>([]);
 
   const fetchJubmojis = async () => {
@@ -71,15 +71,15 @@ export default function Dev_TapPage() {
     <div className="min-h-screen bg-gradient-to-r from-gray-900 to-blue-800 flex flex-col items-center justify-center space-y-4">
       <div className="text-white text-2xl font-bold mb-8">Manage Jubmojis</div>
 
-      <div className="mt-6 w-1/3 bg-white p-4 rounded shadow">
+      <div className="mt-6 w-1/3 bg-black p-4 rounded shadow">
         <div className="font-bold mb-2 text-xl">My Jubmojis:</div>
         <ul>
           {jubmojis.map((jubmoji, idx) => {
             const card = cardPubKeys[jubmoji.pubKeyIndex];
             return (
-              <li key={idx} className="mb-1">
+              <li key={idx} className="mb-1 color-black">
                 {"Emoji: " +
-                  card.name +
+                  card.emoji +
                   ", Nonce: " +
                   jubmoji.msgNonce.toString()}
               </li>
@@ -93,37 +93,37 @@ export default function Dev_TapPage() {
           onClick={() => addMockJubmoji(0)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Package 0
+          📦 0
         </button>
         <button
           onClick={() => addMockJubmoji(1)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Package 1
+          📦 1
         </button>
         <button
           onClick={() => addMockJubmoji(2)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Package 2
+          📦 2
         </button>
         <button
           onClick={() => addMockJubmoji(3)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Amphora 0
+          🏺 0
         </button>
         <button
           onClick={() => addMockJubmoji(4)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Amphora 1
+          🏺 1
         </button>
         <button
           onClick={() => addMockJubmoji(5)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          Amphora 2
+          🏺 2
         </button>
       </div>
 

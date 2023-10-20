@@ -17,6 +17,7 @@
     "@pcd/util": "^0.1.1",
     "@prisma/client": "^5.4.2",
     "@tw-classed/react": "^1.5.2",
+    "@types/react-datepicker": "^4.19.1",
     "babyjubjub-ecdsa": "^1.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
@@ -30,6 +31,7 @@
     "passkit-generator": "^3.1.11",
     "prisma": "^5.4.2",
     "react": "^18",
+    "react-datepicker": "^4.21.0",
     "react-dom": "^18",
     "react-query": "^3.39.3",
     "styled-components": "^6.1.0"
