@@ -73,7 +73,7 @@ export default function QuestConsole() {
     };
 
     try {
-      const response = await fetch("/api/quests", {
+      const response = await fetch("/api/dev_quests", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
