@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { JubmojiQRCode } from "@/types";
+import { JubmojiQRCodeData } from "@/types";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { questImageMap } from "@/lib/dev_imageMaps";
@@ -8,7 +8,7 @@ import { questImageMap } from "@/lib/dev_imageMaps";
 const QRCodePage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [qrData, setQrData] = useState<JubmojiQRCode>();
+  const [qrData, setQrData] = useState<JubmojiQRCodeData>();
 
   useEffect(() => {
     if (id) {

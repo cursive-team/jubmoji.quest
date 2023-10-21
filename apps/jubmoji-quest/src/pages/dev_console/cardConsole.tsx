@@ -1,4 +1,4 @@
-import { JubmojiCard } from "@/types";
+import { JubmojiCollectionCard } from "@/types";
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
 export default function CardConsole() {
@@ -6,7 +6,7 @@ export default function CardConsole() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [owner, setOwner] = useState("");
-  const [cards, setCards] = useState<JubmojiCard[]>([]);
+  const [cards, setCards] = useState<JubmojiCollectionCard[]>([]);
 
   useEffect(() => {
     const getCards = async () => {

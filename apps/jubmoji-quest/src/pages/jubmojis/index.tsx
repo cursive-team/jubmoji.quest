@@ -5,7 +5,7 @@ import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { cardImageMap } from "@/lib/dev_imageMaps";
-import { JubmojiCard } from "@/types";
+import { JubmojiCollectionCard } from "@/types";
 import { classed } from "@tw-classed/react";
 import { cardPubKeys } from "jubmoji-api";
 import React, { useEffect, useState } from "react";
@@ -55,9 +55,9 @@ const JubmojiNav = () => {
 export default function JubmojisPage() {
   const { data: jubmojis = [] } = useJubmojis();
   const [infoModalOpen, setIsModalOpen] = useState(false);
-  const [jubmojiCards, setJubmojiCards] = useState<Record<number, JubmojiCard>>(
-    {}
-  );
+  const [jubmojiCollectionCards, setJubmojiCollectionCards] = useState<
+    Record<number, JubmojiCollectionCard>
+  >({});
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -65,16 +65,16 @@ export default function JubmojisPage() {
 
       if (!response.ok) {
         console.error("Could not fetch Jubmoji cards.");
-        setJubmojiCards([]);
+        setJubmojiCollectionCards([]);
       }
 
-      const cards: JubmojiCard[] = await response.json();
-      const cardMap: Record<number, JubmojiCard> = {};
-      cards.forEach((card) => {
-        cardMap[card.index] = card;
+      const collectionCards: JubmojiCollectionCard[] = await response.json();
+      const collectionCardMap: Record<number, JubmojiCollectionCard> = {};
+      collectionCards.forEach((card) => {
+        collectionCardMap[card.index] = card;
       });
 
-      setJubmojiCards(cardMap);
+      setJubmojiCollectionCards(collectionCardMap);
     };
 
     fetchCards();
@@ -99,7 +99,7 @@ export default function JubmojisPage() {
         />
         <Input placeholder="Search your private collection" />
         {jubmojis.map((jubmoji, i) => {
-          if (!jubmojiCards[jubmoji.pubKeyIndex]) {
+          if (!jubmojiCollectionCards[jubmoji.pubKeyIndex]) {
             return;
           }
 
@@ -107,7 +107,7 @@ export default function JubmojisPage() {
           const { emoji } = cardPubKeys[jubmoji.pubKeyIndex];
           // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
           const { name, owner, collectsFor } =
-            jubmojiCards[jubmoji.pubKeyIndex];
+            jubmojiCollectionCards[jubmoji.pubKeyIndex];
           // Image path is fetched from the hardcoded card image map for offline use
           const imagePath = cardImageMap[jubmoji.pubKeyIndex];
 

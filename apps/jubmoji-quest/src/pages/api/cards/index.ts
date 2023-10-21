@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
-import { JubmojiCard } from "@/types";
+import { JubmojiCollectionCard } from "@/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,7 +11,7 @@ export default async function handler(
   }
 
   try {
-    const cards: JubmojiCard[] = await prisma.card.findMany({
+    const cards: JubmojiCollectionCard[] = await prisma.card.findMany({
       include: {
         collectsFor: {
           select: {

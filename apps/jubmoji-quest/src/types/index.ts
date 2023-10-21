@@ -14,7 +14,7 @@ export interface BackupState {
   serialNum: string;
 }
 
-export type JubmojiCard = Card & {
+export type JubmojiCollectionCard = Card & {
   collectsFor: {
     id: number;
     name: string;
@@ -48,7 +48,7 @@ export type JubmojiPower = Power & {
   };
 };
 
-export type JubmojiQRCode = QRCode & {
+export type JubmojiQRCodeData = QRCode & {
   power: {
     id: number;
     name: string;

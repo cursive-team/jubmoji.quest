@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
-import { JubmojiQRCode } from "@/types";
+import { JubmojiQRCodeData } from "@/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,7 +15,7 @@ export default async function handler(
   const { id } = req.query;
 
   try {
-    const qrCode: JubmojiQRCode | null = await prisma.qRCode.findUnique({
+    const qrCode: JubmojiQRCodeData | null = await prisma.qRCode.findUnique({
       where: { uuid: id as string },
       include: {
         power: {
