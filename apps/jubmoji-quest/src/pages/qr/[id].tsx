@@ -21,8 +21,28 @@ const QRCodePage = () => {
     }
   }, [id]);
 
-  const confirmPower = () => {
-    alert("Confirmed power!");
+  const confirmPower = async () => {
+    const response = await fetch("/api/qr/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        qrCodeUuid: id,
+      }),
+    });
+
+    if (!response.ok) {
+      alert("Failed to confirm power!");
+      return;
+    }
+
+    const { verified, message } = await response.json();
+    if (!verified) {
+      console.log("Failed to verify power: ", message);
+    }
+
+    alert("Confirming power: " + verified.toString());
   };
 
   if (!qrData) {

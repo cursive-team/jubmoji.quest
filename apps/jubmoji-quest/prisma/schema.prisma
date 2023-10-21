@@ -49,9 +49,10 @@ model Power {
   powerParams            Json    // params for the specific power type
 
   // Relationships
-  quest       Quest   @relation(fields: [questId], references: [id])
-  questId     Int  
-  qrCodes     QRCode[]   
+  questId       Int  
+  quest         Quest   @relation(fields: [questId], references: [id])
+  qrCodes       QRCode[]   
+  sigNullifiers PowerSigNullifier[]
 }
 
 model QRCode {
@@ -62,6 +63,21 @@ model QRCode {
   // Relationships
   powerId   Int      
   power     Power    @relation(fields: [powerId], references: [id]) 
+}
+
+model PowerSigNullifier {
+  id        Int    @id @default(autoincrement())
+  nullifier String 
+  
+  // Relationships
+  powerId   Int   
+  power     Power  @relation(fields: [powerId], references: [id])
+
+  // Indexes
+  @@index([powerId], name: "powerId_idx") 
+
+  // Constraints
+  @@unique([nullifier, powerId])
 }
 
 enum CardTag {

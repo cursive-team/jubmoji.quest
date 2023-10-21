@@ -49,22 +49,5 @@ export type JubmojiPower = Power & {
 };
 
 export type JubmojiQRCodeData = QRCode & {
-  power: {
-    id: number;
-    name: string;
-    description: string;
-    startTime: Date | null;
-    endTime: Date | null;
-    powerType: $Enums.PowerType;
-    quest: {
-      id: number;
-      name: string;
-      description: string;
-      proofType: $Enums.ProofType;
-      proofParams: Prisma.JsonValue;
-      collectionCards: {
-        index: number;
-      }[];
-    };
-  };
+  power: JubmojiPower;
 };

@@ -15,41 +15,46 @@ export default async function handler(
   const { id } = req.query;
 
   try {
-    const qrCode: JubmojiQRCodeData | null = await prisma.qRCode.findUnique({
-      where: { uuid: id as string },
-      include: {
-        power: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            startTime: true,
-            endTime: true,
-            powerType: true,
-            quest: {
-              select: {
-                id: true,
-                name: true,
-                description: true,
-                proofType: true,
-                proofParams: true,
-                collectionCards: {
-                  select: {
-                    index: true,
+    const qrCodeData: JubmojiQRCodeData | null = await prisma.qRCode.findUnique(
+      {
+        where: { uuid: id as string },
+        include: {
+          power: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              startTime: true,
+              endTime: true,
+              sigNullifierRandomness: true,
+              powerType: true,
+              powerParams: true,
+              questId: true,
+              quest: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                  proofType: true,
+                  proofParams: true,
+                  collectionCards: {
+                    select: {
+                      index: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      }
+    );
 
-    if (!qrCode) {
+    if (!qrCodeData) {
       return res.status(500).json({ message: "QR Code not found" });
     }
 
-    res.status(200).json(qrCode);
+    res.status(200).json(qrCodeData);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error", error });
