@@ -78,30 +78,3 @@ export const getMerkleProofListFromCache = async (
     )
   );
 };
-
-// Use the following when Merkle caching is implemented
-// export const getMerkleRootFromCache = (pubKeyList: string[]): bigint => {
-//   const tree = getMerkleTreeFromCache(pubKeyList);
-
-//   return getMerkleRootFromTree(tree);
-// };
-
-// export const getMerkleProofFromCache = (
-//   pubKeyList: string[],
-//   leafIndex: number
-// ): MerkleProof => {
-//   const tree = getMerkleTreeFromCache(pubKeyList);
-
-//   return getMerkleProofFromTree(tree, leafIndex);
-// };
-
-// export const getMerkleProofListFromCache = (
-//   pubKeyList: string[],
-//   leafIndices: number[]
-// ): MerkleProof[] => {
-//   const tree = getMerkleTreeFromCache(pubKeyList);
-
-//   return leafIndices.map((leafIndex) =>
-//     getMerkleProofFromTree(tree, leafIndex)
-//   );
-// };

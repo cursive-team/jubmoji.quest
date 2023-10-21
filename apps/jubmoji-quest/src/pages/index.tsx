@@ -17,7 +17,7 @@ import { $Enums } from "@prisma/client";
 import { questImageMap } from "@/lib/dev_imageMaps";
 
 export const QuestTagMapping: Record<
-  $Enums.CardTag | "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED",
+  "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
   string
 > = {
   ALL: "All",
@@ -25,13 +25,7 @@ export const QuestTagMapping: Record<
   COMPLETED: "Completed",
   STARRED: "Starred",
   OFFICIAL: "Official",
-  ROLES: "Roles",
-  APPLICATIONS: "Applications",
   COMMUNITY: "Community",
-  DEV_TOOLS: "Dev Tools",
-  INFRASTRUCTURE: "Infrastructure",
-  PRIVACY: "Privacy",
-  PERSONAL: "Personal",
 };
 
 const BackupSection = () => {
