@@ -150,7 +150,7 @@ export default async function handler(
 
     res.status(200).json({ qrCodeUuid: newQRCode.uuid });
   } catch (error) {
-    console.error("Error creating QR code:", error);
+    console.log("Error creating QR code:", error);
     res
       .status(500)
       .json({ error: "An error occurred while creating the QR code." });

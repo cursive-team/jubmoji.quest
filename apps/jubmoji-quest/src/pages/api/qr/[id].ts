@@ -16,7 +16,7 @@ export default async function handler(
 
   try {
     const qrCode: JubmojiQRCode | null = await prisma.qRCode.findUnique({
-      where: { id: Number(id) },
+      where: { uuid: id as string },
       include: {
         power: {
           select: {
@@ -51,6 +51,7 @@ export default async function handler(
 
     res.status(200).json(qrCode);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
 }

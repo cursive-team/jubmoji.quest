@@ -29,11 +29,8 @@ const QRCodePage = () => {
     return <div>Loading...</div>;
   }
 
-  console.log(qrData);
-
   return (
-    <div>
-      <h1>Proof</h1>
+    <div className="flex flex-col gap-2 mt-10">
       <div>
         <p>The page represents a proof for the following power:</p>
         <PowerCard
@@ -50,14 +47,19 @@ const QRCodePage = () => {
           image={questImageMap[qrData.power.quest.id]}
         />
       </div>
-      <div>
+      <div className="bg-slate-500">
         <p>
           Click the button below to confirm use of this power. Once you confirm,
           the user will no longer be able to use this proof for the same power
           again. Note: if this power has already been used, confirmation will
           fail.
         </p>
-        <button onClick={confirmPower}>Confirm Power</button>
+        <button
+          className="bg-black text-white align-center rounded-md"
+          onClick={confirmPower}
+        >
+          Confirm Power
+        </button>
       </div>
     </div>
   );
