@@ -10,6 +10,8 @@ import { $Enums } from "@prisma/client";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import {
   Jubmoji,
+  JubmojiInCollection,
+  JubmojiInCollectionWithNonce,
   NUniqueJubmojisInCollection,
   createProofInstance,
   getCardPubKeyFromIndex,
@@ -27,10 +29,80 @@ const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
 
     switch (power.quest.proofType) {
       case $Enums.ProofType.IN_COLLECTION:
-        alert("This proof is not implemented!");
+        try {
+          const proofParams = power.quest.proofParams as Prisma.JsonObject;
+          const collectionCardIndices = power.quest.collectionCards.map(
+            (card) => card.index
+          );
+          const collectionPubKeys = collectionCardIndices.map((index) =>
+            getCardPubKeyFromIndex(index)
+          );
+          const sigNullifierRandomness = power.sigNullifierRandomness
+            ? power.sigNullifierRandomness
+            : (proofParams.sigNullifierRandomness as string);
+
+          const proofClass = createProofInstance(JubmojiInCollection, {
+            collectionPubKeys,
+            sigNullifierRandomness,
+          });
+
+          const proofJubmojis = jubmojis.filter((jubmoji) => {
+            return collectionCardIndices.includes(jubmoji.pubKeyIndex);
+          });
+          if (proofJubmojis.length === 0) {
+            alert("You don't have any Jubmojis in this quest!");
+            return;
+          }
+
+          const proof = await proofClass.prove({ jubmoji: proofJubmojis[0] });
+          const { verified } = await proofClass.verify(proof);
+
+          if (verified) {
+            alert("Successfully used your power!");
+          } else {
+            alert("Failed to use your power!");
+          }
+        } catch (e) {
+          console.error(e);
+        }
         break;
       case $Enums.ProofType.IN_COLLECTION_NONCE:
-        alert("This proof is not implemented!");
+        try {
+          const proofParams = power.quest.proofParams as Prisma.JsonObject;
+          const collectionCardIndices = power.quest.collectionCards.map(
+            (card) => card.index
+          );
+          const collectionPubKeys = collectionCardIndices.map((index) =>
+            getCardPubKeyFromIndex(index)
+          );
+          const sigNullifierRandomness = power.sigNullifierRandomness
+            ? power.sigNullifierRandomness
+            : (proofParams.sigNullifierRandomness as string);
+
+          const proofClass = createProofInstance(JubmojiInCollectionWithNonce, {
+            collectionPubKeys,
+            sigNullifierRandomness,
+          });
+
+          const proofJubmojis = jubmojis.filter((jubmoji) => {
+            return collectionCardIndices.includes(jubmoji.pubKeyIndex);
+          });
+          if (proofJubmojis.length === 0) {
+            alert("You don't have any Jubmojis in this quest!");
+            return;
+          }
+
+          const proof = await proofClass.prove({ jubmoji: proofJubmojis[0] });
+          const { verified } = await proofClass.verify(proof);
+
+          if (verified) {
+            alert("Successfully used your power!");
+          } else {
+            alert("Failed to use your power!");
+          }
+        } catch (e) {
+          console.error(e);
+        }
         break;
       case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
         try {
@@ -45,6 +117,7 @@ const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
             ? power.sigNullifierRandomness
             : (proofParams.sigNullifierRandomness as string);
           const N = proofParams.N as number;
+
           const proofClass = createProofInstance(NUniqueJubmojisInCollection, {
             collectionPubKeys,
             N,
@@ -54,6 +127,7 @@ const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
           const proofJubmojis = jubmojis.filter((jubmoji) => {
             return collectionCardIndices.includes(jubmoji.pubKeyIndex);
           });
+
           const proof = await proofClass.prove({ jubmojis: proofJubmojis });
           const { verified } = await proofClass.verify(proof);
 
