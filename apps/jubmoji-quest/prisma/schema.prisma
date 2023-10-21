@@ -48,9 +48,20 @@ model Power {
   powerType              PowerType
   powerParams            Json    // params for the specific power type
 
-  // Relationship
+  // Relationships
   quest       Quest   @relation(fields: [questId], references: [id])
-  questId     Int     
+  questId     Int  
+  qrCodes     QRCode[]   
+}
+
+model QRCode {
+  id                Int      @id @default(autoincrement())
+  uuid              String   @unique @default(uuid()) 
+  serializedProof   String   
+
+  // Relationships
+  powerId   Int      
+  power     Power    @relation(fields: [powerId], references: [id]) 
 }
 
 enum CardTag {
