@@ -66,7 +66,10 @@ export class JubmojiInCollection {
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(jubmoji);
     const index = this.collectionPubKeys.indexOf(pubKey);
-    const merkleProof = getMerkleProofFromCache(this.collectionPubKeys, index);
+    const merkleProof = await getMerkleProofFromCache(
+      this.collectionPubKeys,
+      index
+    );
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
 
     const membershipProof = await proveMembership({
@@ -92,7 +95,7 @@ export class JubmojiInCollection {
     serializedMembershipProof,
     usedSigNullifiers,
   }: JubmojiInCollectionProof): Promise<VerificationResult> {
-    const merkleRoot = getMerkleRootFromCache(this.collectionPubKeys);
+    const merkleRoot = await getMerkleRootFromCache(this.collectionPubKeys);
 
     return await verifyMembership({
       proof: deserializeMembershipProof(serializedMembershipProof),
@@ -126,7 +129,10 @@ export class JubmojiInCollectionWithNonce {
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(jubmoji);
     const index = this.collectionPubKeys.indexOf(pubKey);
-    const merkleProof = getMerkleProofFromCache(this.collectionPubKeys, index);
+    const merkleProof = await getMerkleProofFromCache(
+      this.collectionPubKeys,
+      index
+    );
     const pubKeyNullifierRandomness = getRandomNullifierRandomness();
 
     const membershipProof = await proveMembership({
@@ -166,7 +172,7 @@ export class JubmojiInCollectionWithNonce {
       return { verified: false };
     }
 
-    const merkleRoot = getMerkleRootFromCache(this.collectionPubKeys);
+    const merkleRoot = await getMerkleRootFromCache(this.collectionPubKeys);
 
     return await verifyMembership({
       proof: membershipProof,
@@ -214,7 +220,7 @@ export class NUniqueJubmojisInCollection {
       indices.push(this.collectionPubKeys.indexOf(pubKey));
     }
 
-    const merkleProofs = getMerkleProofListFromCache(
+    const merkleProofs = await getMerkleProofListFromCache(
       this.collectionPubKeys,
       indices
     );
@@ -269,7 +275,7 @@ export class NUniqueJubmojisInCollection {
       return { verified: false };
     }
 
-    const merkleRoot = getMerkleRootFromCache(this.collectionPubKeys);
+    const merkleRoot = await getMerkleRootFromCache(this.collectionPubKeys);
 
     return await batchVerifyMembership({
       proofs: membershipProofs,

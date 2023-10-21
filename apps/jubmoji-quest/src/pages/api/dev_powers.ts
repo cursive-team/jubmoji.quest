@@ -24,6 +24,9 @@ export default async function handler(
 
     // Todo: Need validations for data
 
+    // Todo: Generate random nullifiers
+    const sigNullifierRandomness = "0ab123420";
+
     try {
       const newPower = await prisma.power.create({
         data: {
@@ -31,6 +34,7 @@ export default async function handler(
           description,
           startTime,
           endTime,
+          sigNullifierRandomness,
           powerType,
           powerParams: {},
           questId,

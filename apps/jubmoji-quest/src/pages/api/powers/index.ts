@@ -20,6 +20,13 @@ export default async function handler(
             id: true,
             name: true,
             description: true,
+            proofType: true,
+            proofParams: true,
+            collectionCards: {
+              select: {
+                index: true,
+              },
+            },
           },
         },
       },

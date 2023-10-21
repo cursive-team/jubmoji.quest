@@ -6,9 +6,83 @@ import { JubmojiPower } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { $Enums } from "@prisma/client";
+import { useJubmojis } from "@/hooks/useJubmojis";
+import {
+  Jubmoji,
+  NUniqueJubmojisInCollection,
+  createProofInstance,
+  getCardPubKeyFromIndex,
+} from "jubmoji-api";
+import { Prisma } from "@prisma/client";
+
+export type QRCodePowerProps = {
+  power: JubmojiPower;
+  jubmojis: Jubmoji[];
+};
+
+const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
+  const onUsePower = async () => {
+    alert("Using power...");
+
+    switch (power.quest.proofType) {
+      case $Enums.ProofType.IN_COLLECTION:
+        alert("This proof is not implemented!");
+        break;
+      case $Enums.ProofType.IN_COLLECTION_NONCE:
+        alert("This proof is not implemented!");
+        break;
+      case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
+        try {
+          const proofParams = power.quest.proofParams as Prisma.JsonObject;
+          const collectionCardIndices = power.quest.collectionCards.map(
+            (card) => card.index
+          );
+          const collectionPubKeys = collectionCardIndices.map((index) =>
+            getCardPubKeyFromIndex(index)
+          );
+          const sigNullifierRandomness = power.sigNullifierRandomness
+            ? power.sigNullifierRandomness
+            : (proofParams.sigNullifierRandomness as string);
+          const N = proofParams.N as number;
+          const proofClass = createProofInstance(NUniqueJubmojisInCollection, {
+            collectionPubKeys,
+            N,
+            sigNullifierRandomness,
+          });
+
+          const proofJubmojis = jubmojis.filter((jubmoji) => {
+            return collectionCardIndices.includes(jubmoji.pubKeyIndex);
+          });
+          const proof = await proofClass.prove({ jubmojis: proofJubmojis });
+          const { verified } = await proofClass.verify(proof);
+
+          if (verified) {
+            alert("Successfully used your power!");
+          } else {
+            alert("Failed to use your power!");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+        break;
+      default:
+        throw new Error("Invalid proof type!");
+    }
+  };
+
+  return (
+    <div>
+      <Button variant="secondary" onClick={onUsePower}>
+        Use Power
+      </Button>
+    </div>
+  );
+};
 
 export default function PowerDetailPage() {
   const [power, setPower] = useState<JubmojiPower>();
+  const { data: jubmojis } = useJubmojis();
 
   const router = useRouter();
   const { id: powerId } = router.query;
@@ -60,7 +134,10 @@ export default function PowerDetailPage() {
             </Link>
           </p>
         </div>
-        <Button variant="secondary">Use Power</Button>
+
+        {power.powerType === $Enums.PowerType.QR_CODE && (
+          <QRCodePower power={power} jubmojis={jubmojis || []} />
+        )}
       </div>
     </div>
   );
