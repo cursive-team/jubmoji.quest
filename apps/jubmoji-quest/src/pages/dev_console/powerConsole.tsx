@@ -1,22 +1,10 @@
+import { JubmojiPower } from "@/types";
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-type PowerType = "QR_CODE" | "TELEGRAM" | "TWITTER";
-
-interface Power {
-  id: string; // Assuming the id is a string. Adjust the type as required.
-  name: string;
-  description: string;
-  startTime: string; // Depending on your setup, this could be a Date object or a string.
-  endTime: string; // The same applies here as for startTime.
-  powerType: PowerType;
-  powerParams: {}; // Structure this based on how the data is shaped.
-  questId: string;
-}
-
 export default function PowerConsole() {
-  const [powers, setPowers] = useState<Power[]>([]);
+  const [powers, setPowers] = useState<JubmojiPower[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [startTime, setStartTime] = useState(new Date());
@@ -25,16 +13,16 @@ export default function PowerConsole() {
   const [questId, setQuestId] = useState<number>();
 
   useEffect(() => {
-    // Fetch the powers when the component is mounted
     const fetchPowers = async () => {
       try {
-        const response = await fetch("/api/powers"); // Adjust this to your actual GET endpoint.
-        const data = await response.json();
+        const response = await fetch("/api/powers");
 
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        setPowers(data); // Assuming the data is directly the array of powers.
+        const data = await response.json();
+
+        setPowers(data);
       } catch (error) {
         console.error("Error fetching powers:", error);
       }
@@ -43,12 +31,10 @@ export default function PowerConsole() {
     fetchPowers();
   }, []);
 
-  // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // You'll need to replace the URL with your actual endpoint
     try {
-      const response = await fetch("/api/powers", {
+      const response = await fetch("/api/dev_powers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,15 +46,21 @@ export default function PowerConsole() {
           endTime,
           powerType,
           questId,
-        }), // Send the powerInput state in the request body
+        }),
       });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
-      // Here, handle the response accordingly.
-      console.log("Power created:", await response.json());
+      // After successful creation, re-fetch the list of powers
+      const fetchPowers = async () => {
+        const response = await fetch("/api/powers");
+        const powers = await response.json();
+        setPowers(powers);
+      };
+
+      fetchPowers();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -155,25 +147,22 @@ export default function PowerConsole() {
                   required
                 />
               </div>
-              {/* If you need to input powerParams, you'd add another input control here */}
               <button type="submit">Create Power</button>
             </form>
           </div>
         </div>
       </div>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 text-white">
         <h2 className="text-3xl font-bold pt-8">List of Powers</h2>
         <div className="grid grid-cols-1 gap-6 mt-6">
           {powers.map((power) => (
             <div key={power.id} className="p-4 border mb-4">
               <h3>{power.name}</h3>
               <p>{power.description}</p>
-              {/* Render other power properties as needed */}
-              <p>Start Time: {power.startTime}</p>
-              <p>End Time: {power.endTime}</p>
+              <p>Start Time: {power.startTime && power.startTime.toString()}</p>
+              <p>End Time: {power.endTime && power.endTime.toString()}</p>
               <p>Type: {power.powerType}</p>
               <p>Quest ID: {power.questId}</p>
-              {/* You may want to render powerParams or associatedQuest differently depending on their structure */}
             </div>
           ))}
         </div>

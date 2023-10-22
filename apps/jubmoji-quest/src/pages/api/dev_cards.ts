@@ -26,15 +26,5 @@ export default async function handler(
     }
   }
 
-  if (req.method === "GET") {
-    try {
-      const cards = await prisma.card.findMany();
-      return res.status(200).json(cards);
-    } catch (error) {
-      console.error("Error getting cards:", error);
-      return res.status(500).json({ message: "Internal Server Error", error });
-    }
-  }
-
   return res.status(405).json({ message: "Method Not Allowed" });
 }

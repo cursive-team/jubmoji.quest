@@ -2,23 +2,22 @@ import React, { useState } from "react";
 import { Icons } from "../Icons";
 import { classed } from "@tw-classed/react";
 import { Button } from "../ui/Button";
-
-interface Quest {
-  label: string;
-  url: string;
-}
+import Link from "next/link";
 
 interface CollectionCardProps {
-  icon: string; // jubmoji icon
-  label: string; // meaning of the jubmoji
-  cardBackImage?: string;
+  icon: string;
+  label: string;
   edition: number;
   owner: string;
-  location?: string;
-  questName: string;
-  linkToQuest?: string;
+  cardBackImage?: string;
   actions?: React.ReactNode;
-  quests?: Quest[];
+  quests?: {
+    id: number;
+    name: string;
+    description: string;
+    startTime: Date | null;
+    endTime: Date | null;
+  }[];
 }
 
 const CardText = classed.span("text-shark-50 text-base");
@@ -44,15 +43,13 @@ const BackCard = classed(
 );
 
 const CollectionCard = ({
-  icon,
   label,
+  icon,
   edition,
   owner,
-  location,
-  questName,
-  actions,
-  linkToQuest = "#",
   cardBackImage,
+  actions,
+  quests,
 }: CollectionCardProps) => {
   const [flipped, setFlip] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
@@ -61,7 +58,6 @@ const CollectionCard = ({
     setFlip(!flipped);
   };
 
-  const ownerLocationLabel = [owner, location].filter(Boolean).join("/");
   const backCoverImage: React.CSSProperties = cardBackImage
     ? {
         backgroundImage: `url(${cardBackImage})`,
@@ -73,12 +69,26 @@ const CollectionCard = ({
       return (
         <>
           <CardText>{`#${edition}`}</CardText>
-          <CardText>{ownerLocationLabel}</CardText>
+          <CardText>{owner}</CardText>
         </>
       );
     }
 
-    return <>Quest details</>;
+    return (
+      <div className="flex flex-col gap-2">
+        {quests?.map((quest) => {
+          return (
+            <Link
+              key={quest.id}
+              href={"/quests/" + quest.id}
+              className="underline"
+            >
+              {quest.name}
+            </Link>
+          );
+        })}
+      </div>
+    );
   };
 
   return (

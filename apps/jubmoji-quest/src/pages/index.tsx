@@ -5,14 +5,28 @@ import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import Options from "@/components/Options";
-import { Quest, QuestOptionsMapping, quests } from "@/lib/dev_demo";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/modals/Modal";
 import { QuestCard } from "@/components/cards/QuestCard";
+import { JubmojiQuest } from "@/types";
+import { $Enums } from "@prisma/client";
+import { questImageMap } from "@/lib/dev_imageMaps";
+
+export const QuestTagMapping: Record<
+  "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
+  string
+> = {
+  ALL: "All",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+  STARRED: "Starred",
+  OFFICIAL: "Official",
+  COMMUNITY: "Community",
+};
 
 const BackupSection = () => {
   const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
@@ -32,6 +46,24 @@ const BackupSection = () => {
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState("all");
   const [infoModalOpen, setIsModalOpen] = useState(false);
+  const { data: jubmojis = [] } = useJubmojis();
+  const [quests, setQuests] = useState<JubmojiQuest[]>([]);
+
+  useEffect(() => {
+    const fetchQuests = async () => {
+      const response = await fetch("/api/quests");
+      if (!response.ok) {
+        // Todo: error handling
+        console.error("Error while trying to fetch quests.");
+        setQuests([]);
+      } else {
+        const quests = await response.json();
+        setQuests(quests);
+      }
+    };
+
+    fetchQuests();
+  }, []);
 
   const filteredItems =
     selectedOption === "all" ? quests : filterItems(quests, selectedOption);
@@ -76,7 +108,7 @@ export default function Home() {
             <span className="text-lg font-bold text-white">Begin a quest!</span>
             <Options
               defaultValue="all"
-              object={QuestOptionsMapping}
+              object={QuestTagMapping}
               onChange={setSelectedOption}
             />
             <div className="flex flex-col gap-2">
@@ -87,16 +119,32 @@ export default function Home() {
               ) : (
                 <>
                   {filteredItems?.map(
-                    ({ id, name, description, image }: Quest) => {
+                    ({
+                      id,
+                      name,
+                      description,
+                      collectionCards,
+                    }: JubmojiQuest) => {
                       const questPageUrl = `/quests/${id}`;
+
+                      const collectionCardIndices = collectionCards.map(
+                        (card) => card.index
+                      );
+                      const percentageProgress =
+                        (jubmojis.filter((jubmoji) =>
+                          collectionCardIndices.includes(jubmoji.pubKeyIndex)
+                        ).length /
+                          collectionCardIndices.length) *
+                        100;
+                      const questImagePath = questImageMap[id];
 
                       return (
                         <Link key={id} href={questPageUrl}>
                           <QuestCard
                             title={name}
                             description={description}
-                            image={image}
-                            percentageProgress={67}
+                            image={questImagePath}
+                            percentageProgress={percentageProgress}
                             showProgress
                           />
                         </Link>

@@ -3,25 +3,35 @@ import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { Button } from "@/components/ui/Button";
-import { powers, quests } from "@/lib/dev_demo";
+import { questImageMap } from "@/lib/dev_imageMaps";
+import { JubmojiQuest } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
-
-const getQuestDetailsByIdMock = (id: string): any => {
-  return quests.find((quest) => quest.id === id);
-};
-
-const getPowersByIdMock = (id: string): any => {
-  return powers[0];
-};
+import React, { useEffect, useState } from "react";
 
 export default function QuestDetailPage() {
-  const router = useRouter();
-  const { id: QUEST_ID } = router.query;
+  const [quest, setQuest] = useState<JubmojiQuest>();
 
-  const quest = getQuestDetailsByIdMock(QUEST_ID as string);
-  const power = getPowersByIdMock("POWER_ID");
+  const router = useRouter();
+  const { id: questId } = router.query;
+
+  useEffect(() => {
+    const fetchQuest = async () => {
+      const response = await fetch(`/api/quests/${questId}`);
+
+      if (!response.ok) {
+        // Todo: error handling
+        throw new Error(`Could not fetch quest ${questId}.`);
+      }
+      const data = await response.json();
+
+      setQuest(data);
+    };
+
+    fetchQuest();
+  }, [questId]);
+
+  if (!quest) return null;
 
   return (
     <div>
@@ -35,13 +45,23 @@ export default function QuestDetailPage() {
         }
       />
       <div className="grid grid-cols-1 gap-4">
-        {quest && <QuestCard {...quest} />}
-        <PowerCard
-          title={power.name}
-          description={power.description}
-          disabled={power.disabled}
-          {...power}
+        <QuestCard
+          title={quest.name}
+          description={quest.description}
+          image={questImageMap[quest.id]}
         />
+        {quest.powers.map((power) => {
+          return (
+            <Link key={power.id} href={`/powers/${power.id}`}>
+              <PowerCard
+                title={power.name}
+                description={power.description}
+                powerType={power.powerType}
+                disabled={true} // Todo: Logic for enabling powers
+              />
+            </Link>
+          );
+        })}
         <Button variant="secondary">Update team score</Button>
       </div>
     </div>

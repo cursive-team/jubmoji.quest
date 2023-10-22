@@ -7,7 +7,6 @@ import PowerConsole from "./powerConsole";
 const MainConsole = () => {
   const [selectedConsole, setSelectedConsole] = useState("Jubmojis");
 
-  // Function to render the appropriate console based on selection
   const renderConsole = () => {
     switch (selectedConsole) {
       case "Jubmojis":
@@ -25,7 +24,6 @@ const MainConsole = () => {
 
   return (
     <div>
-      {/* Navigation bar */}
       <div className="flex justify-around p-4 bg-orange-200">
         <button
           onClick={() => setSelectedConsole("Jubmojis")}
@@ -53,7 +51,6 @@ const MainConsole = () => {
         </button>
       </div>
 
-      {/* Console rendering */}
       <div className="p-4">{renderConsole()}</div>
     </div>
   );

@@ -5,26 +5,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
-    try {
-      const powers = await prisma.power.findMany({
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          startTime: true,
-          endTime: true,
-          powerType: true,
-          powerParams: true,
-          questId: true,
-        },
-      });
-      return res.status(200).json(powers);
-    } catch (error) {
-      return res.status(500).json({ error: "Error fetching powers" });
-    }
-  }
-
   if (req.method === "POST") {
     const { name, description, startTime, endTime, powerType, questId } =
       req.body;
@@ -42,6 +22,11 @@ export default async function handler(
       return res.status(400).json({ error: "Required fields missing" });
     }
 
+    // Todo: Need validations for data
+
+    // Todo: Generate random nullifiers
+    const sigNullifierRandomness = "0ab123420";
+
     try {
       const newPower = await prisma.power.create({
         data: {
@@ -49,6 +34,7 @@ export default async function handler(
           description,
           startTime,
           endTime,
+          sigNullifierRandomness,
           powerType,
           powerParams: {},
           questId,
@@ -61,6 +47,5 @@ export default async function handler(
     }
   }
 
-  // Handle any other HTTP method
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }

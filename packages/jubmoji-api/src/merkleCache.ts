@@ -4,6 +4,9 @@ import {
   hexToBigInt,
   MERKLE_TREE_DEPTH,
   MERKLE_TREE_ZEROS,
+  publicKeyFromString,
+  computeMerkleRoot,
+  computeMerkleProof,
 } from "babyjubjub-ecdsa";
 
 export const getMerkleTreeFromCache = (pubKeyList: string[]): string[][] => {
@@ -40,28 +43,38 @@ export const getMerkleProofFromTree = (
   };
 };
 
-export const getMerkleRootFromCache = (pubKeyList: string[]): bigint => {
-  const tree = getMerkleTreeFromCache(pubKeyList);
+export const getMerkleRootFromCache = async (
+  pubKeyList: string[]
+): Promise<bigint> => {
+  const pubKeys = pubKeyList.map((pubKey) =>
+    publicKeyFromString(pubKey).toEdwards()
+  );
 
-  return getMerkleRootFromTree(tree);
+  return await computeMerkleRoot(pubKeys);
 };
 
-export const getMerkleProofFromCache = (
+export const getMerkleProofFromCache = async (
   pubKeyList: string[],
   leafIndex: number
-): MerkleProof => {
-  const tree = getMerkleTreeFromCache(pubKeyList);
+): Promise<MerkleProof> => {
+  const pubKeys = pubKeyList.map((pubKey) =>
+    publicKeyFromString(pubKey).toEdwards()
+  );
 
-  return getMerkleProofFromTree(tree, leafIndex);
+  return await computeMerkleProof(pubKeys, leafIndex);
 };
 
-export const getMerkleProofListFromCache = (
+export const getMerkleProofListFromCache = async (
   pubKeyList: string[],
   leafIndices: number[]
-): MerkleProof[] => {
-  const tree = getMerkleTreeFromCache(pubKeyList);
+): Promise<MerkleProof[]> => {
+  const pubKeys = pubKeyList.map((pubKey) =>
+    publicKeyFromString(pubKey).toEdwards()
+  );
 
-  return leafIndices.map((leafIndex) =>
-    getMerkleProofFromTree(tree, leafIndex)
+  return Promise.all(
+    leafIndices.map(
+      async (leafIndex) => await computeMerkleProof(pubKeys, leafIndex)
+    )
   );
 };

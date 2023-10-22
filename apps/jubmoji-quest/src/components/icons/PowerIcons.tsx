@@ -1,4 +1,4 @@
-export const ProofIcons: Record<string, any> = {
+export const PowerIcons: Record<string, any> = {
   group: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

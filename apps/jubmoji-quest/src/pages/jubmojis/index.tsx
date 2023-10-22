@@ -4,8 +4,11 @@ import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
+import { cardImageMap } from "@/lib/dev_imageMaps";
+import { JubmojiCollectionCard } from "@/types";
 import { classed } from "@tw-classed/react";
-import React, { useState } from "react";
+import { cardPubKeys } from "jubmoji-api";
+import React, { useEffect, useState } from "react";
 
 const JubmojiNavItem = classed.div(
   "block p-2 w-[32px] h-16 rounded cursor-pointer",
@@ -48,9 +51,34 @@ const JubmojiNav = () => {
     </JubmojiNavWrapper>
   );
 };
+
 export default function JubmojisPage() {
   const { data: jubmojis = [] } = useJubmojis();
   const [infoModalOpen, setIsModalOpen] = useState(false);
+  const [jubmojiCollectionCards, setJubmojiCollectionCards] = useState<
+    Record<number, JubmojiCollectionCard>
+  >({});
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      const response = await fetch("/api/cards");
+
+      if (!response.ok) {
+        console.error("Could not fetch Jubmoji cards.");
+        setJubmojiCollectionCards([]);
+      }
+
+      const collectionCards: JubmojiCollectionCard[] = await response.json();
+      const collectionCardMap: Record<number, JubmojiCollectionCard> = {};
+      collectionCards.forEach((card) => {
+        collectionCardMap[card.index] = card;
+      });
+
+      setJubmojiCollectionCards(collectionCardMap);
+    };
+
+    fetchCards();
+  }, []);
 
   return (
     <>
@@ -70,17 +98,33 @@ export default function JubmojisPage() {
           }
         />
         <Input placeholder="Search your private collection" />
-        <div className="my-4">
-          <CollectionCard
-            label="Meaning of Jummoji"
-            icon="🎉"
-            edition={10}
-            owner="kalidou"
-            questName="Jubmoji Quest"
-            cardBackImage="/images/card-back-image.png"
-            actions={<span>backed up</span>}
-          />
-        </div>
+        {jubmojis.map((jubmoji, i) => {
+          if (!jubmojiCollectionCards[jubmoji.pubKeyIndex]) {
+            return;
+          }
+
+          // Emoji is fixed in hardware and fetched from hardcoded card metadata file
+          const { emoji } = cardPubKeys[jubmoji.pubKeyIndex];
+          // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
+          const { name, owner, collectsFor } =
+            jubmojiCollectionCards[jubmoji.pubKeyIndex];
+          // Image path is fetched from the hardcoded card image map for offline use
+          const imagePath = cardImageMap[jubmoji.pubKeyIndex];
+
+          return (
+            <div key={i} className="my-4">
+              <CollectionCard
+                label={name}
+                icon={emoji}
+                edition={jubmoji.msgNonce}
+                owner={owner}
+                cardBackImage={imagePath}
+                actions={<span>backed up</span>}
+                quests={collectsFor}
+              />
+            </div>
+          );
+        })}
         <div className="mt-auto">
           <JubmojiNav />
         </div>
