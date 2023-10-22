@@ -70,6 +70,7 @@ export default async function handler(
         .json({ verified: false, message: "Proof failed to verify!" });
     }
 
+    // Nullifiers are stored as hex in the database
     const consumedSigNullifiers =
       verificationResult.consumedSigNullifiers?.map(bigIntToHex);
     const sigNullifierQueryResult = await prisma.powerSigNullifier.findMany({
