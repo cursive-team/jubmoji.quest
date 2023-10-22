@@ -12,10 +12,11 @@ import {
 } from "jubmoji-api";
 
 // Use circuits in public folder for prover and verified
-export const PATH_TO_CIRCUITS = "public/circuits/";
+export const SERVER_PATH_TO_CIRCUITS = "public/circuits/";
 
 export const createProofInstanceFromJubmojiPower = (
-  power: JubmojiPower
+  power: JubmojiPower,
+  pathToCircuits?: string
 ): ProofClass<any, any> => {
   const proofParams = power.quest.proofParams as Prisma.JsonObject;
   const collectionCardIndices = power.quest.collectionCards.map(
@@ -33,13 +34,13 @@ export const createProofInstanceFromJubmojiPower = (
       return createProofInstance(JubmojiInCollection, {
         collectionPubKeys,
         sigNullifierRandomness,
-        pathToCircuits: PATH_TO_CIRCUITS,
+        pathToCircuits,
       });
     case $Enums.ProofType.IN_COLLECTION_NONCE:
       return createProofInstance(JubmojiInCollectionWithNonce, {
         collectionPubKeys,
         sigNullifierRandomness,
-        pathToCircuits: PATH_TO_CIRCUITS,
+        pathToCircuits,
       });
     case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
       const N = proofParams.N as number;
@@ -47,7 +48,7 @@ export const createProofInstanceFromJubmojiPower = (
         collectionPubKeys,
         N,
         sigNullifierRandomness,
-        pathToCircuits: PATH_TO_CIRCUITS,
+        pathToCircuits,
       });
     default:
       throw new Error("Invalid proof type.");
@@ -56,85 +57,55 @@ export const createProofInstanceFromJubmojiPower = (
 
 export const createJubmojiPowerProof = async (
   power: JubmojiPower,
-  jubmojis: Jubmoji[]
+  jubmojis: Jubmoji[],
+  pathToCircuits?: string
 ): Promise<string> => {
-  const proofParams = power.quest.proofParams as Prisma.JsonObject;
+  const proofClass = createProofInstanceFromJubmojiPower(power, pathToCircuits);
   const collectionCardIndices = power.quest.collectionCards.map(
     (card) => card.index
   );
-  const collectionPubKeys = collectionCardIndices.map((index) =>
-    getCardPubKeyFromIndex(index)
-  );
-  const sigNullifierRandomness = power.sigNullifierRandomness
-    ? power.sigNullifierRandomness
-    : (proofParams.sigNullifierRandomness as string);
   const proofJubmojis = jubmojis.filter((jubmoji) => {
     return collectionCardIndices.includes(jubmoji.pubKeyIndex);
   });
 
-  let proof; // We create proof classes different from the above helper in that they don't use path to circuits for client proving
+  let proofArgs;
   switch (power.quest.proofType) {
     case $Enums.ProofType.IN_COLLECTION:
-      const jubmojiInCollectionProof = createProofInstance(
-        JubmojiInCollection,
-        {
-          collectionPubKeys,
-          sigNullifierRandomness,
-        }
-      );
-
       if (proofJubmojis.length === 0) {
         throw new Error("You don't have any Jubmojis in this quest!");
       }
-      proof = await jubmojiInCollectionProof.prove({
+      proofArgs = {
         jubmoji: proofJubmojis[0],
-      });
+      };
       break;
     case $Enums.ProofType.IN_COLLECTION_NONCE:
-      const jubmojiInCollectionWithNonceProof = createProofInstance(
-        JubmojiInCollectionWithNonce,
-        {
-          collectionPubKeys,
-          sigNullifierRandomness,
-        }
-      );
-
       if (proofJubmojis.length === 0) {
         throw new Error("You don't have any Jubmojis in this quest!");
       }
-      proof = await jubmojiInCollectionWithNonceProof.prove({
+      proofArgs = {
         jubmoji: proofJubmojis[0],
-      });
+      };
       break;
     case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
-      const N = proofParams.N as number;
-      const nUniqueJubmojisInCollectionProof = createProofInstance(
-        NUniqueJubmojisInCollection,
-        {
-          collectionPubKeys,
-          N,
-          sigNullifierRandomness,
-          pathToCircuits: PATH_TO_CIRCUITS,
-        }
-      );
-
-      proof = await nUniqueJubmojisInCollectionProof.prove({
+      proofArgs = {
         jubmojis: proofJubmojis,
-      });
+      };
       break;
     default:
       throw new Error("Invalid proof type.");
   }
 
+  const proof = await proofClass.prove(proofArgs);
   return JSON.stringify(proof);
 };
 
 export const verifyJubmojiPowerProof = async (
   power: JubmojiPower,
-  serializedProof: string
+  serializedProof: string,
+  pathToCircuits?: string
 ): Promise<VerificationResult> => {
   const proof = JSON.parse(serializedProof);
-  const proofClass = createProofInstanceFromJubmojiPower(power);
+  const proofClass = createProofInstanceFromJubmojiPower(power, pathToCircuits);
 
   return await proofClass.verify(proof);
 };

@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiPower } from "@/types";
-import { verifyJubmojiPowerProof } from "@/lib/proving";
+import {
+  SERVER_PATH_TO_CIRCUITS,
+  verifyJubmojiPowerProof,
+} from "@/lib/proving";
 
 export default async function handler(
   req: NextApiRequest,
@@ -41,7 +44,11 @@ export default async function handler(
       return;
     }
 
-    const { verified } = await verifyJubmojiPowerProof(power, serializedProof);
+    const { verified } = await verifyJubmojiPowerProof(
+      power,
+      serializedProof,
+      SERVER_PATH_TO_CIRCUITS
+    );
     if (!verified) {
       return res.status(500).json({ error: "Proof not verified." });
     }

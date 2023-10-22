@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiQRCodeData } from "@/types";
-import { verifyJubmojiPowerProof } from "@/lib/proving";
+import {
+  SERVER_PATH_TO_CIRCUITS,
+  verifyJubmojiPowerProof,
+} from "@/lib/proving";
 import { bigIntToHex } from "babyjubjub-ecdsa";
 
 export default async function handler(
@@ -58,7 +61,8 @@ export default async function handler(
     const powerId = qrCodeData.power.id;
     const verificationResult = await verifyJubmojiPowerProof(
       qrCodeData.power,
-      qrCodeData.serializedProof
+      qrCodeData.serializedProof,
+      SERVER_PATH_TO_CIRCUITS
     );
     if (!verificationResult.verified) {
       return res
