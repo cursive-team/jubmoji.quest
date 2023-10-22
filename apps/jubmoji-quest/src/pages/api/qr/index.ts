@@ -1,14 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiPower } from "@/types";
-import { Prisma, $Enums } from "@prisma/client";
-import {
-  JubmojiInCollection,
-  JubmojiInCollectionWithNonce,
-  NUniqueJubmojisInCollection,
-  createProofInstance,
-  getCardPubKeyFromIndex,
-} from "jubmoji-api";
+import { verifyJubmojiPowerProof } from "@/lib/proving";
 
 export default async function handler(
   req: NextApiRequest,
@@ -48,95 +41,7 @@ export default async function handler(
       return;
     }
 
-    const proof = JSON.parse(serializedProof);
-    const pathToCircuits = "public/circuits/";
-
-    let verified = false;
-    switch (power.quest.proofType) {
-      case $Enums.ProofType.IN_COLLECTION:
-        try {
-          const proofParams = power.quest.proofParams as Prisma.JsonObject;
-          const collectionCardIndices = power.quest.collectionCards.map(
-            (card) => card.index
-          );
-          const collectionPubKeys = collectionCardIndices.map((index) =>
-            getCardPubKeyFromIndex(index)
-          );
-          const sigNullifierRandomness = power.sigNullifierRandomness
-            ? power.sigNullifierRandomness
-            : (proofParams.sigNullifierRandomness as string);
-
-          const proofClass = createProofInstance(JubmojiInCollection, {
-            collectionPubKeys,
-            sigNullifierRandomness,
-            pathToCircuits,
-          });
-
-          const verificationResult = await proofClass.verify(proof);
-          verified = verificationResult.verified;
-        } catch (error) {
-          console.error("Error verifying proof:", error);
-          return res.status(500).json({ error: "Error verifying proof." });
-        }
-        break;
-      case $Enums.ProofType.IN_COLLECTION_NONCE:
-        try {
-          const proofParams = power.quest.proofParams as Prisma.JsonObject;
-          const collectionCardIndices = power.quest.collectionCards.map(
-            (card) => card.index
-          );
-          const collectionPubKeys = collectionCardIndices.map((index) =>
-            getCardPubKeyFromIndex(index)
-          );
-          const sigNullifierRandomness = power.sigNullifierRandomness
-            ? power.sigNullifierRandomness
-            : (proofParams.sigNullifierRandomness as string);
-
-          const proofClass = createProofInstance(JubmojiInCollectionWithNonce, {
-            collectionPubKeys,
-            sigNullifierRandomness,
-            pathToCircuits,
-          });
-
-          const verificationResult = await proofClass.verify(proof);
-          verified = verificationResult.verified;
-        } catch (error) {
-          console.error("Error verifying proof:", error);
-          return res.status(500).json({ error: "Error verifying proof." });
-        }
-        break;
-      case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
-        try {
-          const proofParams = power.quest.proofParams as Prisma.JsonObject;
-          const collectionCardIndices = power.quest.collectionCards.map(
-            (card) => card.index
-          );
-          const collectionPubKeys = collectionCardIndices.map((index) =>
-            getCardPubKeyFromIndex(index)
-          );
-          const sigNullifierRandomness = power.sigNullifierRandomness
-            ? power.sigNullifierRandomness
-            : (proofParams.sigNullifierRandomness as string);
-          const N = proofParams.N as number;
-
-          const proofClass = createProofInstance(NUniqueJubmojisInCollection, {
-            collectionPubKeys,
-            N,
-            sigNullifierRandomness,
-            pathToCircuits,
-          });
-
-          const verificationResult = await proofClass.verify(proof);
-          verified = verificationResult.verified;
-        } catch (error) {
-          console.error("Error verifying proof:", error);
-          return res.status(500).json({ error: "Error verifying proof." });
-        }
-        break;
-      default:
-        return res.status(500).json({ error: "Invalid proof type." });
-    }
-
+    const { verified } = await verifyJubmojiPowerProof(power, serializedProof);
     if (!verified) {
       return res.status(500).json({ error: "Proof not verified." });
     }

@@ -6,17 +6,14 @@ import { JubmojiPower } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { Prisma, $Enums } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import {
-  Jubmoji,
-  JubmojiInCollection,
-  JubmojiInCollectionWithNonce,
-  NUniqueJubmojisInCollection,
-  createProofInstance,
-  getCardPubKeyFromIndex,
-} from "jubmoji-api";
+import { Jubmoji } from "jubmoji-api";
 import QRCode from "react-qr-code";
+import {
+  createJubmojiPowerProof,
+  verifyJubmojiPowerProof,
+} from "@/lib/proving";
 
 export type QRCodePowerProps = {
   power: JubmojiPower;
@@ -30,128 +27,18 @@ const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
     alert("Using power...");
 
     let serializedProof;
-    switch (power.quest.proofType) {
-      case $Enums.ProofType.IN_COLLECTION:
-        try {
-          const proofParams = power.quest.proofParams as Prisma.JsonObject;
-          const collectionCardIndices = power.quest.collectionCards.map(
-            (card) => card.index
-          );
-          const collectionPubKeys = collectionCardIndices.map((index) =>
-            getCardPubKeyFromIndex(index)
-          );
-          const sigNullifierRandomness = power.sigNullifierRandomness
-            ? power.sigNullifierRandomness
-            : (proofParams.sigNullifierRandomness as string);
+    try {
+      serializedProof = await createJubmojiPowerProof(power, jubmojis);
+    } catch (error) {
+      console.log(error);
+      alert("Failed to use your power!");
+      return;
+    }
 
-          const proofClass = createProofInstance(JubmojiInCollection, {
-            collectionPubKeys,
-            sigNullifierRandomness,
-          });
-
-          const proofJubmojis = jubmojis.filter((jubmoji) => {
-            return collectionCardIndices.includes(jubmoji.pubKeyIndex);
-          });
-          if (proofJubmojis.length === 0) {
-            alert("You don't have any Jubmojis in this quest!");
-            return;
-          }
-          const proof = await proofClass.prove({ jubmoji: proofJubmojis[0] });
-
-          const { verified } = await proofClass.verify(proof);
-          if (!verified) {
-            alert("Failed to use your power!");
-            return;
-          }
-
-          serializedProof = JSON.stringify(proof);
-        } catch (e) {
-          console.error(e);
-          alert("Failed to use your power!");
-          return;
-        }
-        break;
-      case $Enums.ProofType.IN_COLLECTION_NONCE:
-        try {
-          const proofParams = power.quest.proofParams as Prisma.JsonObject;
-          const collectionCardIndices = power.quest.collectionCards.map(
-            (card) => card.index
-          );
-          const collectionPubKeys = collectionCardIndices.map((index) =>
-            getCardPubKeyFromIndex(index)
-          );
-          const sigNullifierRandomness = power.sigNullifierRandomness
-            ? power.sigNullifierRandomness
-            : (proofParams.sigNullifierRandomness as string);
-
-          const proofClass = createProofInstance(JubmojiInCollectionWithNonce, {
-            collectionPubKeys,
-            sigNullifierRandomness,
-          });
-
-          const proofJubmojis = jubmojis.filter((jubmoji) => {
-            return collectionCardIndices.includes(jubmoji.pubKeyIndex);
-          });
-          if (proofJubmojis.length === 0) {
-            alert("You don't have any Jubmojis in this quest!");
-            return;
-          }
-          const proof = await proofClass.prove({ jubmoji: proofJubmojis[0] });
-
-          const { verified } = await proofClass.verify(proof);
-          if (!verified) {
-            alert("Failed to use your power!");
-            return;
-          }
-
-          serializedProof = JSON.stringify(proof);
-        } catch (e) {
-          console.error(e);
-          alert("Failed to use your power!");
-          return;
-        }
-        break;
-      case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
-        try {
-          const proofParams = power.quest.proofParams as Prisma.JsonObject;
-          const collectionCardIndices = power.quest.collectionCards.map(
-            (card) => card.index
-          );
-          const collectionPubKeys = collectionCardIndices.map((index) =>
-            getCardPubKeyFromIndex(index)
-          );
-          const sigNullifierRandomness = power.sigNullifierRandomness
-            ? power.sigNullifierRandomness
-            : (proofParams.sigNullifierRandomness as string);
-          const N = proofParams.N as number;
-
-          const proofClass = createProofInstance(NUniqueJubmojisInCollection, {
-            collectionPubKeys,
-            N,
-            sigNullifierRandomness,
-          });
-
-          const proofJubmojis = jubmojis.filter((jubmoji) => {
-            return collectionCardIndices.includes(jubmoji.pubKeyIndex);
-          });
-          const proof = await proofClass.prove({ jubmojis: proofJubmojis });
-
-          const { verified } = await proofClass.verify(proof);
-          if (!verified) {
-            alert("Failed to use your power!");
-            return;
-          }
-
-          serializedProof = JSON.stringify(proof);
-        } catch (e) {
-          console.error(e);
-          alert("Failed to use your power!");
-          return;
-        }
-        break;
-      default:
-        alert("Invalid proof type!");
-        return;
+    let { verified } = await verifyJubmojiPowerProof(power, serializedProof);
+    if (!verified) {
+      alert("Failed to use your power!");
+      return;
     }
 
     const response = await fetch(`/api/qr`, {
