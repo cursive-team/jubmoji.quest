@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { JubmojiCollectionCard } from "@/types";
 import { classed } from "@tw-classed/react";
-import { cardPubKeys } from "jubmoji-api";
+import { Jubmoji, cardPubKeys } from "jubmoji-api";
 import React, { useEffect, useState } from "react";
 import { AppleWalletButton } from "@/components/AppleWalletButton";
 import { GoogleWalletButton } from "@/components/GoogleWalletButton";
+import { useCards } from "@/hooks/useCards";
 
 const BackupSection = () => {
   const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
@@ -27,7 +28,7 @@ const BackupSection = () => {
 };
 
 const JubmojiNavItem = classed.div(
-  "block p-2 w-[32px] h-16 rounded cursor-pointer",
+  "flex items-center  p-2 w-[32px] h-16 rounded cursor-pointer",
   {
     variants: {
       active: {
@@ -39,62 +40,21 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 rigth-0 bottom-[80px] w-full overflow-scroll"
+  "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 right-0 bottom-[80px] w-full overflow-scroll bg-shark-970"
 );
 
-const JubmojiNav = () => {
-  const [active, setActive] = React.useState<number | undefined>(undefined);
-
-  const jubmojis = Array.from(Array(12).keys());
-
-  const onSelectJubmoji = (jubmoji: any, index?: number) => {
-    setActive(index);
-  };
-
-  return (
-    <JubmojiNavWrapper>
-      {jubmojis?.map((jubmoji, index) => {
-        const isActive = index === active;
-
-        return (
-          <JubmojiNavItem
-            key={index}
-            active={isActive}
-            onClick={() => onSelectJubmoji(jubmoji, index)}
-          />
-        );
-      })}
-    </JubmojiNavWrapper>
-  );
-};
-
 export default function JubmojisPage() {
+  const [active, setActive] = React.useState<number | undefined>(undefined);
   const { data: jubmojis = [] } = useJubmojis();
   const [infoModalOpen, setIsModalOpen] = useState(false);
-  const [jubmojiCollectionCards, setJubmojiCollectionCards] = useState<
-    Record<number, JubmojiCollectionCard>
-  >({});
+  const [selectedJubmoji, setSelectedJubmoji] = useState<Jubmoji | undefined>();
 
-  useEffect(() => {
-    const fetchCards = async () => {
-      const response = await fetch("/api/cards");
+  const { data: jubmojiCollectionCards = [] } = useCards();
 
-      if (!response.ok) {
-        console.error("Could not fetch Jubmoji cards.");
-        setJubmojiCollectionCards([]);
-      }
-
-      const collectionCards: JubmojiCollectionCard[] = await response.json();
-      const collectionCardMap: Record<number, JubmojiCollectionCard> = {};
-      collectionCards.forEach((card) => {
-        collectionCardMap[card.index] = card;
-      });
-
-      setJubmojiCollectionCards(collectionCardMap);
-    };
-
-    fetchCards();
-  }, []);
+  const onSelectJubmoji = (jubmoji: Jubmoji, index: number) => {
+    setActive(index);
+    setSelectedJubmoji(jubmoji);
+  };
 
   return (
     <>
@@ -115,9 +75,13 @@ export default function JubmojisPage() {
         />
         <Input placeholder="Search your private collection" />
         {jubmojis.map((jubmoji, i) => {
+          if (!selectedJubmoji) return null;
           if (!jubmojiCollectionCards[jubmoji.pubKeyIndex]) {
             return;
           }
+
+          // TODO: CHANGE this in a better way without loop
+          if (selectedJubmoji.sig !== jubmoji.sig) return null;
 
           // Emoji is fixed in hardware and fetched from hardcoded card metadata file
           const { emoji } = cardPubKeys[jubmoji.pubKeyIndex];
@@ -142,7 +106,22 @@ export default function JubmojisPage() {
           );
         })}
         <div className="mt-auto">
-          <JubmojiNav />
+          <JubmojiNavWrapper>
+            {jubmojis?.map((jubmoji, index) => {
+              const isActive = index === active;
+              const { emoji } = cardPubKeys[jubmoji.pubKeyIndex];
+
+              return (
+                <JubmojiNavItem
+                  key={index}
+                  active={isActive}
+                  onClick={() => onSelectJubmoji(jubmoji, index)}
+                >
+                  {emoji}
+                </JubmojiNavItem>
+              );
+            })}
+          </JubmojiNavWrapper>
         </div>
       </div>
     </>
