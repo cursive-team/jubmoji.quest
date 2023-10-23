@@ -1,12 +1,12 @@
-import AppHeader from "@/components/AppHeader";
+import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
-import { JubmojiPower } from "@/types";
+import { JubmojiPower } from "../../types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { $Enums } from "@prisma/client";
-import { useJubmojis } from "@/hooks/useJubmojis";
+import { useJubmojis } from "../../hooks/useJubmojis";
 import QRCodePower from "@/components/powers/qrCodePower";
 
 export default function PowerDetailPage() {

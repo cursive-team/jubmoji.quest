@@ -1,7 +1,7 @@
-import AppHeader from "@/components/AppHeader";
+import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
-import { useJubmojis } from "@/hooks/useJubmojis";
+import { useJubmojis } from "../hooks/useJubmojis";
 import Options from "@/components/Options";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -61,9 +61,7 @@ export default function Home() {
           title={
             <div className="flex justify-between w-full items-center">
               <Link href="/">
-                <span className="uppercase text-lg font-semibold text-white">
-                  Quests
-                </span>
+                <AppHeader.Title>Quests</AppHeader.Title>
               </Link>
               <button
                 onClick={() => setIsModalOpen(!infoModalOpen)}

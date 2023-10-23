@@ -3,7 +3,7 @@ import { classed } from "@tw-classed/react";
 import React, { useState } from "react";
 
 const RadioOptionItem = classed.div(
-  "whitespace-nowrap text-base font-medium rounded-full px-4 py-2 font-helvetica duration-150 ease-in-out cursor-pointer transition-colors leading-none",
+  "whitespace-nowrap text-base font-dm-sans font-medium rounded-full px-4 py-2 font-helvetica duration-150 ease-in-out cursor-pointer transition-colors leading-none",
   {
     variants: {
       checked: {

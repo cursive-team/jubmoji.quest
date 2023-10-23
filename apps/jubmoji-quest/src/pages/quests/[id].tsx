@@ -1,4 +1,5 @@
-import AppHeader from "@/components/AppHeader";
+import LeaderBoard from "@/components/LeaderBoard";
+import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
@@ -61,6 +62,7 @@ export default function QuestDetailPage() {
             </Link>
           );
         })}
+        <LeaderBoard></LeaderBoard>
         <Button variant="secondary">Update team score</Button>
       </div>
     </div>
