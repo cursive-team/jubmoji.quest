@@ -37,6 +37,7 @@ export default async function handler(
                   description: true,
                   proofType: true,
                   proofParams: true,
+                  imageLink: true,
                   collectionCards: {
                     select: {
                       index: true,

@@ -1,29 +1,17 @@
-import {
-  loadBackupState,
-  loadSigmojis,
-  saveBackupState,
-  loadSigmojiWalletBackup,
-} from "../lib/localStorage";
+import { loadBackupState, saveBackupState } from "../lib/localStorage";
+import { useJubmojis } from "@/hooks/useJubmojis";
+import { serializeJubmojiList } from "jubmoji-api";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export const AppleWalletButton = () => {
+  const { data: jubmojis } = useJubmojis();
   const [serial, setSerial] = useState<string | undefined>(undefined);
-  const [number, setNumber] = useState<number | undefined>(undefined);
-  const [sigmojiWalletBackup, setSigmojiWalletBackup] = useState<
-    string | undefined
-  >(undefined);
 
   useEffect(() => {
-    const loadState = async () => {
-      const [backup, sigmojis, serializedSigmojis] = await Promise.all([
-        loadBackupState(),
-        loadSigmojis(),
-        loadSigmojiWalletBackup(),
-      ]);
-
-      setNumber(sigmojis.length);
-      setSigmojiWalletBackup(serializedSigmojis);
+    const loadBackup = async () => {
+      if (!jubmojis) return;
+      const backup = await loadBackupState();
       if (backup !== undefined && backup.type === "apple") {
         setSerial(backup.serialNum);
       } else {
@@ -32,17 +20,18 @@ export const AppleWalletButton = () => {
       }
     };
 
-    loadState();
-  }, []);
+    loadBackup();
+  }, [jubmojis]);
 
   const onAddToWallet = async () => {
-    const isValid = number && serial && sigmojiWalletBackup;
-    if (!isValid) return;
+    if (!jubmojis || !serial) return;
     saveBackupState({
       type: "apple",
       serialNum: serial,
     });
-    window.location.href = `/api/generateApplePass?number=${number}&serial=${serial}&collection=${sigmojiWalletBackup}`;
+    window.location.href = `/api/generateApplePass?number=${
+      jubmojis.length
+    }&serial=${serial}&collection=${serializeJubmojiList(jubmojis)}`;
   };
 
   return (
@@ -50,7 +39,7 @@ export const AppleWalletButton = () => {
       <button
         style={{ margin: 0 }}
         onClick={onAddToWallet}
-        disabled={!(number && serial)}
+        disabled={!jubmojis || !serial}
       >
         <Image
           src="/images/apple-wallet.svg"
@@ -58,7 +47,7 @@ export const AppleWalletButton = () => {
           width={264}
           height={52}
           sizes="100vw"
-          style={number && serial ? {} : { filter: "grayscale(100%)" }}
+          style={!jubmojis || !serial ? { filter: "grayscale(100%)" } : {}}
         />
       </button>
     </div>

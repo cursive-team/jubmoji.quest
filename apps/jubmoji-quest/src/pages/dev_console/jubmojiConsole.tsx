@@ -2,7 +2,7 @@ import {
   addJubmoji,
   clearJubmojis,
   loadJubmojis,
-} from "../../lib/dev_localStorage";
+} from "../../lib/localStorage";
 import {
   Jubmoji,
   cardPubKeys,
@@ -93,37 +93,37 @@ export default function JubmojiConsole() {
           onClick={() => addMockJubmoji(0)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          📦 0
+          🍭 0
         </button>
         <button
           onClick={() => addMockJubmoji(1)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          📦 1
+          🍭 1
         </button>
         <button
           onClick={() => addMockJubmoji(2)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          📦 2
+          🍭 2
         </button>
         <button
           onClick={() => addMockJubmoji(3)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          🏺 0
+          💳 0
         </button>
         <button
           onClick={() => addMockJubmoji(4)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          🏺 1
+          💳 1
         </button>
         <button
           onClick={() => addMockJubmoji(5)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow text-white"
         >
-          🏺 2
+          💳 2
         </button>
       </div>
 

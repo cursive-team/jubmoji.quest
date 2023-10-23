@@ -6,7 +6,7 @@ import {
   Signature,
 } from "babyjubjub-ecdsa";
 import { Jubmoji } from "../types";
-import { NonceSignature } from "../mockData";
+import { NonceSignature } from "../data";
 import { recoverCounterMessageHash } from "../nfcCard";
 import { getCardPubKeyFromIndex } from "../util";
 

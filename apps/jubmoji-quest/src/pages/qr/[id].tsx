@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { JubmojiQRCodeData } from "@/types";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
-import { questImageMap } from "@/lib/dev_imageMaps";
 
 const QRCodePage = () => {
   const router = useRouter();
@@ -64,7 +63,7 @@ const QRCodePage = () => {
         <QuestCard
           title={qrData.power.quest.name}
           description={qrData.power.quest.description}
-          image={questImageMap[qrData.power.quest.id]}
+          image={qrData.power.quest.imageLink || ""}
         />
       </div>
       <div className="bg-slate-500">

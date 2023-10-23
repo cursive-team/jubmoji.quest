@@ -7,7 +7,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_PRISMA_URL") // uses connection pooling
+  directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
 }
 
 model Card {
@@ -31,6 +32,7 @@ model Quest {
   endTime     DateTime?
   proofType   ProofType
   proofParams Json    // params for the specific proof type
+  imageLink   String?
 
   // Relationships
   prerequisiteCards Card[] @relation("PrerequisiteCards") // cards needed to see the quest

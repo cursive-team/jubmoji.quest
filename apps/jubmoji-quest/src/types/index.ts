@@ -1,13 +1,6 @@
-import { HaLoNoncePCD } from "@pcd/halo-nonce-pcd";
 import { Prisma, Card, Quest, Power, $Enums, QRCode } from "@prisma/client";
 
 export type InputSize = "sm" | "md" | "lg";
-
-export interface Sigmoji {
-  emojiImg: string;
-  PCD: HaLoNoncePCD; // PCD storing the card's signature
-  ZKP: string; // Serialized ZKP.
-}
 
 export interface BackupState {
   type: "google" | "apple" | "copypaste" | "none";
@@ -42,6 +35,7 @@ export type JubmojiPower = Power & {
     description: string;
     proofType: $Enums.ProofType;
     proofParams: Prisma.JsonValue;
+    imageLink: string | null;
     collectionCards: {
       index: number;
     }[];
