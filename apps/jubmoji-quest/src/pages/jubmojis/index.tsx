@@ -4,11 +4,27 @@ import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { cardImageMap } from "@/lib/dev_imageMaps";
 import { JubmojiCollectionCard } from "@/types";
 import { classed } from "@tw-classed/react";
 import { cardPubKeys } from "jubmoji-api";
 import React, { useEffect, useState } from "react";
+import { AppleWalletButton } from "@/components/AppleWalletButton";
+import { GoogleWalletButton } from "@/components/GoogleWalletButton";
+
+const BackupSection = () => {
+  const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
+
+  const hasJubmojis = jubmojis && jubmojis.length > 0 && !isLoadingJubmojis;
+
+  if (isLoadingJubmojis) return <div>Loading...</div>;
+  if (!hasJubmojis) return null;
+  return (
+    <div className="flex flex-col gap-2">
+      <GoogleWalletButton />
+      <AppleWalletButton />
+    </div>
+  );
+};
 
 const JubmojiNavItem = classed.div(
   "block p-2 w-[32px] h-16 rounded cursor-pointer",
@@ -109,7 +125,7 @@ export default function JubmojisPage() {
           const { name, owner, collectsFor } =
             jubmojiCollectionCards[jubmoji.pubKeyIndex];
           // Image path is fetched from the hardcoded card image map for offline use
-          const imagePath = cardImageMap[jubmoji.pubKeyIndex];
+          const imagePath = cardPubKeys[jubmoji.pubKeyIndex].imageBlobUrl;
 
           return (
             <div key={i} className="my-4">

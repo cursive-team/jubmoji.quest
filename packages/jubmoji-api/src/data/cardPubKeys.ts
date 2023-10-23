@@ -2829,7 +2829,8 @@ export const cardPubKeys: CardPubKey[] = [
     emoji: "🍭",
     cardName: "test lollipop",
     unicode: "U+1F36D",
-    imageBlobUrl: "",
+    imageBlobUrl:
+      "https://g03pixcfibqaykq3.public.blob.vercel-storage.com/package-oBEbKyUNTLnB5QRcufTMMNyo79MJ4Q",
     pubKeySlot1: "",
     pubKeySlot2: "",
     pubKeyJub:
@@ -2840,7 +2841,8 @@ export const cardPubKeys: CardPubKey[] = [
     emoji: "💳",
     cardName: "test credit card",
     unicode: "U+1F4B3",
-    imageBlobUrl: "",
+    imageBlobUrl:
+      "https://g03pixcfibqaykq3.public.blob.vercel-storage.com/amphora-jCvMVfXKVExaEXQcNIfW7k7jgOU1mv",
     pubKeySlot1: "",
     pubKeySlot2: "",
     pubKeyJub:

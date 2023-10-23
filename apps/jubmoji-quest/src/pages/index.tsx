@@ -1,6 +1,4 @@
 import AppHeader from "@/components/AppHeader";
-import { AppleWalletButton } from "@/components/AppleWalletButton";
-import { GoogleWalletButton } from "@/components/GoogleWalletButton";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
 import { useJubmojis } from "@/hooks/useJubmojis";
@@ -13,8 +11,6 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/modals/Modal";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { JubmojiQuest } from "@/types";
-import { $Enums } from "@prisma/client";
-import { questImageMap } from "@/lib/dev_imageMaps";
 
 export const QuestTagMapping: Record<
   "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
@@ -26,21 +22,6 @@ export const QuestTagMapping: Record<
   STARRED: "Starred",
   OFFICIAL: "Official",
   COMMUNITY: "Community",
-};
-
-const BackupSection = () => {
-  const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
-
-  const hasJubmojis = jubmojis && jubmojis.length > 0 && !isLoadingJubmojis;
-
-  if (isLoadingJubmojis) return <div>Loading...</div>;
-  if (!hasJubmojis) return null;
-  return (
-    <div className="flex flex-col gap-2">
-      <GoogleWalletButton />
-      <AppleWalletButton />
-    </div>
-  );
 };
 
 export default function Home() {
@@ -124,6 +105,7 @@ export default function Home() {
                       name,
                       description,
                       collectionCards,
+                      imageLink,
                     }: JubmojiQuest) => {
                       const questPageUrl = `/quests/${id}`;
 
@@ -136,14 +118,14 @@ export default function Home() {
                         ).length /
                           collectionCardIndices.length) *
                         100;
-                      const questImagePath = questImageMap[id];
+                      const questImagePath = imageLink;
 
                       return (
                         <Link key={id} href={questPageUrl}>
                           <QuestCard
                             title={name}
                             description={description}
-                            image={questImagePath}
+                            image={questImagePath || ""}
                             percentageProgress={percentageProgress}
                             showProgress
                           />

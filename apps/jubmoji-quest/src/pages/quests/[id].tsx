@@ -3,7 +3,6 @@ import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { Button } from "@/components/ui/Button";
-import { questImageMap } from "@/lib/dev_imageMaps";
 import { JubmojiQuest } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -48,7 +47,7 @@ export default function QuestDetailPage() {
         <QuestCard
           title={quest.name}
           description={quest.description}
-          image={questImageMap[quest.id]}
+          image={quest.imageLink || ""}
         />
         {quest.powers.map((power) => {
           return (
