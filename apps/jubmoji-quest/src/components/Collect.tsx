@@ -7,7 +7,6 @@ import {
   HaLoNoncePCDPackage,
 } from "@pcd/halo-nonce-pcd";
 import { useEffect, useState } from "react";
-import { saveSigmoji } from "../lib/localStorage";
 import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import { Button } from "./ui/Button";
