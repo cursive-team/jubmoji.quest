@@ -15,7 +15,8 @@ export default function CardholderTapModal({
 
   useEffect(() => {
     async function runScan() {
-      const messageHash = "wtf";
+      const messageHash =
+        "\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01";
       let command = {
         name: "sign",
         keyNo: 1,
