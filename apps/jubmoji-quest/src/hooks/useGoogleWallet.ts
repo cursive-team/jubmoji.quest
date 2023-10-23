@@ -5,12 +5,12 @@ import {
 } from "../constants";
 
 interface GetClaimsProps {
-  sigmojiWalletBackup?: string;
+  jubmojiWalletBackup?: string;
   number?: number;
 }
 export const useGoogleWallet = () => {
-  const getClaims = async ({ sigmojiWalletBackup, number }: GetClaimsProps) => {
-    if (!number || !sigmojiWalletBackup) return;
+  const getClaims = async ({ jubmojiWalletBackup, number }: GetClaimsProps) => {
+    if (!number || !jubmojiWalletBackup) return;
 
     const collectedItemsLabel = `${number.toString()}/${
       APP_CONFIG.COLLECTION_SIZE
@@ -93,7 +93,7 @@ export const useGoogleWallet = () => {
       linksModuleData: {
         uris: [
           {
-            uri: APP_CONFIG.RECOVERY_URL(`${sigmojiWalletBackup}`),
+            uri: APP_CONFIG.RECOVERY_URL(`${jubmojiWalletBackup}`),
             description: "Retrieve your collection",
             id: "official_site",
           },

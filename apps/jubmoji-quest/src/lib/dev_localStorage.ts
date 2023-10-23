@@ -3,6 +3,7 @@ import {
   deserializeJubmojiList,
   serializeJubmojiList,
 } from "jubmoji-api";
+import { BackupState } from "../types";
 
 export const loadJubmojis = async (): Promise<Jubmoji[]> => {
   const jubmojis = window.localStorage["jubmojis"];
@@ -36,3 +37,15 @@ export const addJubmoji = async (jubmoji: Jubmoji): Promise<void> => {
 
   await writeJubmojis(jubmojis);
 };
+
+export async function loadBackupState(): Promise<BackupState | undefined> {
+  const serializedBackup = window.localStorage["backup"];
+  if (serializedBackup != null && serializedBackup !== "") {
+    return JSON.parse(serializedBackup);
+  }
+  return undefined;
+}
+
+export async function saveBackupState(backup: BackupState): Promise<void> {
+  window.localStorage["backup"] = JSON.stringify(backup);
+}

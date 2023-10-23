@@ -19,15 +19,15 @@ export const GOOGLE_PASS_CREDENTIALS = {
 
 export const APP_CONFIG = {
   APP_NAME: "Jubmojis",
-  APP_SLUG: "nfctap.xyz",
-  WEBSITE_URI: "http://nfctap.xyz",
+  APP_SLUG: "jubmoji.quest",
+  WEBSITE_URI: "http://jubmoji.quest",
   EVENT_NAME: "Devconnect 2023",
   COLLECTION_SIZE: 200,
   LOCATION: "Istanbul",
   COUNTRY: "Turkey",
   YEAR: "2023",
   RECOVERY_URL: (collection: string) =>
-    `http://nfctap.xyz/recover?collection=${collection}`,
+    `http://jubmoji.quest/recover?collection=${collection}`,
   LOGO_URL: "https://sigmoji.com/logo.png",
 };
 

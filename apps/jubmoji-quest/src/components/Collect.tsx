@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import { Button } from "./ui/Button";
-import { Sigmoji } from "../types";
 import { useJubmojis } from "../hooks/useJubmojis";
 
 interface CollectProps {

@@ -1,86 +1,81 @@
-import {
-  loadBackupState,
-  loadSigmojis,
-  loadSigmojiWalletBackup,
-  saveBackupState,
-} from "../lib/localStorage";
+import { loadBackupState, saveBackupState } from "../lib/dev_localStorage";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import * as jose from "jose";
 import { GOOGLE_WALLET } from "../constants";
 import { useGoogleWallet } from "../hooks/useGoogleWallet";
+import { useJubmojis } from "@/hooks/useJubmojis";
+import { serializeJubmojiList } from "jubmoji-api";
 
 export const GoogleWalletButton = () => {
-  const [tempSerial, setTempSerial] = useState<string>();
-  const [saveUrl, setSaveUrl] = useState<string | null>(null);
-  const [updated, setUpdated] = useState<boolean>(false);
-
-  const [serial, setSerial] = useState<string>();
-  const [number, setNumber] = useState<number>();
-  const [sigmojiWalletBackup, setSigmojiWalletBackup] = useState<string>();
+  const { data: jubmojis } = useJubmojis();
   const { getClaims } = useGoogleWallet();
+
+  const [updateBackup, setUpdateBackup] = useState<boolean>();
+  const [saveUrl, setSaveUrl] = useState<string>();
+  const [updated, setUpdated] = useState<boolean>(false);
+  const [serial, setSerial] = useState<string>();
 
   // determine if user already has a google backup
   useEffect(() => {
-    const loadState = async () => {
-      const [backup, sigmojis, serializedSigmojis] = await Promise.all([
-        loadBackupState(),
-        loadSigmojis(),
-        loadSigmojiWalletBackup(),
-      ]);
+    const loadBackup = async () => {
+      if (!jubmojis) return;
 
+      const backup = await loadBackupState();
       if (backup !== undefined && backup.type === "google") {
+        // just updating backup, use Wallet API
+        setUpdateBackup(true);
+        setSaveUrl(
+          `/api/updateGooglePass?number=${jubmojis.length}&serial=${
+            backup.serialNum
+          }&collection=${serializeJubmojiList(jubmojis)}`
+        );
         setSerial(backup.serialNum);
+      } else {
+        // first time saving backup, use save URL
+        setUpdateBackup(false);
+
+        // create save URL for wallet
+        const claims = await getClaims({
+          jubmojiWalletBackup: serializeJubmojiList(jubmojis),
+          number: jubmojis.length,
+        });
+        if (!claims) return;
+        const PRIVATE_KEY = await jose.importPKCS8(
+          GOOGLE_WALLET.PRIVATE_KEY,
+          "RS256"
+        );
+        const token = await new jose.SignJWT(claims)
+          .setProtectedHeader({ alg: "RS256", typ: "JWT" })
+          .setIssuedAt() // Add issued at time (iat)
+          .sign(PRIVATE_KEY);
+        setSaveUrl(`https://pay.google.com/gp/v/save/${token}`);
+        setSerial(GOOGLE_WALLET.OBJECT_ID);
       }
-      setNumber(sigmojis.length);
-      setSigmojiWalletBackup(serializedSigmojis);
     };
 
-    loadState();
-  }, []);
+    loadBackup();
+  }, [jubmojis, getClaims]);
 
-  // generate save url if user doesn't have a backup already
-  useEffect(() => {
-    if (serial || !number || !sigmojiWalletBackup) return;
-    const generateSaveUrl = async () => {
-      const claims = await getClaims({ sigmojiWalletBackup, number });
-      if (!claims) return;
-
-      const PRIVATE_KEY = await jose.importPKCS8(
-        GOOGLE_WALLET.PRIVATE_KEY,
-        "RS256"
-      );
-
-      const token = await new jose.SignJWT(claims)
-        .setProtectedHeader({ alg: "RS256", typ: "JWT" })
-        .setIssuedAt() // Add issued at time (iat)
-        .sign(PRIVATE_KEY);
-
-      setTempSerial(GOOGLE_WALLET.OBJECT_ID);
-      setSaveUrl(`https://pay.google.com/gp/v/save/${token}`);
-    };
-
-    generateSaveUrl();
-  }, [getClaims, number, serial, sigmojiWalletBackup]);
+  const isDisabled = !jubmojis || !saveUrl || !updateBackup || !serial;
 
   const onAddToWallet = () => {
-    const SAVE_URI = `/api/updateGooglePass?number=${number}&serial=${serial}&collection=${sigmojiWalletBackup}`;
-    if (!serial && saveUrl && tempSerial) {
-      saveBackupState({
-        type: "google",
-        serialNum: tempSerial,
-      });
-      window.location.href = saveUrl;
-    } else if (serial && number && sigmojiWalletBackup) {
-      fetch(SAVE_URI).then((response) => {
+    if (isDisabled) return;
+
+    if (updateBackup) {
+      fetch(saveUrl).then((response) => {
         if (response.status === 200) {
           setUpdated(true);
         }
       });
+    } else if (!updateBackup) {
+      saveBackupState({
+        type: "google",
+        serialNum: serial,
+      });
+      window.location.href = saveUrl;
     }
   };
-
-  const isDisabled = !(saveUrl || (serial && number));
 
   return (
     <div className="flex justify-center">
@@ -100,9 +95,7 @@ export const GoogleWalletButton = () => {
             width={264}
             height={52}
             sizes="100vw"
-            style={
-              saveUrl || (serial && number) ? {} : { filter: "grayscale(100%)" }
-            }
+            style={isDisabled ? { filter: "grayscale(100%)" } : {}}
           />
         )}
       </button>
