@@ -1,4 +1,4 @@
 export * from "./proofs";
 export * from "./types";
 export * from "./util/";
-export * from "./mockData/";
+export * from "./data";

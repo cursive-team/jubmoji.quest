@@ -6,7 +6,7 @@ export type CardPubKey = {
   cardImage: string;
   pubKeySlot1: string;
   pubKeySlot2: string;
-  pubKeyJub: string;
+  pubKeyJub: string; // in Weierstrass form
 };
 
 export const cardPubKeys: CardPubKey[] = [
@@ -2811,10 +2811,10 @@ export const cardPubKeys: CardPubKey[] = [
       "041fafca80d8d2ae27b75c57662e17f8a3a24c394507ac7f006061ea2972a3b45a1c8f70305c99e662785b392da63695897e9f429b1f8bf8f6f205c555c1003d7c",
   },
   {
-    category: "",
-    emoji: "",
-    cardName: "the stork thingy",
-    unicode: "",
+    category: "other",
+    emoji: "🦤",
+    cardName: "jubjub",
+    unicode: "U+1F9A4",
     cardImage: "",
     pubKeySlot1:
       "04faf107d60ad30683ba96801141d10bec632fdf0389e3e41aeb4d98235015be777eeb39522db332858166c6f63ad14bbf53869b1cdc63ee45bedaf36df990b857",
@@ -2822,5 +2822,27 @@ export const cardPubKeys: CardPubKey[] = [
       "0412dd4cca36dff5f19018ba55e278ab154204e37320ff05cc1a518a2dc8b544d1767c1fa3e5370b4f359769e2bf6b5cc10755275438a7faa1752d51cd78056d89",
     pubKeyJub:
       "040417d56d0f5e13eaed6a878a26ac73d70203ed919e4de0cc965b55e1b4abfd512a9e712ded87d3d23f5cd42e3fa0f6714186e83e4da392253fe4e2e492c11f38",
+  },
+  {
+    category: "other",
+    emoji: "🍭",
+    cardName: "test lollipop",
+    unicode: "U+1F36D",
+    cardImage: "",
+    pubKeySlot1: "",
+    pubKeySlot2: "",
+    pubKeyJub:
+      "0407258C81D3DE9F17FFADFCD8CE1CBCAD83027A7FD0A3221FF03CFD1DFBE0CDDE04D68FC27A9F3F0A0BF480326CE5DCD2A9CBFCA34D4098E6A60DA4AE64281950",
+  },
+  {
+    category: "other",
+    emoji: "💳",
+    cardName: "test credit card",
+    unicode: "U+1F4B3",
+    cardImage: "",
+    pubKeySlot1: "",
+    pubKeySlot2: "",
+    pubKeyJub:
+      "040902129E2195B5DEDC2F9B060E846CE6FF6B6A32794A5BA22F3FA03B068F90A52635451C65448273303F2D403F92FF57FD10A67B1B956B3258A1AA5F4F88B5CB",
   },
 ];
