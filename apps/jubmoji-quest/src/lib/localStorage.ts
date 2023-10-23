@@ -8,15 +8,6 @@ import {
 } from "./serialize";
 
 /**
- * Checks if the storage is empty.
- * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating if the storage is empty.
- */
-export async function isStorageEmpty(): Promise<boolean> {
-  const sigmojis = await loadSigmojis();
-  return sigmojis.length === 0;
-}
-
-/**
  * Loads Sigmojis from the local storage.
  * @returns {Promise<Sigmoji[]>} - A promise that resolves to an array of Sigmojis.
  */

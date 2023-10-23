@@ -1,4 +1,3 @@
-import { Sigmoji } from "../types";
 import { useQuery } from "react-query";
 import { loadJubmojis } from "../lib/dev_localStorage";
 import { Jubmoji } from "jubmoji-api";
