@@ -1,10 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
+import {
+  Jubmoji,
+  NonceSignature,
+  cardPubKeys,
+  getJubmojiFromNonceSignature,
+} from "jubmoji-api";
+import { addJubmoji } from "@/lib/localStorage";
 
 export default function CollectJubmojiPage() {
   const router = useRouter();
   const params = useParams();
+
+  const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();
 
   // ensure users do not go to rest of app if they are in incognito
   const alertIncognito = async () => {
@@ -19,7 +28,14 @@ export default function CollectJubmojiPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(location.hash.slice(1));
-      getHaLoArgs(urlParams);
+      const sig = getHaLoArgs(urlParams);
+      if (!sig) {
+        router.push("/");
+        return;
+      }
+      const realJubmoji = getJubmojiFromNonceSignature(sig);
+      setCollectedJubmoji(realJubmoji);
+      addJubmoji(realJubmoji); // async function, need to be careful
     }
   }, [params, router]);
 
@@ -32,8 +48,31 @@ export default function CollectJubmojiPage() {
   );
 }
 
-function getHaLoArgs(params: URLSearchParams) {
-  const pk2 = params.get("pk2");
+function getHaLoArgs(params: URLSearchParams): NonceSignature | undefined {
+  const pkN = params.get("pkN");
   const rnd = params.get("rnd");
   const rndsig = params.get("rndsig");
+
+  if (!pkN || !rnd || !rndsig) {
+    return undefined;
+  }
+
+  const strippedPkN = pkN.substring(4);
+  let pubKeyIndex = -1;
+  for (const [index, card] of Array.from(cardPubKeys.entries())) {
+    if (card.pubKeyJub.toLowerCase() === strippedPkN.toLowerCase()) {
+      pubKeyIndex = index;
+      break;
+    }
+  }
+  if (pubKeyIndex === -1) {
+    return undefined;
+  }
+
+  return {
+    nonce: parseInt(rnd?.substring(0, 8), 16),
+    rand: rnd.substring(8),
+    sig: rndsig,
+    pubKeyIndex,
+  };
 }

@@ -1,2 +1,2 @@
 export * from "./cardPubKeys";
-export * from "./mockNonceSigs";
+export * from "./nonceSigs";
