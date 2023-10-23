@@ -1,4 +1,4 @@
-import AppHeader from "@/components/AppHeader";
+import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";

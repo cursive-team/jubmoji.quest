@@ -28,7 +28,12 @@ const OnboardSection = () => {
       <Card.Base centred>
         <Card.Header spacing="sm">
           <span className="my-auto text-[96px] leading-none">
-            <Image src="/images/hedgehog.png" height={96} width={96} />
+            <Image
+              src="/images/hedgehog.png"
+              height={96}
+              width={96}
+              alt="hedgehog"
+            />
           </span>
         </Card.Header>
         <Card.Content spacing="sm">
@@ -43,7 +48,12 @@ const OnboardSection = () => {
       <Card.Base centred>
         <Card.Header>
           <div className="flex flex-col gap-4">
-            <Image src="/images/hedgehog.png" height={72} width={72} />
+            <Image
+              src="/images/hedgehog.png"
+              height={72}
+              width={72}
+              alt="hedgehog"
+            />
             <Button
               icon={<Icons.download className="text-white" />}
               rounded
