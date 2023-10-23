@@ -17,7 +17,7 @@ export const useGoogleWallet = () => {
     }`;
 
     /**
-     * Setting up Google Wallet API variables that are relevant to Sigmoji I.
+     * Setting up Google Wallet API variables.
      *
      * It's okay to expose our Google Wallet API private key here because the
      * "useful" information in the passes are the signatures from the cards,
