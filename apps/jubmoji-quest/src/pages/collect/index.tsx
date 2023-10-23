@@ -26,17 +26,21 @@ export default function CollectJubmojiPage() {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(location.hash.slice(1));
-      const sig = getHaLoArgs(urlParams);
-      if (!sig) {
-        router.push("/");
-        return;
+    const getJubmojiFromUrl = async () => {
+      if (typeof window !== "undefined") {
+        const urlParams = new URLSearchParams(location.hash.slice(1));
+        const sig = getHaLoArgs(urlParams);
+        if (!sig) {
+          router.push("/");
+          return;
+        }
+        const realJubmoji = getJubmojiFromNonceSignature(sig);
+        setCollectedJubmoji(realJubmoji);
+        await addJubmoji(realJubmoji);
       }
-      const realJubmoji = getJubmojiFromNonceSignature(sig);
-      setCollectedJubmoji(realJubmoji);
-      addJubmoji(realJubmoji); // async function, need to be careful
     }
+
+    getJubmojiFromUrl();
   }, [params, router]);
 
   return (
