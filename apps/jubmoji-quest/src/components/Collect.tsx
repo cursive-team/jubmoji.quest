@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import { Button } from "./ui/Button";
 import { Sigmoji } from "../types";
-import { attestationText } from "../lib/attestationData";
 import { useJubmojis } from "../hooks/useJubmojis";
 
 interface CollectProps {
@@ -92,9 +91,7 @@ export default function Collect({ args }: CollectProps) {
               alt="emoji"
             />
             <span className="text-base font-medium leading-[140%] text-woodsmoke-100">
-              {attestationText(pcd) !== undefined
-                ? `You have collected a "${attestationText(pcd)}" attestation.`
-                : `You have edition ${pcd.claim.nonce} of this Sigmoji.`}
+              `You have edition ${pcd.claim.nonce} of this Sigmoji.`
             </span>
           </>
         ) : alreadyCollected ? (
