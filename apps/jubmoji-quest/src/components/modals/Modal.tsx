@@ -7,9 +7,15 @@ interface ModalProps
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   children?: React.ReactNode;
+  closable?: boolean;
 }
 
-const Modal = ({ isOpen, setIsOpen, children }: ModalProps) => {
+const Modal = ({
+  isOpen,
+  setIsOpen,
+  children,
+  closable = true, // show close button when active
+}: ModalProps) => {
   function closeModal() {
     setIsOpen(false);
   }
@@ -45,16 +51,18 @@ const Modal = ({ isOpen, setIsOpen, children }: ModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-w-md transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
-                <div className="flex items-center h-12 py-8">
-                  <button
-                    type="button"
-                    className="ml-auto"
-                    onClick={closeModal}
-                  >
-                    <Icons.close />
-                  </button>
-                </div>
-                <div className="flex flex-col">{children}</div>
+                {closable && (
+                  <div className="fixed z-10 right-[24px] top-[32px] flex items-center h-12 py-8 ring-0 focus:right-0 focus:outline-none outline-none">
+                    <button
+                      type="button"
+                      className="ml-auto"
+                      onClick={closeModal}
+                    >
+                      <Icons.close />
+                    </button>
+                  </div>
+                )}
+                <div className="flex flex-col grow h-full">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -3,7 +3,7 @@ import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "flex items-center font-medium w-full flex justify-center focus:ring-0 focus:outline-none active:scale-95",
+  "flex items-center font-dm-sans font-medium w-full flex justify-center focus:ring-0 focus:outline-none active:scale-95",
   {
     variants: {
       size: {
@@ -45,17 +45,30 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   loading?: boolean;
   icon?: any;
+  iconPosition?: "left" | "right";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, children, loading, icon, rounded, ...props },
+    {
+      className,
+      variant,
+      size,
+      children,
+      loading,
+      icon,
+      rounded,
+      iconPosition = "left",
+      ...props
+    },
     ref
   ) => {
     return (
       <button
         ref={ref}
-        className={cn(buttonVariants({ variant, size, className, rounded }))}
+        className={cn(buttonVariants({ variant, size, className, rounded }), {
+          "flex-row-reverse": iconPosition === "right",
+        })}
         {...props}
       >
         <div className={cn(iconVariants({ size }))}>{icon}</div>

@@ -1,12 +1,12 @@
-import AppHeader from "@/components/AppHeader";
+import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import Options from "@/components/Options";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
-import { MESSAGES } from "@/messages";
+import { MESSAGES } from "../../messages";
 import React, { useEffect, useState } from "react";
 import { PowerCard } from "@/components/cards/PowerCard";
-import { JubmojiPower } from "@/types";
+import { JubmojiPower } from "../../types";
 import Link from "next/link";
 
 export const PowerOptionsMapping: Record<

@@ -4,8 +4,8 @@ import Image from "next/image";
 import * as jose from "jose";
 import { GOOGLE_WALLET } from "../constants";
 import { useGoogleWallet } from "../hooks/useGoogleWallet";
-import { useJubmojis } from "@/hooks/useJubmojis";
 import { serializeJubmojiList } from "jubmoji-api";
+import { useJubmojis } from "@/hooks/useJubmojis";
 
 export const GoogleWalletButton = () => {
   const { data: jubmojis } = useJubmojis();

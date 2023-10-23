@@ -4,7 +4,7 @@ import type * as Classed from "@tw-classed/react";
 
 const InputComponent = classed(
   "input",
-  "rounded-[4px] p-2 bg-shark-50/10 ring-0 focus:ring-0 focus:outline-none ",
+  "rounded-[4px] font-dm-sans font-medium p-2 bg-shark-50/10 ring-0 focus:ring-0 focus:outline-none",
   {
     variants: {
       size: {

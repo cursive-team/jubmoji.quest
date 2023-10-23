@@ -3,14 +3,18 @@ import { Icons } from "../Icons";
 import { classed } from "@tw-classed/react";
 import { Button } from "../ui/Button";
 import Link from "next/link";
+import { cn } from "../../lib/utils";
 
-interface CollectionCardProps {
+interface CollectionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: string;
   label: string;
-  edition: number;
+  edition?: number | string;
   owner: string;
   cardBackImage?: string;
   actions?: React.ReactNode;
+  centred?: boolean;
+  canFlip?: boolean;
+  size?: "sm" | "md";
   quests?: {
     id: number;
     name: string;
@@ -20,8 +24,24 @@ interface CollectionCardProps {
   }[];
 }
 
-const CardText = classed.span("text-shark-50 text-base");
-const FlipCard = classed.div("perspective h-[324px] justify-center");
+const CardText = classed.span(
+  "text-shark-50 text-base font-normal text-dm-sans"
+);
+const FlipCard = classed.div("perspective justify-center", {
+  variants: {
+    centred: {
+      true: "text-center",
+    },
+    size: {
+      sm: "h-[280px]",
+      md: "h-[324px]",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
 const FlipCardWrapper = classed.div(
   "relative w-full h-full transform-all duration-500 ease-linear",
   {
@@ -49,7 +69,12 @@ const CollectionCard = ({
   owner,
   cardBackImage,
   actions,
-  quests,
+  quests = [],
+  className,
+  size = "md",
+  centred = false,
+  canFlip = true,
+  ...props
 }: CollectionCardProps) => {
   const [flipped, setFlip] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
@@ -57,6 +82,8 @@ const CollectionCard = ({
   const onFlipCard = () => {
     setFlip(!flipped);
   };
+
+  const hasQuest = (quests ?? [])?.length > 0;
 
   const backCoverImage: React.CSSProperties = cardBackImage
     ? {
@@ -68,7 +95,7 @@ const CollectionCard = ({
     if (!showQuest) {
       return (
         <>
-          <CardText>{`#${edition}`}</CardText>
+          {edition && <CardText>Edition {`#${edition}`}</CardText>}
           <CardText>{owner}</CardText>
         </>
       );
@@ -92,23 +119,31 @@ const CollectionCard = ({
   };
 
   return (
-    <FlipCard>
+    <FlipCard size={size} centred={centred} {...props}>
       <FlipCardWrapper
         flipped={flipped}
         style={{ transformStyle: "preserve-3d" }}
       >
         <FrontCard>
           <div className="flex justify-between items-start">
-            <div className="text-[40px] leading-1">{icon}</div>
-            <button
-              onClick={onFlipCard}
-              type="button"
-              role="button"
-              aria-label="flip card"
-              className=""
+            <div
+              className={cn("text-[40px] leading-1", {
+                "mx-auto": centred,
+              })}
             >
-              <Icons.flipArrow />
-            </button>
+              {icon}
+            </div>
+            {canFlip && (
+              <button
+                onClick={onFlipCard}
+                type="button"
+                role="button"
+                aria-label="flip card"
+                className=""
+              >
+                <Icons.flipArrow />
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col gap-4">
@@ -121,16 +156,18 @@ const CollectionCard = ({
           </div>
 
           <div className="flex justify-between items-center gap-2 mt-auto">
-            <div>
-              <Button
-                size="sm"
-                icon={showQuest ? <Icons.arrowBack /> : <Icons.compass />}
-                onClick={() => setShowQuest(!showQuest)}
-                rounded
-              >
-                {showQuest ? "Back" : "Quests"}
-              </Button>
-            </div>
+            {hasQuest && (
+              <div>
+                <Button
+                  size="sm"
+                  icon={showQuest ? <Icons.arrowBack /> : <Icons.compass />}
+                  onClick={() => setShowQuest(!showQuest)}
+                  rounded
+                >
+                  {showQuest ? "Back" : "Quests"}
+                </Button>
+              </div>
+            )}
             {actions && <div>{actions}</div>}
           </div>
         </FrontCard>

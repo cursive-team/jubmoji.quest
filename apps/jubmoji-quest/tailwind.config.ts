@@ -47,6 +47,8 @@ const config: Config = {
       },
       fontFamily: {
         "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],
+        "dm-sans": ["'DM Sans'", "sans-serif"],
+        giorgio: ["'Giorgio'", "sans-serif"],
       },
       colors: {
         "baby-blue": {

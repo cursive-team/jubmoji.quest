@@ -1,4 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=Hind+Siliguri:wght@400;600;700&display=swap');
+
+@font-face {
+  font-family: 'Giorgio';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Giorgio'), url('/fonts/Giorgio.woff') format('woff');
+}
+  
+
+@font-face {
+  font-family: 'Giorgio-Thin';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Giorgio-Thin'), url('/fonts/Giorgio-Thin.woff') format('woff');
+}
 
 @tailwind base;
 @tailwind components;
@@ -19,6 +34,6 @@
 }
 
 html {
-  font-family: "Hind Siliguri", sans-serif;
+  font-family: "Giorgio", sans-serif;
   color: #fff;
 }
