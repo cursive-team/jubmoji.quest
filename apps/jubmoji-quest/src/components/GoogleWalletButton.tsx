@@ -1,4 +1,4 @@
-import { loadBackupState, saveBackupState } from "../lib/dev_localStorage";
+import { loadBackupState, saveBackupState } from "../lib/localStorage";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import * as jose from "jose";

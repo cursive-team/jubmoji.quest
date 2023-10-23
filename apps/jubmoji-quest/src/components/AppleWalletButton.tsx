@@ -1,4 +1,4 @@
-import { loadBackupState, saveBackupState } from "../lib/dev_localStorage";
+import { loadBackupState, saveBackupState } from "../lib/localStorage";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { serializeJubmojiList } from "jubmoji-api";
 import Image from "next/image";

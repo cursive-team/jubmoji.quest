@@ -2,7 +2,7 @@ import {
   addJubmoji,
   clearJubmojis,
   loadJubmojis,
-} from "../../lib/dev_localStorage";
+} from "../../lib/localStorage";
 import {
   Jubmoji,
   cardPubKeys,

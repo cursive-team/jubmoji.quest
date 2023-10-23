@@ -1,9 +1,20 @@
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { detectIncognito } from "detectincognitojs";
 
 export default function CollectJubmojiPage() {
   const router = useRouter();
   const params = useParams();
+
+  // ensure users do not go to rest of app if they are in incognito
+  const alertIncognito = async () => {
+    const isIncognito = await detectIncognito();
+    if (isIncognito.isPrivate) {
+      alert(
+        "Please copy this link into a non-incognito tab in order to save your Jubmojis!"
+      );
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {

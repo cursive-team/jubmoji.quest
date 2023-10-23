@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { loadJubmojis } from "../lib/dev_localStorage";
+import { loadJubmojis } from "../lib/localStorage";
 import { Jubmoji } from "jubmoji-api";
 
 export const useJubmojis = () => {
