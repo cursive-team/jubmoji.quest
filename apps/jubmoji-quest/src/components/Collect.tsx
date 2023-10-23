@@ -7,7 +7,6 @@ import {
   HaLoNoncePCDPackage,
 } from "@pcd/halo-nonce-pcd";
 import { useEffect, useState } from "react";
-import { cardPubKeys } from "../lib/cardPubKeys";
 import { saveSigmoji } from "../lib/localStorage";
 import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
@@ -54,21 +53,21 @@ export default function Collect({ args }: CollectProps) {
       }
 
       // pull correct image and save sigmoji to localStorage
-      for (const entry of Object.entries(cardPubKeys)) {
-        if (
-          entry[1].secondaryPublicKeyRaw.toLowerCase() ===
-          producedPCD.claim.pubkeyHex.toLowerCase()
-        ) {
-          const newSigmoji: Sigmoji = {
-            emojiImg: entry[1].image,
-            PCD: producedPCD,
-            ZKP: "",
-          };
-          await saveSigmoji(newSigmoji);
-          setImageLink(entry[1].image);
-          break;
-        }
-      }
+      // for (const entry of Object.entries(cardPubKeys)) {
+      //   if (
+      //     entry[1].secondaryPublicKeyRaw.toLowerCase() ===
+      //     producedPCD.claim.pubkeyHex.toLowerCase()
+      //   ) {
+      //     const newSigmoji: Sigmoji = {
+      //       emojiImg: entry[1].image,
+      //       PCD: producedPCD,
+      //       ZKP: "",
+      //     };
+      //     await saveSigmoji(newSigmoji);
+      //     setImageLink(entry[1].image);
+      //     break;
+      //   }
+      // }
 
       setPCD(producedPCD);
     };
