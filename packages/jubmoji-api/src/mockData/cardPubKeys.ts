@@ -5,7 +5,6 @@ export type CardPubKey = {
   name: string;
   emoji: string;
   unicode: string;
-  imagePath: string;
 };
 
 export const cardPubKeys: Record<string, CardPubKey> = {
@@ -18,7 +17,6 @@ export const cardPubKeys: Record<string, CardPubKey> = {
     name: "package",
     emoji: "📦",
     unicode: "U+1F4E6",
-    imagePath: "package.png",
   },
   1: {
     index: 1,
@@ -29,6 +27,5 @@ export const cardPubKeys: Record<string, CardPubKey> = {
     name: "amphora",
     emoji: "🏺",
     unicode: "U+1F3FA",
-    imagePath: "amphora.png",
   },
 };
