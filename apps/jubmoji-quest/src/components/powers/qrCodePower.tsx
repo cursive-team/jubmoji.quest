@@ -19,6 +19,8 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
   const onUsePower = async () => {
     alert("Using power...");
 
+    console.log("a", new Date().getTime());
+
     let serializedProof;
     try {
       serializedProof = await createJubmojiPowerProof(
@@ -32,6 +34,8 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
       return;
     }
 
+    console.log("b", new Date().getTime());
+
     const response = await fetch(`/api/qr`, {
       method: "POST",
       headers: {
@@ -42,6 +46,8 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
         serializedProof,
       }),
     });
+
+    console.log("c", new Date().getTime());
 
     if (!response.ok) {
       alert("Failed to use your power!");
