@@ -209,6 +209,7 @@ export class NUniqueJubmojisInCollection {
   async prove({
     jubmojis,
   }: NUniqueJubmojiInCollectionProofArgs): Promise<NUniqueJubmojiInCollectionProof> {
+    console.log("entering the proving zone");
     const pubKeyNullifierRandomness = hexToBigInt(
       getRandomNullifierRandomness()
     );
@@ -231,6 +232,8 @@ export class NUniqueJubmojisInCollection {
       indices
     );
 
+    console.log("I am about to batch prove membership");
+
     const membershipProofs = await batchProveMembership({
       sigs,
       msgHashes,
@@ -240,6 +243,8 @@ export class NUniqueJubmojisInCollection {
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
+
+    console.log("I have batch proven membership", membershipProofs);
 
     return {
       serializedMembershipProofs: membershipProofs.map(
