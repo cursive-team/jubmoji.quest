@@ -63,8 +63,6 @@ export class JubmojiInCollection {
   async prove({
     jubmoji,
   }: JubmojiInCollectionProofArgs): Promise<JubmojiInCollectionProof> {
-    console.log("start in collection proof", new Date().getTime());
-
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(jubmoji);
     const index = this.collectionPubKeys.indexOf(pubKey);
@@ -89,8 +87,6 @@ export class JubmojiInCollection {
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
-
-    console.log("end in collection proof", new Date().getTime());
 
     return {
       serializedMembershipProof: serializeMembershipProof(membershipProof),
@@ -213,7 +209,6 @@ export class NUniqueJubmojisInCollection {
   async prove({
     jubmojis,
   }: NUniqueJubmojiInCollectionProofArgs): Promise<NUniqueJubmojiInCollectionProof> {
-    console.log("start n unique proof", new Date().getTime());
     const pubKeyNullifierRandomness = hexToBigInt(
       getRandomNullifierRandomness()
     );
@@ -231,16 +226,10 @@ export class NUniqueJubmojisInCollection {
       indices.push(this.collectionPubKeys.indexOf(pubKey));
     }
 
-    console.time("Merkle Prove Computation");
-    console.log("begin merkle proof", new Date().getTime());
     const merkleProofs = await getMerkleProofListFromCache(
       this.collectionPubKeys,
       indices
     );
-    console.timeEnd("Merkle Prove Computation");
-    console.log("end merkle proof", new Date().getTime());
-
-    console.log("I am about to batch prove membership");
 
     const membershipProofs = await batchProveMembership({
       sigs,
@@ -251,9 +240,6 @@ export class NUniqueJubmojisInCollection {
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
-
-    console.log("I have batch proven membership", membershipProofs);
-    console.log("end n unique proof", new Date().getTime());
 
     return {
       serializedMembershipProofs: membershipProofs.map(
