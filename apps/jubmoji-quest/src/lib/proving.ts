@@ -11,10 +11,6 @@ import {
   getCardPubKeyFromIndex,
 } from "jubmoji-api";
 
-// Use circuits in public folder for prover and verified
-export const CLIENT_PATH_TO_CIRCUITS = "circuits/";
-export const SERVER_PATH_TO_CIRCUITS = "circuits/";
-
 export const createProofInstanceFromJubmojiPower = (
   power: JubmojiPower,
   pathToCircuits?: string

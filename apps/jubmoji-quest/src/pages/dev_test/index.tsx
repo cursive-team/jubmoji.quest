@@ -3,6 +3,8 @@
 // @ts-ignore
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import { useEffect, useState } from "react";
+import { sha256 } from "js-sha256";
+import { Modal } from "@/components/modals/Modal";
 
 export type CardholderTapModalProps = {
   message: string;
@@ -15,12 +17,13 @@ export default function CardholderTapModal({
 
   useEffect(() => {
     async function runScan() {
-      const messageHash =
-        "\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01";
+      const message = "Hello, world!";
+      const hasher = sha256.create();
+      const messageHash = hasher.update(message).hex();
       let command = {
         name: "sign",
         keyNo: 1,
-        digest: Buffer.from(messageHash).toString("hex"),
+        digest: messageHash,
       };
 
       let res;
@@ -61,6 +64,9 @@ export default function CardholderTapModal({
         );
 
         console.log("Tapped card with public key: ", res.publicKey);
+        console.log("digest: ", res.input.digest);
+        console.log("rawSignature: ", res.signature.raw);
+
         setStatusText("Tapped card! Process result...");
       } catch (error) {
         console.error(error);
@@ -72,7 +78,7 @@ export default function CardholderTapModal({
   }, [message]);
 
   return (
-    <div>
+    <Modal isOpen={true} setIsOpen={() => {}}>
       <span className="font-helvetica text-[23px] font-bold leading-none text-woodsmoke-100">
         Place the NFC card on your phone.
       </span>
@@ -90,6 +96,6 @@ export default function CardholderTapModal({
         </a>
         .
       </span>
-    </div>
+    </Modal>
   );
 }

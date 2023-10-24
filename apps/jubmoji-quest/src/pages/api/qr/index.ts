@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiPower } from "@/types";
-import {
-  SERVER_PATH_TO_CIRCUITS,
-  verifyJubmojiPowerProof,
-} from "@/lib/proving";
+import { verifyJubmojiPowerProof } from "@/lib/proving";
 import path from "path";
 
 export default async function handler(

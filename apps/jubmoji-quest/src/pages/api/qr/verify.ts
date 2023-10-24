@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiQRCodeData } from "@/types";
-import {
-  SERVER_PATH_TO_CIRCUITS,
-  verifyJubmojiPowerProof,
-} from "@/lib/proving";
+import { verifyJubmojiPowerProof } from "@/lib/proving";
 import { bigIntToHex } from "babyjubjub-ecdsa";
 import path from "path";
 

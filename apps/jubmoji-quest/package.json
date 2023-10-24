@@ -31,8 +31,7 @@
     "react-datepicker": "^4.21.0",
     "react-dom": "^18",
     "react-qr-code": "^2.0.12",
-    "react-query": "^3.39.3",
-    "uuid": "^9.0.1"
+    "react-query": "^3.39.3"
   },
   "devDependencies": {
     "@types/elliptic": "^6.4.15",
@@ -41,7 +40,6 @@
     "@types/qr-image": "^3.2.7",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/uuid": "^9.0.6",
     "autoprefixer": "^10",
     "elliptic": "^6.5.4",
     "eslint": "^8",
