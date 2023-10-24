@@ -228,11 +228,13 @@ export class NUniqueJubmojisInCollection {
     }
 
     console.time("Merkle Prove Computation");
+    console.log("begin merkle proof", new Date().getTime());
     const merkleProofs = await getMerkleProofListFromCache(
       this.collectionPubKeys,
       indices
     );
     console.timeEnd("Merkle Prove Computation");
+    console.log("end merkle proof", new Date().getTime());
 
     console.log("I am about to batch prove membership");
 
