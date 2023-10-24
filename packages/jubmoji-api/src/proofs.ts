@@ -227,10 +227,12 @@ export class NUniqueJubmojisInCollection {
       indices.push(this.collectionPubKeys.indexOf(pubKey));
     }
 
+    console.time("Merkle Prove Computation");
     const merkleProofs = await getMerkleProofListFromCache(
       this.collectionPubKeys,
       indices
     );
+    console.timeEnd("Merkle Prove Computation");
 
     console.log("I am about to batch prove membership");
 
