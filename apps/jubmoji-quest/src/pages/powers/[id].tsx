@@ -1,48 +1,45 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
-import { JubmojiPower } from "../../types";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "../../hooks/useJubmojis";
 import QRCodePower from "@/components/powers/qrCodePower";
+import { useFetchPowerById } from "@/hooks/useFetchPowers";
+import { Placeholder } from "@/components/Placeholder";
 
+const PagePlaceholder = () => {
+  return (
+    <div className="grid grid-cols-1 gap-4 py-4">
+      <div className="py-3">
+        <Placeholder.Base className="w-4 h-4" />
+      </div>
+      <Placeholder.Card size="md" />
+      <Placeholder.Card size="xs" />
+    </div>
+  );
+};
 export default function PowerDetailPage() {
-  const [power, setPower] = useState<JubmojiPower>();
   const { data: jubmojis } = useJubmojis();
 
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  useEffect(() => {
-    const fetchPower = async () => {
-      const response = await fetch(`/api/powers/${powerId}`);
+  const { isLoading: isLoadingPower, data: power = null } =
+    useFetchPowerById(powerId);
 
-      if (!response.ok) {
-        // Todo: error handling
-        throw new Error(`Could not fetch power ${powerId}.`);
-      }
-      const data = await response.json();
-
-      setPower(data);
-    };
-
-    fetchPower();
-  }, [powerId]);
-
+  if (isLoadingPower) return <PagePlaceholder />;
   if (!power) return null;
 
   return (
     <div>
       <AppHeader
         title={
-          <Link href="/">
-            <button>
-              <Icons.arrowBack />
-            </button>
-          </Link>
+          <button onClick={() => router.back()}>
+            <Icons.arrowBack />
+          </button>
         }
       />
       <div className="grid grid-cols-1 gap-4">

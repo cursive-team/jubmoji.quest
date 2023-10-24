@@ -18,8 +18,8 @@ import { Onboarding } from "@/components/Onboarding";
 import {
   JubmojiCardProps,
   getJubmojiCardByPubIndex,
-  useCards,
-} from "@/hooks/useCards";
+  useFetchCards,
+} from "@/hooks/useFetchCards";
 import Image from "next/image";
 
 const OnboardSection = () => {
@@ -106,7 +106,7 @@ export default function CollectJubmojiPage() {
   const params = useParams();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  const { data: jubmojiCollectionCards = [], isLoading } = useCards();
+  const { data: jubmojiCollectionCards = [], isLoading } = useFetchCards();
   // used to check if user collected already something
   const [isFirstCollect, setIsFirstCollect] = useState(false);
   const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();

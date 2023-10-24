@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 
 type JubmojiCardMap = Record<number, JubmojiCollectionCard>;
 
-export const useCards = () => {
+export const useFetchCards = () => {
   return useQuery(
     ["cards"],
     async (): Promise<JubmojiCardMap> => {

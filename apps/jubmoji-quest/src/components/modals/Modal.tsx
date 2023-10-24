@@ -2,7 +2,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { Icons } from "../Icons";
 
-interface ModalProps
+export interface ModalProps
   extends Pick<React.HTMLAttributes<HTMLDivElement>, "children"> {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;

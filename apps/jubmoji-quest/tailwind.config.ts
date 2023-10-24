@@ -42,13 +42,14 @@ const config: Config = {
     },
     extend: {
       fontSize: {
-        base: ["16px", "140%"],
-        tiny: ["11px", "140%"],
+        base: ["16px", "120%"],
+        tiny: ["11px", "120%"],
       },
       fontFamily: {
         "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],
         "dm-sans": ["'DM Sans'", "sans-serif"],
         giorgio: ["'Giorgio'", "sans-serif"],
+        "space-mono": ['"Space Mono"', "monospace"],
       },
       colors: {
         "baby-blue": {
@@ -75,6 +76,10 @@ const config: Config = {
       },
     },
   },
-  plugins: [backfaceVisibility, perspective],
+  plugins: [
+    require("@tailwindcss/line-clamp"),
+    backfaceVisibility,
+    perspective,
+  ],
 };
 export default config;

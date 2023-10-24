@@ -4,13 +4,15 @@ import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { JubmojiCollectionCard } from "@/types";
 import { classed } from "@tw-classed/react";
-import { Jubmoji, cardPubKeys } from "jubmoji-api";
-import React, { useEffect, useState } from "react";
+import { cardPubKeys } from "jubmoji-api";
+import React, { useState } from "react";
 import { AppleWalletButton } from "@/components/AppleWalletButton";
 import { GoogleWalletButton } from "@/components/GoogleWalletButton";
-import { useCards } from "@/hooks/useCards";
+import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
+import { Button } from "@/components/ui/Button";
+import { Placeholder } from "@/components/Placeholder";
+import BackupModal from "@/components/modals/BackupModal";
 
 const BackupSection = () => {
   const { isLoading: isLoadingJubmojis, data: jubmojis } = useJubmojis();
@@ -28,7 +30,7 @@ const BackupSection = () => {
 };
 
 const JubmojiNavItem = classed.div(
-  "flex items-center  p-2 w-[32px] h-16 rounded cursor-pointer",
+  "flex items-center p-2 w-8 h-16 rounded cursor-pointer",
   {
     variants: {
       active: {
@@ -40,28 +42,32 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 right-0 bottom-[80px] w-full overflow-scroll bg-shark-970"
+  "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 right-0 bottom-[80px] w-full overflow-scroll bg-shark-970 justify-center"
 );
 
 export default function JubmojisPage() {
-  const [active, setActive] = React.useState<number | undefined>(undefined);
+  const [activeIndex, setActiveIndex] = React.useState<number>(0);
   const { data: jubmojis = [] } = useJubmojis();
   const [infoModalOpen, setIsModalOpen] = useState(false);
-  const [selectedJubmoji, setSelectedJubmoji] = useState<Jubmoji | undefined>();
+  const [backupModalOpen, setBackupModalOpen] = useState(false);
 
-  const { data: jubmojiCollectionCards = [] } = useCards();
+  const { isLoading: isLoadingJubmojis, data: jubmojiCollectionCards = [] } =
+    useFetchCards();
 
-  const onSelectJubmoji = (jubmoji: Jubmoji, index: number) => {
-    setActive(index);
-    setSelectedJubmoji(jubmoji);
-  };
+  const selectedPubKeyIndex = jubmojis[activeIndex]?.pubKeyIndex;
+  const { emoji, name, owner, collectsFor, imagePath } =
+    getJubmojiCardByPubIndex(jubmojiCollectionCards, selectedPubKeyIndex) ?? {};
 
   return (
     <>
+      <BackupModal
+        isOpen={backupModalOpen}
+        setIsOpen={setBackupModalOpen}
+      ></BackupModal>
       <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
         Info for Jubmojis
       </Modal>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-4">
         <AppHeader
           title="YOUR JUBMOJIS"
           actions={
@@ -73,49 +79,51 @@ export default function JubmojisPage() {
             </button>
           }
         />
-        <Input placeholder="Search your private collection" />
-        {jubmojis.map((jubmoji, i) => {
-          if (!selectedJubmoji) return null;
-          if (!jubmojiCollectionCards[jubmoji.pubKeyIndex]) {
-            return;
-          }
+        <div className="grid grid-cols-[1fr_120px] justify-between gap-2">
+          <Input placeholder="Search your private collection" />
+          <Button
+            icon={<Icons.download className="text-black" />}
+            size="sm"
+            variant="blue"
+            onClick={() => setBackupModalOpen(true)}
+          >
+            Back up!
+          </Button>
+        </div>
 
-          // TODO: CHANGE this in a better way without loop
-          if (selectedJubmoji.sig !== jubmoji.sig) return null;
-
-          // Emoji is fixed in hardware and fetched from hardcoded card metadata file
-          const { emoji } = cardPubKeys[jubmoji.pubKeyIndex];
-          // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
-          const { name, owner, collectsFor } =
-            jubmojiCollectionCards[jubmoji.pubKeyIndex];
-          // Image path is fetched from the hardcoded card image map for offline use
-          const imagePath = cardPubKeys[jubmoji.pubKeyIndex].imageBlobUrl;
-
-          return (
-            <div key={i} className="my-4">
+        {isLoadingJubmojis ? (
+          <Placeholder.Card size="2xl" />
+        ) : (
+          <>
+            {name && owner && (
               <CollectionCard
                 label={name}
                 icon={emoji}
-                edition={jubmoji.msgNonce}
+                edition={"jubmoji.msgNonce"}
                 owner={owner}
                 cardBackImage={imagePath}
-                actions={<span>backed up</span>}
+                actions={
+                  <Button size="sm" rounded icon={<Icons.compass />}>
+                    Quests
+                  </Button>
+                }
                 quests={collectsFor}
               />
-            </div>
-          );
-        })}
+            )}
+          </>
+        )}
+
         <div className="mt-auto">
           <JubmojiNavWrapper>
             {jubmojis?.map((jubmoji, index) => {
-              const isActive = index === active;
+              const isActive = index === activeIndex;
               const { emoji } = cardPubKeys[jubmoji.pubKeyIndex];
 
               return (
                 <JubmojiNavItem
                   key={index}
                   active={isActive}
-                  onClick={() => onSelectJubmoji(jubmoji, index)}
+                  onClick={() => setActiveIndex(index)}
                 >
                   {emoji}
                 </JubmojiNavItem>

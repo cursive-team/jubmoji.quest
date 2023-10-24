@@ -4,34 +4,35 @@ import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { Button } from "@/components/ui/Button";
-import { JubmojiQuest } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useFetchQuestById } from "@/hooks/useFetchQuests";
+import { Placeholder } from "@/components/Placeholder";
+
+const PagePlaceholder = () => {
+  return (
+    <div className="grid grid-cols-1 gap-4 py-4">
+      <div className="py-3">
+        <Placeholder.Base className="w-4 h-4" />
+      </div>
+      <Placeholder.Card size="md" />
+      <Placeholder.Card size="xs" />
+      <Placeholder.Card size="xl" />
+      <Placeholder.Button />
+    </div>
+  );
+};
 
 export default function QuestDetailPage() {
-  const [quest, setQuest] = useState<JubmojiQuest>();
-
   const router = useRouter();
   const { id: questId } = router.query;
 
-  useEffect(() => {
-    const fetchQuest = async () => {
-      const response = await fetch(`/api/quests/${questId}`);
+  const { isLoading: isLoadingQuest, data: quest = null } =
+    useFetchQuestById(questId);
 
-      if (!response.ok) {
-        // Todo: error handling
-        throw new Error(`Could not fetch quest ${questId}.`);
-      }
-      const data = await response.json();
-
-      setQuest(data);
-    };
-
-    fetchQuest();
-  }, [questId]);
-
-  if (!quest) return null;
+  if (isLoadingQuest) return <PagePlaceholder />;
+  if (!quest) return <div>Quest not found</div>;
 
   return (
     <div>

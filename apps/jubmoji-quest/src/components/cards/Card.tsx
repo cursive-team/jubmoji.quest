@@ -1,11 +1,11 @@
 import { classed } from "@tw-classed/react";
 
 const CardBase = classed.div(
-  "flex flex-col items-center rounded border border-shark-900 bg-shark-950",
+  "flex flex-col items-center rounded border border-shark-900 bg-shark-950 overflow-hidden",
   {
     variants: {
       disabled: {
-        true: "opacity-50",
+        true: "opacity-30",
       },
       centred: {
         true: "text-center",
@@ -58,7 +58,7 @@ const CardImage = classed.div(
 );
 
 const CardTitle = classed.span(
-  "flex gap-2 text-shark-50 font-medium leading-[140%]",
+  "flex gap-2 text-shark-50 font-medium leading-[120%]",
   {
     variants: {
       font: {
@@ -82,7 +82,7 @@ const CardTitle = classed.span(
 );
 
 const CardDescription = classed.span(
-  "flex text-shark-400 font-normal items-center gap-2 self-stretch border-shark-400 leading-[140%]",
+  "flex text-shark-400 font-normal items-center gap-2 self-stretch border-shark-400 leading-[120%]",
   {
     variants: {
       font: {
@@ -93,9 +93,13 @@ const CardDescription = classed.span(
       centred: {
         true: "mx-auto",
       },
+      truncate: {
+        true: "line-clamp-1",
+      },
     },
     defaultVariants: {
       font: "dm",
+      truncate: false,
     },
   }
 );

@@ -8,6 +8,7 @@ interface PowerCardProps {
   description?: string;
   powerType: $Enums.PowerType;
   disabled?: boolean;
+  shortDescription?: boolean;
 }
 
 const PowerTypeIconMapping: Record<$Enums.PowerType, any> = {
@@ -23,19 +24,24 @@ const PowerCard = ({
   description,
   powerType,
   disabled = false,
+  shortDescription = false,
 }: PowerCardProps) => {
   const powerIcon = PowerTypeIconMapping[powerType];
 
   return (
     <Card.Base disabled={disabled}>
       <Card.Content spacing="sm">
-        <div className="flex gap-6 items-start self-stretch">
+        <div className="flex gap-6 items-center self-stretch">
           <div className="flex items-start gap-2 h-12">{powerIcon}</div>
           <div className="flex gap-2">
             <div>
               <Card.Title>{title}</Card.Title>
               {description && (
-                <Card.Description>{description}</Card.Description>
+                <div className="w-full">
+                  <Card.Description truncate={shortDescription}>
+                    {description}
+                  </Card.Description>
+                </div>
               )}
             </div>
           </div>
