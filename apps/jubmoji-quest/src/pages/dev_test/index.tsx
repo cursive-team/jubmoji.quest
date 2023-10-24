@@ -10,9 +10,7 @@ export type CardholderTapModalProps = {
   message: string;
 };
 
-export default function CardholderTapModal({
-  message,
-}: CardholderTapModalProps) {
+export function CardholderTapModal({ message }: CardholderTapModalProps) {
   const [statusText, setStatusText] = useState("Waiting for NFC setup...");
 
   useEffect(() => {
@@ -97,5 +95,13 @@ export default function CardholderTapModal({
         .
       </span>
     </Modal>
+  );
+}
+
+export default function DevTapPage() {
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <CardholderTapModal message="Hello, world!" />
+    </div>
   );
 }
