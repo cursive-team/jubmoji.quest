@@ -4,10 +4,12 @@ const crypto = require("crypto");
 // Generates randomness for nullifiers
 // Uses Crypto Web API in browser and Node.js Crypto module in Node.js
 export const getRandomNullifierRandomness = (): string => {
+  const numBytes = 30; // Generate a number of bytes smaller than the size of a field element
+
   if (isNode()) {
-    return crypto.randomBytes(32).toString("hex");
+    return crypto.randomBytes(numBytes).toString("hex");
   } else {
-    return bytesToHex(self.crypto.getRandomValues(new Uint8Array(32)));
+    return bytesToHex(self.crypto.getRandomValues(new Uint8Array(numBytes)));
   }
 };
 

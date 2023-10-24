@@ -26,7 +26,6 @@ export default async function handler(
       // Todo: Need validations for data
 
       const sigNullifierRandomness = getRandomNullifierRandomness();
-
       const proofParams: any = {
         sigNullifierRandomness,
       };

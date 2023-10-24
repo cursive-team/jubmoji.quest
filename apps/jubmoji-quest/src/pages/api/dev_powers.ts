@@ -10,8 +10,6 @@ export default async function handler(
     const { name, description, startTime, endTime, powerType, questId } =
       req.body;
 
-    console.log(req.body);
-
     if (
       !name ||
       !description ||
