@@ -23,8 +23,8 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
     try {
       serializedProof = await createJubmojiPowerProof(
         power,
-        jubmojis,
-        __dirname + CLIENT_PATH_TO_CIRCUITS
+        jubmojis
+        // __dirname + CLIENT_PATH_TO_CIRCUITS
       );
     } catch (error) {
       console.log(error);
