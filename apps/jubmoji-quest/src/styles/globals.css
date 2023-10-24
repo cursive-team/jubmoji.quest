@@ -37,3 +37,12 @@ html {
   font-family: "Giorgio", sans-serif;
   color: #fff;
 }
+
+input[type="saerch"] {
+  -webkit-appearance: none !important;
+  background-color: red;
+}
+
+input[type="search"]::-ms-clear {
+  background: yellow;
+}

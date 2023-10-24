@@ -109,7 +109,7 @@ export default function Home() {
           }
         />
         <div className="grid grid-cols-[1fr_120px] justify-between gap-2">
-          <Input placeholder="Find a quest to complete" />
+          <Input placeholder="Find a quest to complete" type="search" />
           <Button
             icon={<Icons.plus className="text-black" />}
             size="sm"
