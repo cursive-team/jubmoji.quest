@@ -43,6 +43,9 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
       }),
     });
 
+    const responseJson = await response.json();
+    console.log("Response from /api/qr: ", responseJson);
+
     if (!response.ok) {
       alert("Failed to use your power!");
       return;

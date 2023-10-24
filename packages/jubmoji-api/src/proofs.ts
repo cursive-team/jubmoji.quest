@@ -63,6 +63,8 @@ export class JubmojiInCollection {
   async prove({
     jubmoji,
   }: JubmojiInCollectionProofArgs): Promise<JubmojiInCollectionProof> {
+    console.log("start in collection proof", new Date().getTime());
+
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(jubmoji);
     const index = this.collectionPubKeys.indexOf(pubKey);
@@ -87,6 +89,8 @@ export class JubmojiInCollection {
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
+
+    console.log("end in collection proof", new Date().getTime());
 
     return {
       serializedMembershipProof: serializeMembershipProof(membershipProof),
@@ -209,7 +213,7 @@ export class NUniqueJubmojisInCollection {
   async prove({
     jubmojis,
   }: NUniqueJubmojiInCollectionProofArgs): Promise<NUniqueJubmojiInCollectionProof> {
-    console.log("entering the proving zone");
+    console.log("start n unique proof", new Date().getTime());
     const pubKeyNullifierRandomness = hexToBigInt(
       getRandomNullifierRandomness()
     );
@@ -249,6 +253,7 @@ export class NUniqueJubmojisInCollection {
     });
 
     console.log("I have batch proven membership", membershipProofs);
+    console.log("end n unique proof", new Date().getTime());
 
     return {
       serializedMembershipProofs: membershipProofs.map(
