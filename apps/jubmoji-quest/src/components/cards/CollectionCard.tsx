@@ -63,7 +63,7 @@ const FlipCardContainer = classed.div(
 const FrontCard = classed(FlipCardContainer, "gap-4 self-stretch bg-shark-950");
 const BackCard = classed(
   FlipCardContainer,
-  "bg-cover bg-center bg-slate-200 transform rotate-y-180"
+  "bg-cover bg-center bg-slate-200 transform rotate-y-180 cursor-pointer"
 );
 
 const CollectionCard = ({
