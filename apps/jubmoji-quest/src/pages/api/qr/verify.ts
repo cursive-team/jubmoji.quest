@@ -6,6 +6,7 @@ import {
   verifyJubmojiPowerProof,
 } from "@/lib/proving";
 import { bigIntToHex } from "babyjubjub-ecdsa";
+import path from "path";
 
 export default async function handler(
   req: NextApiRequest,
@@ -63,7 +64,7 @@ export default async function handler(
     const verificationResult = await verifyJubmojiPowerProof(
       qrCodeData.power,
       qrCodeData.serializedProof,
-      SERVER_PATH_TO_CIRCUITS
+      path.resolve(process.cwd(), "./public") + "/circuits/"
     );
     if (!verificationResult.verified) {
       return res
