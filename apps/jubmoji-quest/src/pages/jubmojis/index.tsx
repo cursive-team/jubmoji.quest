@@ -13,7 +13,7 @@ import BackupModal from "@/components/modals/BackupModal";
 import { cn } from "@/lib/utils";
 
 const JubmojiNavItem = classed.div(
-  "flex items-center p-2 rounded cursor-pointer",
+  "flex items-center justify-center p-2 rounded cursor-pointer",
   {
     variants: {
       size: {
