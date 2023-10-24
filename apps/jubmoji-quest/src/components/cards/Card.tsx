@@ -21,7 +21,7 @@ const CardBase = classed.div(
 );
 
 const CardContent = classed.div(
-  "flex flex-col justify-center items-center gap-2 self-stretch",
+  "flex flex-col justify-center gap-2 self-stretch",
   {
     variants: {
       spacing: {

@@ -52,10 +52,10 @@ const Modal = ({
             >
               <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-w-md transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
                 {closable && (
-                  <div className="fixed z-10 right-[24px] top-[32px] flex items-center h-12 py-8 ring-0 focus:right-0 focus:outline-none outline-none">
+                  <div className="fixed z-10 right-[24px] top-[9px] flex items-center h-12 py-8">
                     <button
                       type="button"
-                      className="ml-auto"
+                      className="ml-auto ring-0 focus:right-0 focus:outline-none outline-none cursor-pointer"
                       onClick={closeModal}
                     >
                       <Icons.close />

@@ -29,9 +29,9 @@ const CardText = classed.span(
 );
 
 const FlipCardIconContainer = classed.div(
-  "bg-shark-900 w-[60px] h-[60px] rounded-full flex items-center justify-center overflow-hidden"
+  "bg-shark-900 w-[60px] h-[60px] rounded-full flex items-center justify-center"
 );
-const FlipCard = classed.div("perspective justify-center overflow-hidden", {
+const FlipCard = classed.div("perspective justify-center", {
   variants: {
     centred: {
       true: "text-center",
@@ -58,12 +58,12 @@ const FlipCardWrapper = classed.div(
   }
 );
 const FlipCardContainer = classed.div(
-  "absolute flex flex-col rounded-lg p-5 w-full h-full backface-hidden"
+  "absolute inset-0 flex flex-col rounded-lg p-5 w-full h-full backface-hidden"
 );
 const FrontCard = classed(FlipCardContainer, "gap-4 self-stretch bg-shark-950");
 const BackCard = classed(
   FlipCardContainer,
-  "bg-cover bg-center bg-slate-200 transform rotate-y-180 cursor-pointer"
+  "bg-cover bg-center bg-slate-200 transform rotate-y-180 cursor-pointer overflow-hidden"
 );
 
 const CollectionCard = ({

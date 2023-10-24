@@ -3,7 +3,7 @@ import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "flex items-center font-dm-sans font-medium w-full flex justify-center focus:ring-0 focus:outline-none active:scale-95",
+  "flex items-center disabled:opacity-50 font-dm-sans font-medium w-full flex justify-center focus:ring-0 focus:outline-none active:scale-95",
   {
     variants: {
       size: {

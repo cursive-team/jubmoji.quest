@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useFetchQuestById } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
+import { Card } from "@/components/cards/Card";
 
 const PagePlaceholder = () => {
   return (
@@ -31,6 +32,11 @@ export default function QuestDetailPage() {
   const { isLoading: isLoadingQuest, data: quest = null } =
     useFetchQuestById(questId);
 
+  const endDateLabel = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "long",
+    timeStyle: "medium",
+  }).format(new Date(quest?.endTime!));
+
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
 
@@ -50,7 +56,19 @@ export default function QuestDetailPage() {
           title={quest.name}
           description={quest.description}
           image={quest.imageLink || ""}
-        />
+        >
+          <div className="flex flex-col gap-4 mt-6">
+            <div className="flex flex-col">
+              <Card.Title className="!text-base text-left">Collect:</Card.Title>
+              <div className="flex gap-2">[COLLETED_ITEMS]</div>
+            </div>
+            <div className="ml-auto">
+              <span className=" text-shark-400 text-[13px] font-dm-sans">
+                {`Ends on ${endDateLabel}`}
+              </span>
+            </div>
+          </div>
+        </QuestCard>
         {quest.powers.map((power) => {
           return (
             <Link key={power.id} href={`/powers/${power.id}`}>
