@@ -53,11 +53,8 @@ export default function JubmojisPage() {
     setSelectedPubKeyIndex(jubmojis[0]?.pubKeyIndex);
   }, [isLoadingJubmojis]);
 
-  console.log(jubmojis);
   const { emoji, name, owner, collectsFor, imagePath } =
     getJubmojiCardByPubIndex(jubmojiCollectionCards, selectedPubKeyIndex) ?? {};
-
-  const hasSearch = search.length > 0;
 
   // get all pubkeys from jubmojis
   const collectedPubKeys = Object.entries(jubmojis).map(
@@ -113,7 +110,6 @@ export default function JubmojisPage() {
       return <span>No results found.</span>;
     }
 
-    console.log(filteredJubmojis);
     return (
       <div className="grid grid-cols-4 gap-3">
         {filteredJubmojis?.map((jubmoji, index) => {
@@ -178,7 +174,7 @@ export default function JubmojisPage() {
           {isSearchMode ? (
             <button
               onClick={() => setIsSearchMode(false)}
-              className="font-dm-sans"
+              className="font-dm-sans text-[13px]"
             >
               Cancel
             </button>
