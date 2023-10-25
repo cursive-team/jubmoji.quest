@@ -40,7 +40,7 @@ export const useFetchCollectedCards = () => {
 
   return useQuery(
     ["collectedCards", jubmojis?.length],
-    async () => {
+    async (): Promise<JubmojiCardProps[]> => {
       // get all jubmojis collected infos
       const collectedPubKeys = Object.entries(jubmojis).map(
         ([_index, { pubKeyIndex }]) => pubKeyIndex
@@ -50,7 +50,8 @@ export const useFetchCollectedCards = () => {
         collectedPubKeys.map((pubKeyIndex) => {
           return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
         }) ?? [];
-      return collectedJubmojis;
+
+      return collectedJubmojis as JubmojiCardProps[];
     },
     {
       enabled: !isLoading && !isLoadingJubmojis,
@@ -61,9 +62,9 @@ export const useFetchCollectedCards = () => {
 export const getJubmojiCardByPubIndex = (
   cards: JubmojiCardMap,
   pubKeyIndex: Jubmoji["pubKeyIndex"]
-): JubmojiCardProps | null => {
+): JubmojiCardProps | undefined => {
   if (!cards[pubKeyIndex]) {
-    return null;
+    return undefined;
   }
 
   // Emoji is fixed in hardware and fetched from hardcoded card metadata file
