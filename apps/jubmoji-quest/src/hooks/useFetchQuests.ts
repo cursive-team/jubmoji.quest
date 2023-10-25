@@ -22,7 +22,7 @@ export const useFetchQuests = () => {
   );
 };
 
-export const useFetchQuestById = (id: string | string[] | undefined) => {
+export const useFetchQuestById = (id: string | number) => {
   return useQuery(
     ["quests", id],
     async (): Promise<JubmojiQuest | null> => {
@@ -30,7 +30,7 @@ export const useFetchQuestById = (id: string | string[] | undefined) => {
 
       if (!response.ok) {
         console.error("Could not fetch quest ${questId}.");
-        return null; //
+        return null;
       }
 
       const quest = await response.json();

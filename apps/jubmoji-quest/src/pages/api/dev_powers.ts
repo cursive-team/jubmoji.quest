@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
+import { getRandomNullifierRandomness } from "jubmoji-api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,8 +9,6 @@ export default async function handler(
   if (req.method === "POST") {
     const { name, description, startTime, endTime, powerType, questId } =
       req.body;
-
-    console.log(req.body);
 
     if (
       !name ||
@@ -24,8 +23,7 @@ export default async function handler(
 
     // Todo: Need validations for data
 
-    // Todo: Generate random nullifiers
-    const sigNullifierRandomness = "0ab123420";
+    const sigNullifierRandomness = getRandomNullifierRandomness();
 
     try {
       const newPower = await prisma.power.create({

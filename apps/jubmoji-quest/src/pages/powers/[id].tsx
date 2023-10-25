@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "../../hooks/useJubmojis";
-import QRCodePower from "@/components/powers/qrCodePower";
 import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
+import { PowerQrCode } from "@/components/powers/PowerQrCode";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -49,8 +49,9 @@ export default function PowerDetailPage() {
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  const { isLoading: isLoadingPower, data: power = null } =
-    useFetchPowerById(powerId);
+  const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
+    powerId as string
+  );
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) return null;
@@ -99,7 +100,7 @@ export default function PowerDetailPage() {
         </div>
 
         {power.powerType === $Enums.PowerType.QR_CODE && (
-          <QRCodePower power={power} jubmojis={jubmojis || []} />
+          <PowerQrCode power={power} jubmojis={jubmojis || []} />
         )}
       </div>
     </div>
