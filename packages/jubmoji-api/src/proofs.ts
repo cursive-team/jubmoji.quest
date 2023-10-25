@@ -359,10 +359,9 @@ export class TeamLeaderboard
 
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(teamJubmoji);
-    const teamMerkleProof = await getMerkleProofFromCache(
-      this.teamPubKeys,
-      this.teamPubKeys.indexOf(pubKey)
-    );
+    const teamPubKey = getCardPubKeyFromIndex(teamJubmoji.pubKeyIndex);
+    // We need to reveal which team we are on for the leaderboard
+    const teamMerkleProof = await getMerkleProofFromCache([teamPubKey], 0);
 
     const teamMembershipProof = await proveMembership({
       sig,

@@ -93,6 +93,7 @@ export default function QuestDetailPage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        questId: quest.id,
         serializedProof: JSON.stringify(teamLeaderboardProof),
       }),
     });
@@ -104,6 +105,24 @@ export default function QuestDetailPage() {
 
     const { scoreAdded } = await response.json();
     alert(`Added ${scoreAdded} points to your team's score!`);
+
+    // After successful update, re-fetch the leaderboard
+    const url = new URL("/api/team-leaderboard", window.location.origin);
+    url.searchParams.append("questId", quest.id.toString());
+    const leaderboardResponse = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!leaderboardResponse.ok) {
+      console.error("Could not fetch new leaderboard");
+      return;
+    }
+
+    const { scoreMap } = await leaderboardResponse.json();
+    console.log(scoreMap);
   };
 
   return (
