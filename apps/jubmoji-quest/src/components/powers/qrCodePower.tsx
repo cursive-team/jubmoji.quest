@@ -19,7 +19,7 @@ const QrCodeWrapper = classed.div(
   "bg-white rounded-[8px] w-full max-w-[156px]"
 );
 
-export const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
+const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
   const [url, setUrl] = useState<string>();
 
   const powerMutation = usePowerMutation();
@@ -100,3 +100,7 @@ export const QRCodePower = ({ power, jubmojis }: QRCodePowerProps) => {
     </PowerWrapper>
   );
 };
+
+QRCodePower.displayName = "QRCodePower";
+
+export { QRCodePower };
