@@ -50,7 +50,12 @@ export default function QuestDetailPage() {
     }
 
     const pathToCircuits = __dirname + "circuits/";
-    console.log("path to circuits", __dirname, pathToCircuits);
+    console.log(
+      "path to circuits",
+      __dirname,
+      pathToCircuits,
+      getClientPathToCircuits()
+    );
     const teamLeaderboardProof = await createJubmojiQuestProof({
       config: { ...quest, proofParams: quest.proofParams as Prisma.JsonObject },
       jubmojis,
@@ -64,7 +69,7 @@ export default function QuestDetailPage() {
       },
       body: JSON.stringify({
         questId: quest.id,
-        serializedProof: JSON.stringify(teamLeaderboardProof),
+        serializedProof: teamLeaderboardProof,
       }),
     });
 

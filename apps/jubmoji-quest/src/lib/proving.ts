@@ -11,7 +11,14 @@ import {
   createProofInstance,
   getCardPubKeyFromIndex,
 } from "jubmoji-api";
+import path from "path";
 
+export const getClientPathToCircuits = (): string => {
+  return __dirname + "circuits/";
+};
+export const getServerPathToCircuits = (): string => {
+  return path.resolve(process.cwd(), "./public") + "/circuits/";
+};
 // Minimal set of JubmojiQuest fields needed for proving and verification
 // These fields define the configuration for a proving instance
 export interface JubmojiQuestProofConfig {

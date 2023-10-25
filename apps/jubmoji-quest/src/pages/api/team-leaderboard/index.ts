@@ -5,7 +5,10 @@ import { Prisma, $Enums } from "@prisma/client";
 import path from "path";
 import { TeamLeaderboardProof, cardPubKeys } from "jubmoji-api";
 import { areAllBigIntsDifferent, bigIntToHex } from "babyjubjub-ecdsa";
-import { verifyJubmojiQuestProof } from "@/lib/proving";
+import {
+  getServerPathToCircuits,
+  verifyJubmojiQuestProof,
+} from "@/lib/proving";
 
 export default async function handler(
   req: NextApiRequest,
@@ -81,6 +84,11 @@ export default async function handler(
       const pathToCircuits =
         path.resolve(process.cwd(), "./public") + "/circuits/";
       console.log("Path to circuits", process.cwd(), pathToCircuits);
+      console.log(
+        "Alternate path to circuits: ",
+        path.resolve(process.cwd(), "public", "circuits") + "/",
+        getServerPathToCircuits()
+      );
       const { verified, consumedSigNullifiers } = await verifyJubmojiQuestProof(
         {
           config: {
