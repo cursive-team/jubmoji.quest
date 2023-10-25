@@ -22,22 +22,17 @@ import {
 } from "@/hooks/useFetchCards";
 import Image from "next/image";
 
-const OnboardSection = () => {
+const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
     <Onboarding>
       <Card.Base centred>
         <Card.Header spacing="sm">
-          <span className="my-auto text-[96px] leading-none">
-            <Image
-              src="/images/hedgehog.png"
-              height={96}
-              width={96}
-              alt="hedgehog"
-            />
+          <span className="my-auto text-[60px] leading-none">
+            {jubmoji.emoji}
           </span>
         </Card.Header>
         <Card.Content spacing="sm">
-          <Card.Title font="giorgio" size="md">
+          <Card.Title centred font="giorgio" size="md">
             Congrats!
           </Card.Title>
           <Card.Description font="giorgio">
@@ -48,12 +43,7 @@ const OnboardSection = () => {
       <Card.Base centred>
         <Card.Header>
           <div className="flex flex-col gap-4">
-            <Image
-              src="/images/hedgehog.png"
-              height={72}
-              width={72}
-              alt="hedgehog"
-            />
+            <span className="text-[40px]">{jubmoji.emoji}</span>
             <Button
               icon={<Icons.download className="text-white" />}
               rounded
@@ -75,7 +65,7 @@ const OnboardSection = () => {
       <Card.Base centred>
         <Card.Header></Card.Header>
         <Card.Content spacing="sm">
-          <Card.Title font="giorgio" size="md">
+          <Card.Title centred font="giorgio" size="md">
             lorem ipsum
           </Card.Title>
           <Card.Description font="giorgio">
@@ -86,7 +76,7 @@ const OnboardSection = () => {
       <Card.Base centred>
         <Card.Header></Card.Header>
         <Card.Content spacing="sm" centred>
-          <Card.Title font="giorgio" size="md">
+          <Card.Title centred font="giorgio" size="md">
             Itching to understand how your data remains private?
           </Card.Title>
           <Card.Description font="giorgio" centred>
@@ -153,10 +143,13 @@ export default function CollectJubmojiPage() {
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
       closable={!isFirstCollect}
+      onClose={() => {
+        router.push(`/jubmojis?pubKeyIndex=${collectedCard?.pubKeyIndex}`); // redirect to `/jubmojis` when modal is closed
+      }}
     >
       <div className="my-auto flex flex-col gap-8">
         {showOnboarding ? (
-          <OnboardSection />
+          collectedCard && <OnboardSection jubmoji={collectedCard} />
         ) : (
           <>
             {isLoading ? (

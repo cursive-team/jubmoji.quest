@@ -8,6 +8,7 @@ export interface ModalProps
   setIsOpen: (isOpen: boolean) => void;
   children?: React.ReactNode;
   closable?: boolean;
+  onClose?: () => void;
 }
 
 const Modal = ({
@@ -15,18 +16,16 @@ const Modal = ({
   setIsOpen,
   children,
   closable = true, // show close button when active
+  onClose, // run when modal close
 }: ModalProps) => {
-  function closeModal() {
+  const onCloseModal = () => {
     setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
+    onClose?.();
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as="div" className="relative z-10" onClose={onCloseModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -56,7 +55,7 @@ const Modal = ({
                     <button
                       type="button"
                       className="ml-auto ring-0 focus:right-0 focus:outline-none outline-none cursor-pointer"
-                      onClick={closeModal}
+                      onClick={onCloseModal}
                     >
                       <Icons.close />
                     </button>

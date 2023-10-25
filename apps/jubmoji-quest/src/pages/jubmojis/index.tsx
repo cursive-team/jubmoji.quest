@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/Placeholder";
 import BackupModal from "@/components/modals/BackupModal";
 import { cn } from "@/lib/utils";
+import { Jubmoji } from "jubmoji-api";
+import { useRouter } from "next/router";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
@@ -37,6 +39,8 @@ const JubmojiNavWrapper = classed.div(
 );
 
 export default function JubmojisPage() {
+  const router = useRouter();
+  const { pubKeyIndex } = router.query;
   const [selectedPubKeyIndex, setSelectedPubKeyIndex] =
     React.useState<number>(0);
   const { data: jubmojis = [] } = useJubmojis();
@@ -50,18 +54,23 @@ export default function JubmojisPage() {
 
   useEffect(() => {
     if (isLoadingJubmojis) return;
-    setSelectedPubKeyIndex(jubmojis[0]?.pubKeyIndex);
+    // set default pubKeyIndex from query params
+    setSelectedPubKeyIndex(Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex);
   }, [isLoadingJubmojis]);
 
   const { emoji, name, owner, collectsFor, imagePath } =
     getJubmojiCardByPubIndex(jubmojiCollectionCards, selectedPubKeyIndex) ?? {};
 
-  // get all pubkeys from jubmojis
+  // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
-    ([_index, { pubKeyIndex }]) => {
-      return pubKeyIndex;
-    }
+    ([_index, { pubKeyIndex }]) => pubKeyIndex
   );
+
+  const msgNonce = jubmojis.find((jubmoji: Jubmoji) => {
+    const index = collectedPubKeys.indexOf(selectedPubKeyIndex);
+    return jubmoji.pubKeyIndex === collectedPubKeys[index];
+  })?.msgNonce;
+
 
   const collectedJubmojis = collectedPubKeys.map((pubKeyIndex) => {
     return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
@@ -90,14 +99,10 @@ export default function JubmojisPage() {
           <CollectionCard
             label={name}
             icon={emoji}
-            edition={"jubmoji.msgNonce"}
+            edition={msgNonce}
             owner={owner}
             cardBackImage={imagePath}
-            actions={
-              <Button size="sm" rounded icon={<Icons.compass />}>
-                Quests
-              </Button>
-            }
+            actions={null}
             quests={collectsFor}
           />
         )}

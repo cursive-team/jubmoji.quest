@@ -29,8 +29,19 @@ const CardText = classed.span(
 );
 
 const FlipCardIconContainer = classed.div(
-  "bg-shark-900 w-[60px] h-[60px] rounded-full flex items-center justify-center"
+  "w-[60px] h-[60px] rounded-full flex items-center justify-center",
+  {
+    variants: {
+      centred: {
+        true: "mx-auto",
+      },
+    },
+    defaultVariants: {
+      variant: "transparent",
+    },
+  }
 );
+
 const FlipCard = classed.div("perspective justify-center", {
   variants: {
     centred: {
@@ -130,7 +141,7 @@ const CollectionCard = ({
       >
         <FrontCard>
           <div className="flex justify-between items-start">
-            <FlipCardIconContainer>
+            <FlipCardIconContainer centred={centred}>
               <span
                 className={cn(
                   "text-[40px] mt-[9px] inline-block text-space-mono font-bold leading-[40px]"
@@ -174,7 +185,7 @@ const CollectionCard = ({
                 </Button>
               </div>
             )}
-            {actions && <div>{actions}</div>}
+            {actions && <div className="ml-auto">{actions}</div>}
           </div>
         </FrontCard>
         <BackCard onClick={onFlipCard} style={backCoverImage} />
