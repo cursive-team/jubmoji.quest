@@ -40,7 +40,6 @@ html {
 
 input[type="search"] {
   -webkit-appearance: none !important;
-  background-color: red;
 }
 
 input[type="search"]::-ms-clear {
