@@ -6,7 +6,7 @@ import { useState } from "react";
 import { PowerWrapper } from "../PowerWrapper";
 import Image from "next/image";
 import { Icons } from "../Icons";
-import { usePower } from "@/hooks/useFetchPowers";
+import { usePowerMutation } from "@/hooks/useFetchPowers";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { classed } from "@tw-classed/react";
@@ -23,7 +23,7 @@ const QrCodeWrapper = classed.div(
 export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
   const [url, setUrl] = useState<string>();
 
-  const usePowerMutation = usePower();
+  const powerMutation = usePowerMutation();
 
   return (
     <PowerWrapper>
@@ -38,7 +38,7 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
           <button
             type="button"
             onClick={() =>
-              usePowerMutation
+              powerMutation
                 .mutateAsync({
                   power,
                   jubmojis,
@@ -58,7 +58,7 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
               height={150}
               alt="zkp marker"
               className={cn("", {
-                "animate animate-pulse": usePowerMutation.isLoading,
+                "animate animate-pulse": powerMutation.isLoading,
               })}
             />
           </button>
