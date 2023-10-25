@@ -80,6 +80,7 @@ export default async function handler(
 
       const pathToCircuits =
         path.resolve(process.cwd(), "./public") + "/circuits/";
+      console.log("Path to circuits", process.cwd(), pathToCircuits);
       const { verified, consumedSigNullifiers } = await verifyJubmojiQuestProof(
         {
           config: {
