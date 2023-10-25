@@ -21,7 +21,7 @@ const setupDBEntries = async () => {
         });
 
         if (!response.ok) {
-          throw new Error(response.text());
+          throw new Error("Network response was not ok");
         }
       } catch (error) {
         console.error("There was an error creating the card:", error);
