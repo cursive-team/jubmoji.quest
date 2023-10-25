@@ -1,9 +1,16 @@
-import { bytesToBigInt } from "babyjubjub-ecdsa";
+import { isNode, bytesToHex } from "babyjubjub-ecdsa";
+const crypto = require("crypto");
 
-export const getRandomNullifierRandomness = (): bigint => {
-  const randBytes = self.crypto.getRandomValues(new Uint8Array(32));
+// Generates randomness for nullifiers
+// Uses Crypto Web API in browser and Node.js Crypto module in Node.js
+export const getRandomNullifierRandomness = (): string => {
+  const numBytes = 30; // Generate a number of bytes smaller than the size of a field element
 
-  return bytesToBigInt(randBytes);
+  if (isNode()) {
+    return crypto.randomBytes(numBytes).toString("hex");
+  } else {
+    return bytesToHex(self.crypto.getRandomValues(new Uint8Array(numBytes)));
+  }
 };
 
 // Adjusts a hex string to be a certain length by adding a leading 0 if necessary

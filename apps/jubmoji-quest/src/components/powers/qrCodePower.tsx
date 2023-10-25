@@ -2,10 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import QRCode from "react-qr-code";
-import {
-  createJubmojiPowerProof,
-  verifyJubmojiPowerProof,
-} from "@/lib/proving";
+import { createJubmojiPowerProof } from "@/lib/proving";
 import { useState } from "react";
 
 export type QRCodePowerProps = {
@@ -21,15 +18,13 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
 
     let serializedProof;
     try {
-      serializedProof = await createJubmojiPowerProof(power, jubmojis);
+      serializedProof = await createJubmojiPowerProof(
+        power,
+        jubmojis,
+        __dirname + "circuits/"
+      );
     } catch (error) {
       console.log(error);
-      alert("Failed to use your power!");
-      return;
-    }
-
-    let { verified } = await verifyJubmojiPowerProof(power, serializedProof);
-    if (!verified) {
       alert("Failed to use your power!");
       return;
     }
