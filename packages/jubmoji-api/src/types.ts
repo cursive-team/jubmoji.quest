@@ -119,3 +119,21 @@ export interface PublicMessageSignatureProof {
   sig: string;
   pubKeyIndex: number;
 }
+
+export interface TeamLeaderboardClassArgs {
+  teamPubKeys: string[];
+  collectionPubKeys: string[];
+  sigNullifierRandomness: string;
+  pathToCircuits?: string;
+}
+
+export interface TeamLeaderboardProofArgs {
+  teamJubmoji: Jubmoji;
+  collectionJubmojis: Jubmoji[];
+}
+
+export interface TeamLeaderboardProof {
+  teamPubKey: string;
+  serializedTeamMembershipProof: string;
+  serializedCollectionMembershipProofs: string[];
+}

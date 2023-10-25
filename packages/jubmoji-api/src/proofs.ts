@@ -43,6 +43,9 @@ import {
   PublicMessageSignatureClassArgs,
   PublicMessageSignatureProofArgs,
   PublicMessageSignatureProof,
+  TeamLeaderboardClassArgs,
+  TeamLeaderboardProofArgs,
+  TeamLeaderboardProof,
 } from "./types";
 
 export class JubmojiInCollection {
@@ -303,7 +306,9 @@ export class PublicMessageSignature
     this.randStr = classArgs.randStr;
   }
 
-  prove(proofArgs: PublicMessageSignatureProofArgs) {
+  prove(
+    proofArgs: PublicMessageSignatureProofArgs
+  ): Promise<PublicMessageSignatureProof> {
     return Promise.resolve(proofArgs);
   }
 
@@ -320,6 +325,134 @@ export class PublicMessageSignature
 
     return Promise.resolve({
       verified: verifyEcdsaSignature(decodedSig, msgHash, pubKey),
+    });
+  }
+}
+
+export class TeamLeaderboard
+  implements ProofClass<TeamLeaderboardProofArgs, TeamLeaderboardProof>
+{
+  teamPubKeys: string[];
+  collectionPubKeys: string[];
+  sigNullifierRandomness: string;
+  pathToCircuits?: string;
+
+  constructor({
+    teamPubKeys,
+    collectionPubKeys,
+    sigNullifierRandomness,
+    pathToCircuits,
+  }: TeamLeaderboardClassArgs) {
+    this.teamPubKeys = teamPubKeys;
+    this.collectionPubKeys = collectionPubKeys;
+    this.sigNullifierRandomness = sigNullifierRandomness;
+    this.pathToCircuits = pathToCircuits;
+  }
+
+  async prove({
+    teamJubmoji,
+    collectionJubmojis,
+  }: TeamLeaderboardProofArgs): Promise<TeamLeaderboardProof> {
+    const pubKeyNullifierRandomness = hexToBigInt(
+      getRandomNullifierRandomness()
+    );
+
+    const { sig, msgHash, pubKey, R, T, U } =
+      getMembershipProofArgsFromJubmoji(teamJubmoji);
+    const teamMerkleProof = await getMerkleProofFromCache(
+      this.teamPubKeys,
+      this.teamPubKeys.indexOf(pubKey)
+    );
+
+    const teamMembershipProof = await proveMembership({
+      sig,
+      msgHash,
+      publicInputs: {
+        R,
+        T,
+        U,
+      },
+      merkleProof: teamMerkleProof,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      pubKeyNullifierRandomness,
+      pathToCircuits: this.pathToCircuits,
+    });
+
+    const sigs = [];
+    const msgHashes = [];
+    const publicInputs = [];
+    const indices = [];
+    for (const jubmoji of collectionJubmojis) {
+      const { sig, msgHash, pubKey, R, T, U } =
+        getMembershipProofArgsFromJubmoji(jubmoji);
+      sigs.push(sig);
+      msgHashes.push(msgHash);
+      publicInputs.push({ R, T, U });
+      indices.push(this.collectionPubKeys.indexOf(pubKey));
+    }
+
+    const collectionMerkleProofs = await getMerkleProofListFromCache(
+      this.collectionPubKeys,
+      indices
+    );
+
+    const collectionMembershipProofs = await batchProveMembership({
+      sigs,
+      msgHashes,
+      publicInputs,
+      merkleProofs: collectionMerkleProofs,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      pubKeyNullifierRandomness,
+      pathToCircuits: this.pathToCircuits,
+    });
+
+    return {
+      teamPubKey: pubKey,
+      serializedTeamMembershipProof:
+        serializeMembershipProof(teamMembershipProof),
+      serializedCollectionMembershipProofs: collectionMembershipProofs.map(
+        serializeMembershipProof
+      ),
+    };
+  }
+
+  async verify({
+    teamPubKey,
+    serializedTeamMembershipProof,
+    serializedCollectionMembershipProofs,
+  }: TeamLeaderboardProof): Promise<VerificationResult> {
+    // Claimed team public key must be in the list of team public keys
+    if (!this.teamPubKeys.includes(teamPubKey)) {
+      return { verified: false };
+    }
+
+    // Verify that the user is in the team they claim to be in
+    const teamMerkleRoot = await getMerkleRootFromCache([teamPubKey]);
+    const teamVerificationResult = await verifyMembership({
+      proof: deserializeMembershipProof(serializedTeamMembershipProof),
+      merkleRoot: teamMerkleRoot,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      usedSigNullifiers: undefined, // We don't care about reusing a team sig
+      pathToCircuits: this.pathToCircuits,
+    });
+
+    if (!teamVerificationResult.verified) {
+      return { verified: false }; // User is not in the team they claim to be in
+    }
+
+    const collectionMembershipProofs = serializedCollectionMembershipProofs.map(
+      deserializeMembershipProof
+    );
+    const collectionMerkleRoot = await getMerkleRootFromCache(
+      this.collectionPubKeys
+    );
+
+    return await batchVerifyMembership({
+      proofs: collectionMembershipProofs,
+      merkleRoot: collectionMerkleRoot,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      usedSigNullifiers: undefined, // Verify usedSigNullifiers outside of this proof, since we sometimes want to increase a user's score as long as they have used some new sigs
+      pathToCircuits: this.pathToCircuits,
     });
   }
 }
