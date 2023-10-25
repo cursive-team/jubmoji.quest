@@ -36,6 +36,7 @@ export type JubmojiPower = Power & {
     proofType: $Enums.ProofType;
     proofParams: Prisma.JsonValue;
     imageLink: string | null;
+    prerequisiteCards: { index: number }[];
     collectionCards: {
       index: number;
     }[];

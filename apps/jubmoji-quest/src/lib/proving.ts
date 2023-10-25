@@ -7,26 +7,69 @@ import {
   JubmojiInCollectionWithNonce,
   NUniqueJubmojisInCollection,
   ProofClass,
+  TeamLeaderboard,
   createProofInstance,
   getCardPubKeyFromIndex,
 } from "jubmoji-api";
 
-export const createProofInstanceFromJubmojiPower = (
-  power: JubmojiPower,
-  pathToCircuits?: string
-): ProofClass<any, any> => {
-  const proofParams = power.quest.proofParams as Prisma.JsonObject;
-  const collectionCardIndices = power.quest.collectionCards.map(
+// Minimal set of JubmojiQuest fields needed for proving and verification
+// These fields define the configuration for a proving instance
+export interface JubmojiQuestProofConfig {
+  proofType: $Enums.ProofType;
+  proofParams: Prisma.JsonObject;
+  prerequisiteCards: {
+    index: number;
+  }[];
+  collectionCards: {
+    index: number;
+  }[];
+}
+
+export interface CreateJubmojiQuestProofInstanceArgs {
+  config: JubmojiQuestProofConfig;
+  overrideSigNullifierRandomness?: string; // If we want to use a sigNullifierRandomness different from the quest's
+  pathToCircuits?: string;
+}
+
+export interface CreateJubmojiQuestProofArgs {
+  config: JubmojiQuestProofConfig;
+  jubmojis: Jubmoji[];
+  overrideSigNullifierRandomness?: string;
+  pathToCircuits?: string;
+}
+
+export interface VerifyJubmojiQuestProofArgs {
+  config: JubmojiQuestProofConfig;
+  serializedProof: string;
+  overrideSigNullifierRandomness?: string;
+  pathToCircuits?: string;
+}
+
+// Creates a proof instance from any quest parameters
+// Exact proof type is based on quest proofType parameter
+export const createJubmojiQuestProofInstance = ({
+  config,
+  overrideSigNullifierRandomness,
+  pathToCircuits,
+}: CreateJubmojiQuestProofInstanceArgs): ProofClass<any, any> => {
+  const proofParams = config.proofParams as Prisma.JsonObject;
+  const prerequisiteCardIndices = config.prerequisiteCards.map(
+    (card) => card.index
+  );
+  const prerequisitePubKeys = prerequisiteCardIndices.map((index) =>
+    getCardPubKeyFromIndex(index)
+  );
+  const collectionCardIndices = config.collectionCards.map(
     (card) => card.index
   );
   const collectionPubKeys = collectionCardIndices.map((index) =>
     getCardPubKeyFromIndex(index)
   );
-  const sigNullifierRandomness = power.sigNullifierRandomness
-    ? power.sigNullifierRandomness
-    : (proofParams.sigNullifierRandomness as string);
+  const sigNullifierRandomness =
+    overrideSigNullifierRandomness ||
+    (proofParams.sigNullifierRandomness as string);
 
-  switch (power.quest.proofType) {
+  switch (config.proofType) {
     case $Enums.ProofType.IN_COLLECTION:
       return createProofInstance(JubmojiInCollection, {
         collectionPubKeys,
@@ -47,18 +90,35 @@ export const createProofInstanceFromJubmojiPower = (
         sigNullifierRandomness,
         pathToCircuits,
       });
+    case $Enums.ProofType.TEAM_LEADERBOARD:
+      return createProofInstance(TeamLeaderboard, {
+        teamPubKeys: prerequisitePubKeys,
+        collectionPubKeys,
+        sigNullifierRandomness,
+        pathToCircuits,
+      });
     default:
       throw new Error("Invalid proof type.");
   }
 };
 
-export const createJubmojiPowerProof = async (
-  power: JubmojiPower,
-  jubmojis: Jubmoji[],
-  pathToCircuits?: string
-): Promise<string> => {
-  const proofClass = createProofInstanceFromJubmojiPower(power, pathToCircuits);
-  const collectionCardIndices = power.quest.collectionCards.map(
+// Generates a proof from any quest parameters
+// Exact proof type is based on quest proofType parameter
+export const createJubmojiQuestProof = async ({
+  config,
+  jubmojis,
+  overrideSigNullifierRandomness,
+  pathToCircuits,
+}: CreateJubmojiQuestProofArgs): Promise<string> => {
+  const proofClass = createJubmojiQuestProofInstance({
+    config,
+    overrideSigNullifierRandomness,
+    pathToCircuits,
+  });
+  const prerequisitePubKeys = config.prerequisiteCards.map((card) =>
+    getCardPubKeyFromIndex(card.index)
+  );
+  const collectionCardIndices = config.collectionCards.map(
     (card) => card.index
   );
   const proofJubmojis = jubmojis.filter((jubmoji) => {
@@ -66,7 +126,7 @@ export const createJubmojiPowerProof = async (
   });
 
   let proofArgs;
-  switch (power.quest.proofType) {
+  switch (config.proofType) {
     case $Enums.ProofType.IN_COLLECTION:
       if (proofJubmojis.length === 0) {
         throw new Error("You don't have any Jubmojis in this quest!");
@@ -88,6 +148,24 @@ export const createJubmojiPowerProof = async (
         jubmojis: proofJubmojis,
       };
       break;
+    case $Enums.ProofType.TEAM_LEADERBOARD:
+      const teamJubmojiList = jubmojis.filter((jubmoji) => {
+        return prerequisitePubKeys.includes(
+          getCardPubKeyFromIndex(jubmoji.pubKeyIndex)
+        );
+      });
+      if (teamJubmojiList.length === 0) {
+        throw new Error("You are not a member of any team!");
+      }
+      const teamJubmoji = teamJubmojiList[0]; // In the future, we can allow users to choose which team they represent
+      if (proofJubmojis.length === 0) {
+        throw new Error("You don't have any Jubmojis in this quest!");
+      }
+      proofArgs = {
+        teamJubmoji,
+        collectionJubmojis: proofJubmojis,
+      };
+      break;
     default:
       throw new Error("Invalid proof type.");
   }
@@ -96,13 +174,32 @@ export const createJubmojiPowerProof = async (
   return JSON.stringify(proof);
 };
 
-export const verifyJubmojiPowerProof = async (
-  power: JubmojiPower,
-  serializedProof: string,
-  pathToCircuits?: string
-): Promise<VerificationResult> => {
+// Verifies a proof from any quest parameters
+// Exact proof type is based on quest proofType parameter
+export const verifyJubmojiQuestProof = async ({
+  config,
+  serializedProof,
+  overrideSigNullifierRandomness,
+  pathToCircuits,
+}: VerifyJubmojiQuestProofArgs): Promise<VerificationResult> => {
   const proof = JSON.parse(serializedProof);
-  const proofClass = createProofInstanceFromJubmojiPower(power, pathToCircuits);
+  const proofClass = createJubmojiQuestProofInstance({
+    config,
+    overrideSigNullifierRandomness,
+    pathToCircuits,
+  });
 
   return await proofClass.verify(proof);
+};
+
+// Retrieves quest proof parameters from a JubmojiPower
+export const jubmojiPowerToQuestProofConfig = (
+  power: JubmojiPower
+): JubmojiQuestProofConfig => {
+  return {
+    proofType: power.quest.proofType,
+    proofParams: power.quest.proofParams as Prisma.JsonObject,
+    prerequisiteCards: power.quest.prerequisiteCards,
+    collectionCards: power.quest.collectionCards,
+  };
 };

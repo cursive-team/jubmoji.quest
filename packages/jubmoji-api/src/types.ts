@@ -19,20 +19,6 @@ export type Jubmoji = {
   U: string;
 };
 
-export enum ProofType {
-  JUBMOJI_IN_COLLECTION = "JUBMOJI_IN_COLLECTION",
-  JUBMOJI_IN_COLLECTION_NONCE = "JUBMOJI_IN_COLLECTION_NONCE",
-  N_UNIQUE_JUBMOJI_IN_COLLECTION = "N_UNIQUE_JUBMOJI_IN_COLLECTION",
-  PUBLIC_MESSAGE_SIGNATURE = "PUBLIC_MESSAGE_SIGNATURE",
-}
-
-export const ProofTypeToClass = {
-  [ProofType.JUBMOJI_IN_COLLECTION]: JubmojiInCollection,
-  [ProofType.JUBMOJI_IN_COLLECTION_NONCE]: JubmojiInCollectionWithNonce,
-  [ProofType.N_UNIQUE_JUBMOJI_IN_COLLECTION]: JubmojiInCollection,
-  [ProofType.PUBLIC_MESSAGE_SIGNATURE]: PublicMessageSignature,
-};
-
 // Defines a class used to create and verify proofs
 export interface ProofClass<A, P> {
   prove(proofArgs: A): Promise<P>;

@@ -44,47 +44,16 @@ export default function QuestDetailPage() {
   if (!quest) return <div>Quest not found</div>;
 
   const onUpdateTeamLeaderboardScore = async () => {
-    const proofParams = quest.proofParams as Prisma.JsonObject;
-    const teamPubKeys = quest.prerequisiteCards.map((card) =>
-      getCardPubKeyFromIndex(card.index)
-    );
-    const collectionPubKeys = quest.collectionCards.map((card) =>
-      getCardPubKeyFromIndex(card.index)
-    );
-    const sigNullifierRandomness = proofParams.sigNullifierRandomness as string;
+    if (!jubmojis) {
+      alert("You must have jubmojis to participate in this quest!");
+      return;
+    }
+
     const pathToCircuits = __dirname + "circuits/";
-    const teamLeaderboardProofClass = createProofInstance(TeamLeaderboard, {
-      teamPubKeys,
-      collectionPubKeys,
-      sigNullifierRandomness,
+    const teamLeaderboardProof = await createJubmojiQuestProof({
+      config: { ...quest, proofParams: quest.proofParams as Prisma.JsonObject },
+      jubmojis,
       pathToCircuits,
-    });
-
-    const teamJubmojiList = jubmojis?.filter((jubmoji) => {
-      return teamPubKeys.includes(getCardPubKeyFromIndex(jubmoji.pubKeyIndex));
-    });
-    if (!teamJubmojiList || teamJubmojiList.length === 0) {
-      alert(
-        "Please collect a Jubmoji from one of the team cards to participate in this quest!"
-      );
-      return;
-    }
-    const teamJubmoji = teamJubmojiList[0]; // In the future, we can allow users to choose which team they represent
-    const collectionJubmojis = jubmojis?.filter((jubmoji) => {
-      return collectionPubKeys.includes(
-        getCardPubKeyFromIndex(jubmoji.pubKeyIndex)
-      );
-    });
-    if (!collectionJubmojis || collectionJubmojis.length === 0) {
-      alert(
-        "Please collect a Jubmoji from one of this quest's cards to update your team's score!"
-      );
-      return;
-    }
-
-    const teamLeaderboardProof = await teamLeaderboardProofClass.prove({
-      teamJubmoji,
-      collectionJubmojis,
     });
 
     const response = await fetch(`/api/team-leaderboard`, {

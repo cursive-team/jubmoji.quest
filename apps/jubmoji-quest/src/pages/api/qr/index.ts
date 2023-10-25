@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiPower } from "@/types";
-import { verifyJubmojiPowerProof } from "@/lib/proving";
+import {
+  jubmojiPowerToQuestProofConfig,
+  verifyJubmojiQuestProof,
+} from "@/lib/proving";
 import path from "path";
 
 export default async function handler(
@@ -28,6 +31,11 @@ export default async function handler(
             proofType: true,
             proofParams: true,
             imageLink: true,
+            prerequisiteCards: {
+              select: {
+                index: true,
+              },
+            },
             collectionCards: {
               select: {
                 index: true,
@@ -43,11 +51,13 @@ export default async function handler(
       return;
     }
 
-    const { verified } = await verifyJubmojiPowerProof(
-      power,
+    const config = jubmojiPowerToQuestProofConfig(power);
+    const { verified } = await verifyJubmojiQuestProof({
+      config,
       serializedProof,
-      path.resolve(process.cwd(), "./public") + "/circuits/"
-    );
+      overrideSigNullifierRandomness: power.sigNullifierRandomness || undefined,
+      pathToCircuits: path.resolve(process.cwd(), "./public") + "/circuits/",
+    });
     if (!verified) {
       return res.status(500).json({ error: "Proof not verified." });
     }

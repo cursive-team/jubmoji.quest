@@ -3,14 +3,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { Prisma, $Enums } from "@prisma/client";
 import path from "path";
-import {
-  TeamLeaderboard,
-  TeamLeaderboardProof,
-  cardPubKeys,
-  createProofInstance,
-  getCardPubKeyFromIndex,
-} from "jubmoji-api";
+import { TeamLeaderboardProof, cardPubKeys } from "jubmoji-api";
 import { areAllBigIntsDifferent, bigIntToHex } from "babyjubjub-ecdsa";
+import { verifyJubmojiQuestProof } from "@/lib/proving";
 
 export default async function handler(
   req: NextApiRequest,
@@ -83,29 +78,18 @@ export default async function handler(
         return res.status(500).json({ message: "Invalid proof type" });
       }
 
-      const proofParams = quest.proofParams as Prisma.JsonObject;
-      const teamPubKeys = quest.prerequisiteCards.map((card) =>
-        getCardPubKeyFromIndex(card.index)
-      );
-      const collectionPubKeys = quest.collectionCards.map((card) =>
-        getCardPubKeyFromIndex(card.index)
-      );
-      const sigNullifierRandomness =
-        proofParams.sigNullifierRandomness as string;
       const pathToCircuits =
         path.resolve(process.cwd(), "./public") + "/circuits/";
-      const teamLeaderboardProofClass = createProofInstance(TeamLeaderboard, {
-        teamPubKeys,
-        collectionPubKeys,
-        sigNullifierRandomness,
-        pathToCircuits,
-      });
-
-      const teamLeaderboardProof = JSON.parse(
-        serializedProof
-      ) as TeamLeaderboardProof;
-      const { verified, consumedSigNullifiers } =
-        await teamLeaderboardProofClass.verify(teamLeaderboardProof);
+      const { verified, consumedSigNullifiers } = await verifyJubmojiQuestProof(
+        {
+          config: {
+            ...quest,
+            proofParams: quest.proofParams as Prisma.JsonObject,
+          },
+          serializedProof,
+          pathToCircuits,
+        }
+      );
       if (!verified) {
         return res.status(500).json({ message: "Proof not verified" });
       }
@@ -120,6 +104,9 @@ export default async function handler(
           .json({ message: "Do not provide multiple of the same signature" });
       }
 
+      const teamLeaderboardProof = JSON.parse(
+        serializedProof
+      ) as TeamLeaderboardProof;
       const teamCardPubKeyIndex = cardPubKeys.findIndex(
         (card) => card.pubKeyJub === teamLeaderboardProof.teamPubKey
       );

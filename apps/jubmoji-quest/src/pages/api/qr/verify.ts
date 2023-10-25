@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiQRCodeData } from "@/types";
-import { verifyJubmojiPowerProof } from "@/lib/proving";
+import {
+  jubmojiPowerToQuestProofConfig,
+  verifyJubmojiQuestProof,
+} from "@/lib/proving";
 import { bigIntToHex } from "babyjubjub-ecdsa";
 import path from "path";
 
@@ -40,6 +43,11 @@ export default async function handler(
                   proofType: true,
                   proofParams: true,
                   imageLink: true,
+                  prerequisiteCards: {
+                    select: {
+                      index: true,
+                    },
+                  },
                   collectionCards: {
                     select: {
                       index: true,
@@ -58,11 +66,14 @@ export default async function handler(
     }
 
     const powerId = qrCodeData.power.id;
-    const verificationResult = await verifyJubmojiPowerProof(
-      qrCodeData.power,
-      qrCodeData.serializedProof,
-      path.resolve(process.cwd(), "./public") + "/circuits/"
-    );
+    const config = jubmojiPowerToQuestProofConfig(qrCodeData.power);
+    const verificationResult = await verifyJubmojiQuestProof({
+      config,
+      serializedProof: qrCodeData.serializedProof,
+      overrideSigNullifierRandomness:
+        qrCodeData.power.sigNullifierRandomness || undefined,
+      pathToCircuits: path.resolve(process.cwd(), "./public") + "/circuits/",
+    });
     if (!verificationResult.verified) {
       return res
         .status(200)
