@@ -6,7 +6,7 @@ import {
   verifyJubmojiQuestProof,
 } from "@/lib/proving";
 import { bigIntToHex } from "babyjubjub-ecdsa";
-import path from "path";
+import { getServerPathToCircuits } from "@/lib/config";
 
 export default async function handler(
   req: NextApiRequest,
@@ -72,7 +72,7 @@ export default async function handler(
       serializedProof: qrCodeData.serializedProof,
       overrideSigNullifierRandomness:
         qrCodeData.power.sigNullifierRandomness || undefined,
-      pathToCircuits: path.resolve(process.cwd(), "./public") + "/circuits/",
+      pathToCircuits: getServerPathToCircuits(),
     });
     if (!verificationResult.verified) {
       return res

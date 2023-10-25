@@ -5,7 +5,7 @@ import {
   jubmojiPowerToQuestProofConfig,
   verifyJubmojiQuestProof,
 } from "@/lib/proving";
-import path from "path";
+import { getServerPathToCircuits } from "@/lib/config";
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,7 +56,7 @@ export default async function handler(
       config,
       serializedProof,
       overrideSigNullifierRandomness: power.sigNullifierRandomness || undefined,
-      pathToCircuits: path.resolve(process.cwd(), "./public") + "/circuits/",
+      pathToCircuits: getServerPathToCircuits(),
     });
     if (!verified) {
       return res.status(500).json({ error: "Proof not verified." });

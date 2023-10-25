@@ -2,13 +2,10 @@ import { JubmojiQuest } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { Prisma, $Enums } from "@prisma/client";
-import path from "path";
 import { TeamLeaderboardProof, cardPubKeys } from "jubmoji-api";
 import { areAllBigIntsDifferent, bigIntToHex } from "babyjubjub-ecdsa";
-import {
-  getServerPathToCircuits,
-  verifyJubmojiQuestProof,
-} from "@/lib/proving";
+import { verifyJubmojiQuestProof } from "@/lib/proving";
+import { getServerPathToCircuits } from "@/lib/config";
 
 export default async function handler(
   req: NextApiRequest,
@@ -81,14 +78,6 @@ export default async function handler(
         return res.status(500).json({ message: "Invalid proof type" });
       }
 
-      const pathToCircuits =
-        path.resolve(process.cwd(), "./public") + "/circuits/";
-      console.log("Path to circuits", process.cwd(), pathToCircuits);
-      console.log(
-        "Alternate path to circuits: ",
-        path.resolve(process.cwd(), "public", "circuits") + "/",
-        getServerPathToCircuits()
-      );
       const { verified, consumedSigNullifiers } = await verifyJubmojiQuestProof(
         {
           config: {
@@ -96,7 +85,7 @@ export default async function handler(
             proofParams: quest.proofParams as Prisma.JsonObject,
           },
           serializedProof,
-          pathToCircuits,
+          pathToCircuits: getServerPathToCircuits(),
         }
       );
       if (!verified) {

@@ -49,17 +49,10 @@ export default function QuestDetailPage() {
       return;
     }
 
-    const pathToCircuits = __dirname + "circuits/";
-    console.log(
-      "path to circuits",
-      __dirname,
-      pathToCircuits,
-      getClientPathToCircuits()
-    );
     const teamLeaderboardProof = await createJubmojiQuestProof({
       config: { ...quest, proofParams: quest.proofParams as Prisma.JsonObject },
       jubmojis,
-      pathToCircuits,
+      pathToCircuits: getClientPathToCircuits(),
     });
 
     const response = await fetch(`/api/team-leaderboard`, {
@@ -97,7 +90,8 @@ export default function QuestDetailPage() {
     }
 
     const { scoreMap } = await leaderboardResponse.json();
-    console.log(scoreMap);
+    // Todo: Use scores to update leaderboard
+    console.log("Team scores: ", scoreMap);
   };
 
   return (
