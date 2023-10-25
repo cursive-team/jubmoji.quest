@@ -36,6 +36,7 @@ const buttonVariants = cva(
 const iconVariants = cva("", {
   variants: {
     size: {
+      tiny: "text-[9px] ",
       sm: "text-[9px]",
       md: "text-base",
       lg: "text-base",
