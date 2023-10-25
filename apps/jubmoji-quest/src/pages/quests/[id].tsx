@@ -43,6 +43,69 @@ export default function QuestDetailPage() {
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
 
+  const onUpdateTeamLeaderboardScore = async () => {
+    const proofParams = quest.proofParams as Prisma.JsonObject;
+    const teamPubKeys = quest.prerequisiteCards.map((card) =>
+      getCardPubKeyFromIndex(card.index)
+    );
+    const collectionPubKeys = quest.collectionCards.map((card) =>
+      getCardPubKeyFromIndex(card.index)
+    );
+    const sigNullifierRandomness = proofParams.sigNullifierRandomness as string;
+    const pathToCircuits = __dirname + "circuits/";
+    const teamLeaderboardProofClass = createProofInstance(TeamLeaderboard, {
+      teamPubKeys,
+      collectionPubKeys,
+      sigNullifierRandomness,
+      pathToCircuits,
+    });
+
+    const teamJubmojiList = jubmojis?.filter((jubmoji) => {
+      return teamPubKeys.includes(getCardPubKeyFromIndex(jubmoji.pubKeyIndex));
+    });
+    if (!teamJubmojiList || teamJubmojiList.length === 0) {
+      alert(
+        "Please collect a Jubmoji from one of the team cards to participate in this quest!"
+      );
+      return;
+    }
+    const teamJubmoji = teamJubmojiList[0]; // In the future, we can allow users to choose which team they represent
+    const collectionJubmojis = jubmojis?.filter((jubmoji) => {
+      return collectionPubKeys.includes(
+        getCardPubKeyFromIndex(jubmoji.pubKeyIndex)
+      );
+    });
+    if (!collectionJubmojis || collectionJubmojis.length === 0) {
+      alert(
+        "Please collect a Jubmoji from one of this quest's cards to update your team's score!"
+      );
+      return;
+    }
+
+    const teamLeaderboardProof = await teamLeaderboardProofClass.prove({
+      teamJubmoji,
+      collectionJubmojis,
+    });
+
+    const response = await fetch(`/api/team-leaderboard`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        serializedProof: JSON.stringify(teamLeaderboardProof),
+      }),
+    });
+
+    if (!response.ok) {
+      alert("Failed to update team leaderboard score!");
+      return;
+    }
+
+    const { scoreAdded } = await response.json();
+    alert(`Added ${scoreAdded} points to your team's score!`);
+  };
+
   return (
     <div>
       <AppHeader
@@ -84,8 +147,14 @@ export default function QuestDetailPage() {
             </Link>
           );
         })}
-        <LeaderBoard></LeaderBoard>
-        <Button variant="secondary">Update team score</Button>
+        {quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD && (
+          <div>
+            <LeaderBoard></LeaderBoard>
+            <Button variant="secondary" onClick={onUpdateTeamLeaderboardScore}>
+              Update team score
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
