@@ -7,6 +7,7 @@ const buttonVariants = cva(
   {
     variants: {
       size: {
+        tiny: "text-[11px] py-1 px-4",
         sm: "text-[13px] leading-none gap-1 py-2 px-4",
         md: "text-[16px] py-3 leading-none gap-2 px-4",
         lg: "text-[16px] py-3 leading-none gap-2 px-4",
@@ -16,7 +17,8 @@ const buttonVariants = cva(
         secondary: "secondary bg-white text-black border border-shark-400",
         blue: "bg-baby-blue-default text-shark-970",
         transparent: "bg-transparent",
-        dark: "bg-black text-white border border-[#A6A6A6] !rounded-[8px] ",
+        dark: "bg-black text-white border border-[#A6A6A6]",
+        shark: "bg-shark-970 border border-shark-50 text-white",
       },
       rounded: {
         true: "rounded-full",

@@ -37,12 +37,9 @@ export const getJubmojiCardByPubIndex = (
     return null;
   }
 
-  // Emoji is fixed in hardware and fetched from hardcoded card metadata file
-  const { emoji } = cardPubKeys[pubKeyIndex];
+  const { emoji, imageBlobUrl: imagePath } = cardPubKeys[pubKeyIndex];
   // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
   const { name, owner, collectsFor, description, index } = cards[pubKeyIndex];
-  // Image path is fetched from the hardcoded card image map for offline use
-  const imagePath = cardPubKeys[pubKeyIndex].imageBlobUrl;
 
   return {
     emoji,

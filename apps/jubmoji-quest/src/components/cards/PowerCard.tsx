@@ -4,7 +4,7 @@ import { PowerIcons } from "../icons/PowerIcons";
 import { $Enums } from "@prisma/client";
 import { Icons } from "../Icons";
 
-interface PowerCardProps {
+export interface PowerCardProps {
   title: string;
   description?: string;
   powerType: $Enums.PowerType;

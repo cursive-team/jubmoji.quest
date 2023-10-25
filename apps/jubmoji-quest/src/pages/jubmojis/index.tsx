@@ -13,6 +13,7 @@ import BackupModal from "@/components/modals/BackupModal";
 import { cn } from "@/lib/utils";
 import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
+import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
@@ -71,7 +72,6 @@ export default function JubmojisPage() {
     return jubmoji.pubKeyIndex === collectedPubKeys[index];
   })?.msgNonce;
 
-
   const collectedJubmojis = collectedPubKeys.map((pubKeyIndex) => {
     return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
   });
@@ -91,20 +91,28 @@ export default function JubmojisPage() {
     .filter(Boolean);
 
   const JubmojiContent = () => {
-    if (isLoadingJubmojis) return <Placeholder.Card size="2xl" />;
+    if (isLoadingJubmojis)
+      return (
+        <div className="grid grid-cols-1 divide-y">
+          <Placeholder.CardArc />
+          <Placeholder.Card className=" !rounded-t-none" size="xs" />
+        </div>
+      );
 
     return (
       <>
         {name && owner && (
-          <CollectionCard
-            label={name}
-            icon={emoji}
-            edition={msgNonce}
-            owner={owner}
-            cardBackImage={imagePath}
-            actions={null}
-            quests={collectsFor}
-          />
+          <div className="mt-4">
+            <CollectionCardArc
+              label={name}
+              icon={emoji}
+              edition={msgNonce}
+              owner={owner}
+              cardBackImage={imagePath}
+              actions={null}
+              quests={collectsFor}
+            />
+          </div>
         )}
       </>
     );
@@ -152,7 +160,11 @@ export default function JubmojisPage() {
       <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
         Info for Jubmojis
       </Modal>
-      <div className="flex flex-col gap-4">
+      <div
+        className={cn("flex flex-col gap-4", {
+          invisible: infoModalOpen || backupModalOpen,
+        })}
+      >
         <AppHeader
           title="YOUR JUBMOJIS"
           actions={
