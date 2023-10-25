@@ -71,7 +71,6 @@ export default function JubmojisPage() {
     return jubmoji.pubKeyIndex === collectedPubKeys[index];
   })?.msgNonce;
 
-
   const collectedJubmojis = collectedPubKeys.map((pubKeyIndex) => {
     return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
   });

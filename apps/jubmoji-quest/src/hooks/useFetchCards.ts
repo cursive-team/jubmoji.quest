@@ -1,6 +1,7 @@
 import { JubmojiCollectionCard } from "@/types";
 import { Jubmoji, cardPubKeys } from "jubmoji-api";
 import { useQuery } from "react-query";
+import { useJubmojis } from "./useJubmojis";
 
 type JubmojiCardMap = Record<number, JubmojiCollectionCard>;
 
@@ -25,6 +26,34 @@ export const useFetchCards = () => {
     },
     {
       refetchOnWindowFocus: false,
+    }
+  );
+};
+
+/**
+ * Get list of the collected cards with all the information
+ * @returns JubmojiCardProps
+ */
+export const useFetchCollectedCards = () => {
+  const { isLoading, data: jubmojiCollectionCards = [] } = useFetchCards();
+  const { isLoading: isLoadingJubmojis, data: jubmojis = [] } = useJubmojis();
+
+  return useQuery(
+    ["collectedCards", jubmojis?.length],
+    async () => {
+      // get all jubmojis collected infos
+      const collectedPubKeys = Object.entries(jubmojis).map(
+        ([_index, { pubKeyIndex }]) => pubKeyIndex
+      );
+
+      const collectedJubmojis =
+        collectedPubKeys.map((pubKeyIndex) => {
+          return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
+        }) ?? [];
+      return collectedJubmojis;
+    },
+    {
+      enabled: !isLoading && !isLoadingJubmojis,
     }
   );
 };

@@ -1,20 +1,29 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { PowerCard, PowerTypeIconMapping } from "@/components/cards/PowerCard";
+import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "../../hooks/useJubmojis";
-import QRCodePower from "@/components/powers/qrCodePower";
 import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
+import { QRCodePower } from "@/components/powers/qrCodePower";
+import { TelegramPower } from "@/components/powers/TelegramPower";
+import { TwitterPower } from "@/components/powers/TwitterPower";
+import { JubmojiPower } from "@/types";
+import { Jubmoji } from "jubmoji-api";
 
 interface PowerDetailLabelProps {
   label: string;
   value: ReactNode;
+}
+
+export interface PowerContentProps {
+  power: JubmojiPower;
+  jubmojis: Jubmoji[];
 }
 
 const PagePlaceholder = () => {
@@ -42,6 +51,12 @@ const PowerDetailLabel = ({ label, value }: PowerDetailLabelProps) => {
   );
 };
 
+const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
+  QR_CODE: QRCodePower,
+  TELEGRAM: TelegramPower,
+  TWITTER: TwitterPower,
+};
+
 export default function PowerDetailPage() {
   const { data: jubmojis } = useJubmojis();
   const [bookmarked, setBookmarked] = React.useState(false);
@@ -57,6 +72,7 @@ export default function PowerDetailPage() {
 
   const powerIcon = PowerTypeIconMapping[power.powerType];
 
+  const PowerContentByType = PowerTypeContentMapping[power.powerType];
   return (
     <div>
       <AppHeader
@@ -98,9 +114,7 @@ export default function PowerDetailPage() {
           <PowerLabel>{power.description}</PowerLabel>
         </div>
 
-        {power.powerType === $Enums.PowerType.QR_CODE && (
-          <QRCodePower power={power} jubmojis={jubmojis || []} />
-        )}
+        <PowerContentByType power={power} jubmojis={jubmojis || []} />
       </div>
     </div>
   );
