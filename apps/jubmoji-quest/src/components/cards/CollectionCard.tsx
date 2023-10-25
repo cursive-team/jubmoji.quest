@@ -36,9 +36,6 @@ const FlipCardIconContainer = classed.div(
         true: "mx-auto",
       },
     },
-    defaultVariants: {
-      variant: "transparent",
-    },
   }
 );
 

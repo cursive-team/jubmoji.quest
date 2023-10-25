@@ -8,20 +8,26 @@ import Image from "next/image";
 import { Icons } from "../Icons";
 import { usePower } from "@/hooks/useFetchPowers";
 import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { classed } from "@tw-classed/react";
 
 export type QRCodePowerProps = {
   power: JubmojiPower;
   jubmojis: Jubmoji[];
 };
 
+const QrCodeWrapper = classed.div(
+  "bg-white rounded-[8px] w-full max-w-[156px]"
+);
+
 export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
   const [url, setUrl] = useState<string>();
 
   const usePowerMutation = usePower();
 
-  if (!url) {
-    return (
-      <PowerWrapper>
+  return (
+    <PowerWrapper>
+      {!url ? (
         <div className="flex items-center gap-4 justify-between">
           <div className="relative">
             <span className="absolute top-[6px] left-[12px] text-[13px] font-normal font-dm-sans text-shark-300">
@@ -37,11 +43,11 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
                   power,
                   jubmojis,
                 })
-                .then((url) => {
-                  if (typeof url === "string") {
-                    setUrl(url);
+                .then((data) => {
+                  if (typeof data === "string") {
+                    setUrl(data);
                   } else {
-                    // TODO: Show error to user
+                    toast.error(data.error);
                   }
                 })
             }
@@ -57,20 +63,41 @@ export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
             />
           </button>
         </div>
-      </PowerWrapper>
-    );
-  }
-
-  return (
-    <div
-      style={{ height: "auto", margin: "0 auto", maxWidth: 256, width: "100%" }}
-    >
-      <QRCode
-        size={512}
-        style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-        value={url}
-        viewBox={`0 0 512 512`}
-      />
-    </div>
+      ) : (
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <span className=" font-dm-sans text-base font-medium text-shark-50">
+              Title
+            </span>
+            <span className="flex flex-col gap-1 text-[13px] font-dm-sans text-shark-300 font-semibold">
+              <span className="block">
+                {new Intl.DateTimeFormat("en-US", {
+                  dateStyle: "long",
+                }).format(new Date())}
+              </span>
+              <span className="block text-tiny font-dm-sans text-shark-300 font-normal">
+                {new Intl.DateTimeFormat("en-US", {
+                  timeStyle: "medium",
+                }).format(new Date())}
+              </span>
+            </span>
+            <span className="text-[13px] font-dm-sans text-shark-300 font-semibold">
+              Owner
+            </span>
+            <span className="text-tiny font-dm-sans text-shark-300">
+              Location
+            </span>
+          </div>
+          <QrCodeWrapper>
+            <QRCode
+              size={156}
+              className="ml-auto p-4 h-auto w-full max-w-full"
+              value={url}
+              viewBox={`0 0 156 156`}
+            />
+          </QrCodeWrapper>
+        </div>
+      )}
+    </PowerWrapper>
   );
 }
