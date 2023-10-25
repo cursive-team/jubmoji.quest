@@ -6,6 +6,11 @@ import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { useMutation, useQuery } from "react-query";
 
+interface PowerMutationProps {
+  power: JubmojiPower;
+  jubmojis: Jubmoji[];
+}
+
 export const useFetchPowers = () => {
   return useQuery(
     ["powers"],
@@ -53,14 +58,9 @@ export const useFetchPowerById = (id: string | string[] | undefined) => {
  * @returns
  */
 export const usePowerMutation = () => {
-  return useMutation(
-    async ({
-      power,
-      jubmojis,
-    }: {
-      power: JubmojiPower;
-      jubmojis: Jubmoji[];
-    }) => {
+  return useMutation({
+    mutationKey: "usePower",
+    mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
       let serializedProof;
       try {
         serializedProof = await createJubmojiPowerProof(power, jubmojis);
@@ -91,8 +91,5 @@ export const usePowerMutation = () => {
       const { qrCodeUuid } = await response.json();
       return `${window.location.origin}/qr/${qrCodeUuid}`;
     },
-    {
-      mutationKey: "usePower",
-    }
-  );
+  });
 };
