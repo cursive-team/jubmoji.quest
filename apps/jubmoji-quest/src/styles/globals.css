@@ -38,7 +38,7 @@ html {
   color: #fff;
 }
 
-input[type="saerch"] {
+input[type="search"] {
   -webkit-appearance: none !important;
   background-color: red;
 }
