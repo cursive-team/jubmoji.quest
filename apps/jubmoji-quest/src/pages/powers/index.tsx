@@ -92,7 +92,7 @@ export default function PowersPage() {
                               title={name}
                               description={description}
                               powerType={powerType}
-                              shortDescription
+                              shortDescription={true}
                             />
                           </Link>
                         );

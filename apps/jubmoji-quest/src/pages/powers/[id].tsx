@@ -1,14 +1,21 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { PowerCard } from "@/components/cards/PowerCard";
+import { PowerCard, PowerTypeIconMapping } from "@/components/cards/PowerCard";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { ReactNode } from "react";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "../../hooks/useJubmojis";
 import QRCodePower from "@/components/powers/qrCodePower";
 import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
+import { Card } from "@/components/cards/Card";
+import { classed } from "@tw-classed/react";
+
+interface PowerDetailLabelProps {
+  label: string;
+  value: ReactNode;
+}
 
 const PagePlaceholder = () => {
   return (
@@ -21,8 +28,23 @@ const PagePlaceholder = () => {
     </div>
   );
 };
+
+const PowerLabel = classed.span(
+  "text-shark-300 font-dm-sans text-base font-normal leading-[120%]"
+);
+
+const PowerDetailLabel = ({ label, value }: PowerDetailLabelProps) => {
+  return (
+    <div className="flex gap-2 items-center">
+      <PowerLabel className="!font-medium min-w-[80px]">{label}</PowerLabel>
+      {value}
+    </div>
+  );
+};
+
 export default function PowerDetailPage() {
   const { data: jubmojis } = useJubmojis();
+  const [bookmarked, setBookmarked] = React.useState(false);
 
   const router = useRouter();
   const { id: powerId } = router.query;
@@ -32,6 +54,8 @@ export default function PowerDetailPage() {
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) return null;
+
+  const powerIcon = PowerTypeIconMapping[power.powerType];
 
   return (
     <div>
@@ -43,22 +67,35 @@ export default function PowerDetailPage() {
         }
       />
       <div className="grid grid-cols-1 gap-4">
-        <PowerCard
-          key={power.id}
-          title={power.name}
-          description={power.description}
-          powerType={power.powerType}
-        />
-        <div>
-          <p>{"Power name: " + power.name} </p>
-          <p>{"Power description: " + power.description} </p>
-          <p>{"Power type: " + power.powerType} </p>
-          <p>
-            {"Unlocked from quest: "}
-            <Link href={"/quests/" + power.quest.id} className="underline">
-              {power.quest.name}
-            </Link>
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-12">{powerIcon}</div>
+            <Card.Title className="!leading-none">{power.name}</Card.Title>
+          </div>
+          <div className="flex items-start ml-auto w-6 h-6">
+            {bookmarked ? <Icons.starSolid /> : <Icons.star />}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 py-5">
+          <PowerDetailLabel
+            label="Quest"
+            value={
+              <Link
+                href={`/quests/${power.quest.id}`}
+                className="underline text-baby-blue-default"
+              >
+                {power.quest.name}
+              </Link>
+            }
+          />
+          <PowerDetailLabel
+            label="Proof"
+            value={<PowerLabel>{power.name}</PowerLabel>}
+          />
+        </div>
+        <div className="py-4">
+          <PowerLabel>{power.description}</PowerLabel>
         </div>
 
         {power.powerType === $Enums.PowerType.QR_CODE && (
