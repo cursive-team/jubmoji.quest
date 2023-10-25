@@ -32,10 +32,12 @@ export default function QuestDetailPage() {
   const { isLoading: isLoadingQuest, data: quest = null } =
     useFetchQuestById(questId);
 
-  const endDateLabel = new Intl.DateTimeFormat("en-US", {
-    dateStyle: "long",
-    timeStyle: "medium",
-  }).format(new Date(quest?.endTime!));
+  const endDateLabel = quest?.endTime
+    ? new Intl.DateTimeFormat("en-US", {
+        dateStyle: "long",
+        timeStyle: "medium",
+      }).format(new Date(quest.endTime))
+    : undefined;
 
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
