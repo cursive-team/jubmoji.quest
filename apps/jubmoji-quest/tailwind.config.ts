@@ -18,6 +18,10 @@ const backfaceVisibility = plugin(function ({ addUtilities }: any) {
     ".rotate-y-180": {
       transform: "rotateY(180deg)",
     },
+    ".fixed-bottom": {
+      position: "fixed",
+      bottom: "80px", // avoid the footer
+    },
   });
 });
 
@@ -67,6 +71,7 @@ const config: Config = {
           500: "#6A6B70",
           600: "#5A5B60",
           700: "#4D4D51",
+          800: "#434347",
           900: "#3B3B3E",
           950: "#252527",
           970: "#1E1E1F",

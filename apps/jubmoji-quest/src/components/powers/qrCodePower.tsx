@@ -1,12 +1,13 @@
-import { Button } from "@/components/ui/Button";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import QRCode from "react-qr-code";
-import {
-  createJubmojiPowerProof,
-  verifyJubmojiPowerProof,
-} from "@/lib/proving";
+
 import { useState } from "react";
+import { PowerWrapper } from "../PowerWrapper";
+import Image from "next/image";
+import { Icons } from "../Icons";
+import { usePower } from "@/hooks/useFetchPowers";
+import { cn } from "@/lib/utils";
 
 export type QRCodePowerProps = {
   power: JubmojiPower;
@@ -16,51 +17,47 @@ export type QRCodePowerProps = {
 export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
   const [url, setUrl] = useState<string>();
 
-  const onUsePower = async () => {
-    alert("Using power...");
-
-    let serializedProof;
-    try {
-      serializedProof = await createJubmojiPowerProof(power, jubmojis);
-    } catch (error) {
-      console.log(error);
-      alert("Failed to use your power!");
-      return;
-    }
-
-    let { verified } = await verifyJubmojiPowerProof(power, serializedProof);
-    if (!verified) {
-      alert("Failed to use your power!");
-      return;
-    }
-
-    const response = await fetch(`/api/qr`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        powerId: power.id,
-        serializedProof,
-      }),
-    });
-
-    if (!response.ok) {
-      alert("Failed to use your power!");
-      return;
-    }
-
-    const { qrCodeUuid } = await response.json();
-    setUrl(`${window.location.origin}/qr/${qrCodeUuid}`);
-  };
+  const usePowerMutation = usePower();
 
   if (!url) {
     return (
-      <div>
-        <Button variant="secondary" onClick={onUsePower}>
-          Use Power
-        </Button>
-      </div>
+      <PowerWrapper>
+        <div className="flex items-center gap-4 justify-between">
+          <div className="relative">
+            <span className="absolute top-[6px] left-[12px] text-[13px] font-normal font-dm-sans text-shark-300">
+              Tap and hold to prove
+            </span>
+            <Icons.bubble className="text-shark-800" />
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              usePowerMutation
+                .mutateAsync({
+                  power,
+                  jubmojis,
+                })
+                .then((url) => {
+                  if (typeof url === "string") {
+                    setUrl(url);
+                  } else {
+                    // TODO: Show error to user
+                  }
+                })
+            }
+          >
+            <Image
+              src="/images/zkp-maker.png"
+              width={150}
+              height={150}
+              alt="zkp marker"
+              className={cn("", {
+                "animate animate-pulse": usePowerMutation.isLoading,
+              })}
+            />
+          </button>
+        </div>
+      </PowerWrapper>
     );
   }
 

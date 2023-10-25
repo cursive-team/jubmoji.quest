@@ -391,4 +391,19 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  bubble: (props: any) => (
+    <svg
+      width={166}
+      height={32}
+      viewBox="0 0 166 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M0.5 8C0.5 3.58172 4.08172 0 8.5 0H150.5C154.918 0 158.5 3.58172 158.5 8V13L165.5 16L158.5 19V24C158.5 28.4183 154.918 32 150.5 32H83.5H79.5H75.5H8.5C4.08172 32 0.5 28.4183 0.5 24V8Z"
+        fill="currentColor"
+      />
+    </svg>
+  ),
 };

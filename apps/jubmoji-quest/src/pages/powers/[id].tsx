@@ -97,6 +97,7 @@ export default function PowerDetailPage() {
         <div className="py-4">
           <PowerLabel>{power.description}</PowerLabel>
         </div>
+        
 
         {power.powerType === $Enums.PowerType.QR_CODE && (
           <QRCodePower power={power} jubmojis={jubmojis || []} />
