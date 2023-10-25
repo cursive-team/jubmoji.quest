@@ -10,7 +10,7 @@ import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
-import { QRCodePower } from "@/components/powers/QRCodePower";
+import { PowerQrCode } from "@/components/powers/PowerQrCode";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -100,7 +100,7 @@ export default function PowerDetailPage() {
         </div>
 
         {power.powerType === $Enums.PowerType.QR_CODE && (
-          <QRCodePower power={power} jubmojis={jubmojis || []} />
+          <PowerQrCode power={power} jubmojis={jubmojis || []} />
         )}
       </div>
     </div>
