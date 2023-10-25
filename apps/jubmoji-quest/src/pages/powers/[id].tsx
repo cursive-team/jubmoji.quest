@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "../../hooks/useJubmojis";
-import QRCodePower from "@/components/powers/qrCodePower";
 import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
+import { QRCodePower } from "@/components/powers/QRCodePower";
 
 interface PowerDetailLabelProps {
   label: string;
