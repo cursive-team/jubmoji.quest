@@ -1,5 +1,4 @@
 import QRCode from "react-qr-code";
-
 import { useState } from "react";
 import { PowerWrapper } from "../PowerWrapper";
 import Image from "next/image";
@@ -14,7 +13,7 @@ const QrCodeWrapper = classed.div(
   "bg-white rounded-[8px] w-full max-w-[156px]"
 );
 
-const QRCodePower = ({ power, jubmojis }: PowerContentProps) => {
+const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
   const [url, setUrl] = useState<string>();
 
   const powerMutation = usePowerMutation();
@@ -96,4 +95,6 @@ const QRCodePower = ({ power, jubmojis }: PowerContentProps) => {
   );
 };
 
-export { QRCodePower };
+PowerQrCode.displayName = "PowerQrCode";
+
+export { PowerQrCode };

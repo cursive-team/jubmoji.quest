@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
+import { getRandomNullifierRandomness } from "jubmoji-api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,11 +23,9 @@ export default async function handler(
         collectionCardIndices,
       } = req.body;
 
-      // Todo: Add random nullifiers
-      const sigNullifierRandomness = "abc123";
-
       // Todo: Need validations for data
 
+      const sigNullifierRandomness = getRandomNullifierRandomness();
       const proofParams: any = {
         sigNullifierRandomness,
       };

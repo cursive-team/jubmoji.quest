@@ -9,8 +9,6 @@ export default async function handler(
     const { index, name, description, owner } = req.body;
 
     try {
-      // Todo: Need validations for data
-
       const newCard = await prisma.card.create({
         data: {
           index,

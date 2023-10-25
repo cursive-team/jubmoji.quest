@@ -70,7 +70,9 @@ export class JubmojiInCollection {
       this.collectionPubKeys,
       index
     );
-    const pubKeyNullifierRandomness = getRandomNullifierRandomness();
+    const pubKeyNullifierRandomness = hexToBigInt(
+      getRandomNullifierRandomness()
+    );
 
     const membershipProof = await proveMembership({
       sig,
@@ -133,7 +135,9 @@ export class JubmojiInCollectionWithNonce {
       this.collectionPubKeys,
       index
     );
-    const pubKeyNullifierRandomness = getRandomNullifierRandomness();
+    const pubKeyNullifierRandomness = hexToBigInt(
+      getRandomNullifierRandomness()
+    );
 
     const membershipProof = await proveMembership({
       sig,
@@ -205,7 +209,9 @@ export class NUniqueJubmojisInCollection {
   async prove({
     jubmojis,
   }: NUniqueJubmojiInCollectionProofArgs): Promise<NUniqueJubmojiInCollectionProof> {
-    const pubKeyNullifierRandomness = getRandomNullifierRandomness();
+    const pubKeyNullifierRandomness = hexToBigInt(
+      getRandomNullifierRandomness()
+    );
 
     const sigs = [];
     const msgHashes = [];

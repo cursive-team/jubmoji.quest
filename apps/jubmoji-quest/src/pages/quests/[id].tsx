@@ -29,8 +29,9 @@ export default function QuestDetailPage() {
   const router = useRouter();
   const { id: questId } = router.query;
 
-  const { isLoading: isLoadingQuest, data: quest = null } =
-    useFetchQuestById(questId);
+  const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
+    questId as string
+  );
 
   const endDateLabel = quest?.endTime
     ? new Intl.DateTimeFormat("en-US", {
@@ -62,7 +63,7 @@ export default function QuestDetailPage() {
           <div className="flex flex-col gap-4 mt-6">
             <div className="flex flex-col">
               <Card.Title className="!text-base text-left">Collect:</Card.Title>
-              <div className="flex gap-2">[COLLETED_ITEMS]</div>
+              <div className="flex gap-2"></div>
             </div>
             <div className="ml-auto">
               <span className=" text-shark-400 text-[13px] font-dm-sans">

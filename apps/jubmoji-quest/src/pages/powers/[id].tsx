@@ -10,9 +10,9 @@ import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
-import { QRCodePower } from "@/components/powers/qrCodePower";
 import { TelegramPower } from "@/components/powers/TelegramPower";
 import { TwitterPower } from "@/components/powers/TwitterPower";
+import { PowerQrCode } from "@/components/powers/PowerQrCode";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 
@@ -52,7 +52,7 @@ const PowerDetailLabel = ({ label, value }: PowerDetailLabelProps) => {
 };
 
 const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
-  QR_CODE: QRCodePower,
+  QR_CODE: PowerQrCode,
   TELEGRAM: TelegramPower,
   TWITTER: TwitterPower,
 };
@@ -64,8 +64,9 @@ export default function PowerDetailPage() {
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  const { isLoading: isLoadingPower, data: power = null } =
-    useFetchPowerById(powerId);
+  const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
+    powerId as string
+  );
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) return null;

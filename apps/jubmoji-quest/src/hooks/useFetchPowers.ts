@@ -1,7 +1,4 @@
-import {
-  createJubmojiPowerProof,
-  verifyJubmojiPowerProof,
-} from "@/lib/proving";
+import { createJubmojiPowerProof } from "@/lib/proving";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { useMutation, useQuery } from "react-query";
@@ -32,7 +29,7 @@ export const useFetchPowers = () => {
   );
 };
 
-export const useFetchPowerById = (id: string | string[] | undefined) => {
+export const useFetchPowerById = (id: string | number) => {
   return useQuery(
     ["powers", id],
     async (): Promise<JubmojiPower | null> => {
@@ -63,13 +60,13 @@ export const usePowerMutation = () => {
     mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
       let serializedProof;
       try {
-        serializedProof = await createJubmojiPowerProof(power, jubmojis);
+        serializedProof = await createJubmojiPowerProof(
+          power,
+          jubmojis,
+          __dirname + "circuits/"
+        );
       } catch (error) {
-        return { error: "Failed to use your power!" };
-      }
-
-      let { verified } = await verifyJubmojiPowerProof(power, serializedProof);
-      if (!verified) {
+        console.log(error);
         return { error: "Failed to use your power!" };
       }
 
