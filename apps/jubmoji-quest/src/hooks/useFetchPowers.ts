@@ -29,7 +29,7 @@ export const useFetchPowers = () => {
   );
 };
 
-export const useFetchPowerById = (id: string | string[] | undefined) => {
+export const useFetchPowerById = (id: string | number) => {
   return useQuery(
     ["powers", id],
     async (): Promise<JubmojiPower | null> => {

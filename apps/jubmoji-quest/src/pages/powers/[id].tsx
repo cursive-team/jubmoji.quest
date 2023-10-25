@@ -49,8 +49,9 @@ export default function PowerDetailPage() {
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  const { isLoading: isLoadingPower, data: power = null } =
-    useFetchPowerById(powerId);
+  const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
+    powerId as string
+  );
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) return null;
