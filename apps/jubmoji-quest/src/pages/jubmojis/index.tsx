@@ -180,10 +180,10 @@ export default function JubmojisPage() {
           }
         />
         <div
-          className={cn("grid justify-between gap-2", {
-            "grid-cols-[1fr_70px]": isSearchMode,
-            "grid-cols-[1fr_110px]": !isSearchMode,
-          })}
+          className={cn(
+            "grid justify-between gap-2",
+            isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr_110px]"
+          )}
         >
           <Input
             type="search"

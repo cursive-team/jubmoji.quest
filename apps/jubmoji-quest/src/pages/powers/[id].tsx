@@ -1,6 +1,6 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { PowerCard, PowerTypeIconMapping } from "@/components/cards/PowerCard";
+import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
@@ -11,20 +11,43 @@ import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
 import { PowerQrCode } from "@/components/powers/PowerQrCode";
+import { TelegramPower } from "@/components/powers/TelegramPower";
+import { TwitterPower } from "@/components/powers/TwitterPower";
+import { JubmojiPower } from "@/types";
+import { Jubmoji } from "jubmoji-api";
 
 interface PowerDetailLabelProps {
   label: string;
   value: ReactNode;
 }
 
+export interface PowerContentProps {
+  power: JubmojiPower;
+  jubmojis: Jubmoji[];
+}
+
 const PagePlaceholder = () => {
   return (
-    <div className="grid grid-cols-1 gap-4 py-4">
+    <div className="grid grid-cols-1 gap-3 py-4">
       <div className="py-3">
         <Placeholder.Base className="w-4 h-4" />
       </div>
-      <Placeholder.Card size="md" />
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
+          <Placeholder.Line />
+          <Placeholder.Line size="md" />
+        </div>
+      </div>
       <Placeholder.Card size="xs" />
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
+          <Placeholder.Line />
+        </div>
+      </div>
+
+      <div className="fixed left-0 bottom-[62px] xs:bottom-[78px] right-0 mt-auto">
+        <Placeholder.Card className="!rounded-t-[32px]" size="md" />
+      </div>
     </div>
   );
 };
@@ -42,6 +65,12 @@ const PowerDetailLabel = ({ label, value }: PowerDetailLabelProps) => {
   );
 };
 
+const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
+  QR_CODE: PowerQrCode,
+  TELEGRAM: TelegramPower,
+  TWITTER: TwitterPower,
+};
+
 export default function PowerDetailPage() {
   const { data: jubmojis } = useJubmojis();
   const [bookmarked, setBookmarked] = React.useState(false);
@@ -49,15 +78,24 @@ export default function PowerDetailPage() {
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
-    powerId as string
-  );
+  const {
+    isError,
+    isLoading: isLoadingPower,
+    data: power = null,
+  } = useFetchPowerById(powerId as string);
 
   if (isLoadingPower) return <PagePlaceholder />;
-  if (!power) return null;
+  if (!power) {
+    return (
+      <span className="mt-4 text-center font-dm-sans text-base">
+        No power detail available.
+      </span>
+    );
+  }
 
   const powerIcon = PowerTypeIconMapping[power.powerType];
 
+  const PowerContentByType = PowerTypeContentMapping[power.powerType];
   return (
     <div>
       <AppHeader
@@ -99,9 +137,7 @@ export default function PowerDetailPage() {
           <PowerLabel>{power.description}</PowerLabel>
         </div>
 
-        {power.powerType === $Enums.PowerType.QR_CODE && (
-          <PowerQrCode power={power} jubmojis={jubmojis || []} />
-        )}
+        <PowerContentByType power={power} jubmojis={jubmojis || []} />
       </div>
     </div>
   );

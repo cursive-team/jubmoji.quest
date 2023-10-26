@@ -3,6 +3,18 @@ import { Card } from "./cards/Card";
 
 const PlaceholderBase = classed.div("bg-slate-300 animate-pulse");
 
+const PlaceholderLine = classed.div(PlaceholderBase, "w-full", {
+  variants: {
+    size: {
+      sm: "h-[8px]",
+      md: "h-[16px]",
+    },
+  },
+  defaultVariants: {
+    size: "sm",
+  },
+});
+
 const PlaceholderCard = classed.div(PlaceholderBase, Card.Base, {
   variants: {
     size: {
@@ -44,4 +56,5 @@ export const Placeholder = {
   Card: PlaceholderCard,
   Button: PlaceholderButton,
   CardArc: PlaceholderCardArc,
+  Line: PlaceholderLine,
 };

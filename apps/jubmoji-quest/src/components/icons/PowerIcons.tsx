@@ -32,31 +32,31 @@ export const PowerIcons: Record<string, any> = {
       <path
         d="M33.12 35.6999V34.0699"
         stroke="#92D7FE"
-        strokeMiterlimit="10"
+        stroke-miterlimit="10"
         strokeLinecap="round"
       />
       <path
         d="M33.12 30.4999V28.8699"
         stroke="#92D7FE"
-        strokeMiterlimit="10"
+        stroke-miterlimit="10"
         strokeLinecap="round"
       />
       <path
         d="M33.12 25.2599V23.6299"
         stroke="#92D7FE"
-        strokeMiterlimit="10"
+        stroke-miterlimit="10"
         strokeLinecap="round"
       />
       <path
         d="M33.12 20.34V18.71"
         stroke="#92D7FE"
-        strokeMiterlimit="10"
+        stroke-miterlimit="10"
         strokeLinecap="round"
       />
       <path
         d="M33.12 15.4299V13.7999"
         stroke="#92D7FE"
-        strokeMiterlimit="10"
+        stroke-miterlimit="10"
         strokeLinecap="round"
       />
     </svg>

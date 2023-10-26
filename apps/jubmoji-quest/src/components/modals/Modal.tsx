@@ -19,8 +19,8 @@ const Modal = ({
   onClose, // run when modal close
 }: ModalProps) => {
   const onCloseModal = () => {
-    setIsOpen(false);
     onClose?.();
+    setIsOpen(false);
   };
 
   return (
