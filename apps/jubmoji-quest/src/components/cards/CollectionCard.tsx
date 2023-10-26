@@ -25,8 +25,20 @@ interface CollectionCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CardText = classed.span(
-  "text-shark-50 text-base font-normal text-dm-sans"
+  "text-shark-50 text-[13px] font-normal font-dm-sans"
 );
+
+const FlipCardIconContainer = classed.div(
+  "w-[60px] h-[60px] rounded-full flex items-center justify-center",
+  {
+    variants: {
+      centred: {
+        true: "mx-auto",
+      },
+    },
+  }
+);
+
 const FlipCard = classed.div("perspective justify-center", {
   variants: {
     centred: {
@@ -54,12 +66,12 @@ const FlipCardWrapper = classed.div(
   }
 );
 const FlipCardContainer = classed.div(
-  "absolute flex flex-col rounded-lg p-5 w-full h-full backface-hidden"
+  "absolute inset-0 flex flex-col rounded-lg p-5 w-full h-full backface-hidden"
 );
 const FrontCard = classed(FlipCardContainer, "gap-4 self-stretch bg-shark-950");
 const BackCard = classed(
   FlipCardContainer,
-  "bg-cover bg-center bg-slate-200 transform rotate-y-180"
+  "bg-cover bg-center bg-slate-200 transform rotate-y-180 cursor-pointer overflow-hidden"
 );
 
 const CollectionCard = ({
@@ -94,10 +106,10 @@ const CollectionCard = ({
   const CollectionContent = () => {
     if (!showQuest) {
       return (
-        <>
+        <div className="flex flex-col gap-3">
           {edition && <CardText>Edition {`#${edition}`}</CardText>}
           <CardText>{owner}</CardText>
-        </>
+        </div>
       );
     }
 
@@ -126,13 +138,15 @@ const CollectionCard = ({
       >
         <FrontCard>
           <div className="flex justify-between items-start">
-            <div
-              className={cn("text-[40px] leading-1", {
-                "mx-auto": centred,
-              })}
-            >
-              {icon}
-            </div>
+            <FlipCardIconContainer centred={centred}>
+              <span
+                className={cn(
+                  "text-[40px] mt-[9px] inline-block text-space-mono font-bold leading-[40px]"
+                )}
+              >
+                {icon}
+              </span>
+            </FlipCardIconContainer>
             {canFlip && (
               <button
                 onClick={onFlipCard}
@@ -168,7 +182,7 @@ const CollectionCard = ({
                 </Button>
               </div>
             )}
-            {actions && <div>{actions}</div>}
+            {actions && <div className="ml-auto">{actions}</div>}
           </div>
         </FrontCard>
         <BackCard onClick={onFlipCard} style={backCoverImage} />

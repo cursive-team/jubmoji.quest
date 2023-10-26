@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import type { AppProps } from "next/app";
 import AppFooter from "@/components/AppFooter";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,11 @@ export default function App({ Component, pageProps }: AppProps) {
         </div>
       </div>
       <AppFooter />
+      <Toaster
+        toastOptions={{
+          className: "font-dm-sans",
+        }}
+      />
     </QueryClientProvider>
   );
 }

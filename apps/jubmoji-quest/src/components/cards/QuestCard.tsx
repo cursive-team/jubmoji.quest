@@ -8,8 +8,10 @@ interface CardProps extends Classed.VariantProps<typeof Card.Base> {
   description?: string;
   image?: string;
   bookmarked?: boolean;
-  percentageProgress?: number;
+  collected?: number;
+  collectionTotalItems?: number;
   showProgress?: boolean;
+  children?: React.ReactNode;
 }
 
 const QuestCard = ({
@@ -17,10 +19,14 @@ const QuestCard = ({
   title,
   description,
   bookmarked = false,
-  percentageProgress = 0,
+  collected = 0,
+  collectionTotalItems = 0,
   showProgress = false,
   disabled = false,
+  children,
 }: CardProps) => {
+  const percentageProgress = (collected / (collectionTotalItems || 1)) * 100;
+
   return (
     <Card.Base disabled={disabled}>
       <Card.Image
@@ -37,14 +43,21 @@ const QuestCard = ({
         </div>
         <Card.Description>{description}</Card.Description>
         {showProgress && (
-          <div className="flex flex-col justify-center items-center gap-2 self-stretch py-2 px-0">
-            <div className="flex items-center gap-2 self-stretch border border-shark-400">
+          <div className="flex justify-center items-center gap-2 self-stretch">
+            <div className="flex items-center self-stretch border border-shark-400 w-full">
               <div
-                className={`w-[${percentageProgress}%] h-2 border-shark-400`}
+                className={`h-full bg-shark-400`}
+                style={{
+                  width: `${percentageProgress}%`,
+                }}
               />
             </div>
+            <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
+              {collected}/{collectionTotalItems}
+            </span>
           </div>
         )}
+        {children}
       </Card.Content>
     </Card.Base>
   );

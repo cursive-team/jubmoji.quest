@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^1.4.1",
     "@prisma/client": "^5.4.2",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tw-classed/react": "^1.5.2",
     "@types/react-datepicker": "^4.19.1",
     "babyjubjub-ecdsa": "^1.1.2",

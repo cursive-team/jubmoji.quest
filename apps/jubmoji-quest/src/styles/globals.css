@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=Hind+Siliguri:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=Hind+Siliguri:wght@400;600;700&family=Space+Mono:wght@700&display=swap');
 
 @font-face {
   font-family: 'Giorgio';
@@ -36,4 +36,12 @@
 html {
   font-family: "Giorgio", sans-serif;
   color: #fff;
+}
+
+input[type="search"] {
+  -webkit-appearance: none !important;
+}
+
+input[type="search"]::-ms-clear {
+  background: yellow;
 }

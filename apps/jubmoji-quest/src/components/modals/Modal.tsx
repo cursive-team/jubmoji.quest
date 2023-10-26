@@ -2,12 +2,13 @@ import { Transition, Dialog } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { Icons } from "../Icons";
 
-interface ModalProps
+export interface ModalProps
   extends Pick<React.HTMLAttributes<HTMLDivElement>, "children"> {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   children?: React.ReactNode;
   closable?: boolean;
+  onClose?: () => void;
 }
 
 const Modal = ({
@@ -15,18 +16,16 @@ const Modal = ({
   setIsOpen,
   children,
   closable = true, // show close button when active
+  onClose, // run when modal close
 }: ModalProps) => {
-  function closeModal() {
+  const onCloseModal = () => {
     setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
+    onClose?.();
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog as="div" className="relative z-10" onClose={onCloseModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -52,11 +51,11 @@ const Modal = ({
             >
               <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-w-md transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
                 {closable && (
-                  <div className="fixed z-10 right-[24px] top-[32px] flex items-center h-12 py-8 ring-0 focus:right-0 focus:outline-none outline-none">
+                  <div className="fixed z-10 right-[24px] top-[9px] flex items-center h-12 py-8">
                     <button
                       type="button"
-                      className="ml-auto"
-                      onClick={closeModal}
+                      className="ml-auto ring-0 focus:right-0 focus:outline-none outline-none cursor-pointer"
+                      onClick={onCloseModal}
                     >
                       <Icons.close />
                     </button>

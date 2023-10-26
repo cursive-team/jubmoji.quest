@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { RadioGroup } from "@headlessui/react";
 import { classed } from "@tw-classed/react";
 import React, { useState } from "react";
@@ -18,12 +19,14 @@ interface OptionsProps {
   object?: Record<string, string>;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  disabled?: boolean;
 }
 
 export default function Options({
   object = {},
   defaultValue,
   onChange,
+  disabled,
 }: OptionsProps) {
   let [option, setOption] = useState(defaultValue);
 
@@ -34,9 +37,12 @@ export default function Options({
 
   return (
     <RadioGroup
-      className="flex gap-4 overflow-scroll"
+      className={cn("flex gap-4 overflow-scroll", {
+        "opacity-50": disabled,
+      })}
       value={option}
       onChange={handleChange}
+      disabled={disabled}
     >
       {Object.entries(object).map(([key, label]) => {
         return (

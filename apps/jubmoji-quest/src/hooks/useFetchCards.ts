@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 
 type JubmojiCardMap = Record<number, JubmojiCollectionCard>;
 
-export const useCards = () => {
+export const useFetchCards = () => {
   return useQuery(
     ["cards"],
     async (): Promise<JubmojiCardMap> => {
@@ -40,7 +40,7 @@ export const getJubmojiCardByPubIndex = (
   // Emoji is fixed in hardware and fetched from hardcoded card metadata file
   const { emoji } = cardPubKeys[pubKeyIndex];
   // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
-  const { name, owner, collectsFor } = cards[pubKeyIndex];
+  const { name, owner, collectsFor, description, index } = cards[pubKeyIndex];
   // Image path is fetched from the hardcoded card image map for offline use
   const imagePath = cardPubKeys[pubKeyIndex].imageBlobUrl;
 
@@ -48,8 +48,11 @@ export const getJubmojiCardByPubIndex = (
     emoji,
     name,
     owner,
+    description,
     collectsFor,
     imagePath,
+    index,
+    pubKeyIndex,
   };
 };
 
@@ -57,6 +60,9 @@ export interface JubmojiCardProps {
   emoji?: any;
   name: string;
   owner: string;
+  description: string;
   collectsFor?: any[];
   imagePath: string;
+  index: number;
+  pubKeyIndex: number;
 }
