@@ -105,13 +105,6 @@ export default async function handler(
       const teamLeaderboardProof = JSON.parse(
         serializedProof
       ) as TeamLeaderboardProof;
-      const teamCardPubKeyIndex = cardPubKeys.findIndex(
-        (card) => card.pubKeyJub === teamLeaderboardProof.teamPubKey
-      );
-      if (teamCardPubKeyIndex === -1) {
-        return res.status(500).json({ message: "Invalid team public key" });
-      }
-
       const consumedSigNullifiersHex = consumedSigNullifiers.map(bigIntToHex);
       const previouslyUsedSigNullifiers =
         await prisma.teamLeaderboardNullifiers.findMany({
@@ -119,12 +112,11 @@ export default async function handler(
             questId: Number(questId),
           },
         });
-
+      const usedNullifierSet = new Set(
+        previouslyUsedSigNullifiers.map((n) => n.sigNullifier)
+      );
       const newlyConsumedSigNullifiers = consumedSigNullifiersHex.filter(
-        (nullifier) =>
-          !previouslyUsedSigNullifiers.find(
-            (usedNullifier) => usedNullifier.sigNullifier === nullifier
-          )
+        (nullifier) => !usedNullifierSet.has(nullifier)
       );
       if (newlyConsumedSigNullifiers.length === 0) {
         return res
@@ -135,7 +127,7 @@ export default async function handler(
       const scoreAdded = newlyConsumedSigNullifiers.length;
       await prisma.teamLeaderboardNullifiers.createMany({
         data: newlyConsumedSigNullifiers.map((nullifier) => ({
-          teamPubKeyIndex: teamCardPubKeyIndex,
+          teamPubKeyIndex: teamLeaderboardProof.teamPubKeyIndex,
           sigNullifier: nullifier,
           questId: Number(questId),
         })),

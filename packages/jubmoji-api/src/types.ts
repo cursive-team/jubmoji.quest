@@ -119,7 +119,7 @@ export interface TeamLeaderboardProofArgs {
 }
 
 export interface TeamLeaderboardProof {
-  teamPubKey: string;
+  teamPubKeyIndex: number;
   serializedTeamMembershipProof: string;
   serializedCollectionMembershipProofs: string[];
 }

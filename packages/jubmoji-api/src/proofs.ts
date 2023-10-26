@@ -406,7 +406,7 @@ export class TeamLeaderboard
     });
 
     return {
-      teamPubKey: pubKey,
+      teamPubKeyIndex: teamJubmoji.pubKeyIndex,
       serializedTeamMembershipProof:
         serializeMembershipProof(teamMembershipProof),
       serializedCollectionMembershipProofs: collectionMembershipProofs.map(
@@ -416,11 +416,12 @@ export class TeamLeaderboard
   }
 
   async verify({
-    teamPubKey,
+    teamPubKeyIndex,
     serializedTeamMembershipProof,
     serializedCollectionMembershipProofs,
   }: TeamLeaderboardProof): Promise<VerificationResult> {
     // Claimed team public key must be in the list of team public keys
+    const teamPubKey = getCardPubKeyFromIndex(teamPubKeyIndex);
     if (!this.teamPubKeys.includes(teamPubKey)) {
       return { verified: false };
     }
