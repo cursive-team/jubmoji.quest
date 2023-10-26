@@ -2,8 +2,11 @@
 
 import ForegroundTapModal from "@/components/modals/ForegroundTapModal";
 import { NfcCardSignMessageResult } from "jubmoji-api";
+import { useState } from "react";
 
 export default function DevTapPage() {
+  const [isTapping, setIsTapping] = useState(false);
+
   const exampleMessage = "Hello, world!";
 
   const exampleOnTap = async ({
@@ -19,5 +22,13 @@ export default function DevTapPage() {
     console.log("public key: ", publicKey);
   };
 
-  return <ForegroundTapModal message={exampleMessage} onTap={exampleOnTap} />;
+  return (
+    <div>
+      {isTapping ? (
+        <ForegroundTapModal message={exampleMessage} onTap={exampleOnTap} />
+      ) : (
+        <button onClick={() => setIsTapping(true)}>Tap</button>
+      )}
+    </div>
+  );
 }
