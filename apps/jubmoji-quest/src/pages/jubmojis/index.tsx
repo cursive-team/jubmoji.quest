@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
+import { Message } from "@/components/Message";
 
 const BottomWrapper = classed.div(
   "fixed-bottom bottom-[62px] xs:bottom-[78px]"
@@ -123,8 +124,11 @@ export default function JubmojisPage() {
 
   const JubmojiSearchItems = () => {
     if (filteredJubmojis.length === 0) {
-      return <span>No results found.</span>;
+      return <Message>No results found.</Message>;
     }
+
+    if (jubmojis.length !== 0)
+      return <Message>No Jubmoji collected yet.</Message>;
 
     return (
       <div className="grid grid-cols-4 gap-3">

@@ -10,6 +10,7 @@ import { JubmojiPower } from "../../types";
 import Link from "next/link";
 import { useFetchPowers } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
+import { Message } from "@/components/Message";
 
 export const PowerOptionsMapping: Record<
   "ALL" | "STARRED" | "NEW" | "LOCKED",
@@ -79,9 +80,7 @@ export default function PowersPage() {
             ) : (
               <>
                 {powers.length === 0 ? (
-                  <span className="text-base font-normal">
-                    {MESSAGES.NO_RESULTS}
-                  </span>
+                  <Message>{MESSAGES.NO_RESULTS}</Message>
                 ) : (
                   <>
                     {powers?.map(

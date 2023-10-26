@@ -15,6 +15,7 @@ import { TelegramPower } from "@/components/powers/TelegramPower";
 import { TwitterPower } from "@/components/powers/TwitterPower";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
+import { Message } from "@/components/Message";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -87,9 +88,9 @@ export default function PowerDetailPage() {
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) {
     return (
-      <span className="mt-4 text-center font-dm-sans text-base">
+      <Message centred className="mt-4">
         No power detail available.
-      </span>
+      </Message>
     );
   }
 
