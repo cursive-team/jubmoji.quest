@@ -122,7 +122,6 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
-            <span className="text-lg font-bold text-white">Begin a quest!</span>
             <Options
               defaultValue="all"
               object={QuestTagMapping}

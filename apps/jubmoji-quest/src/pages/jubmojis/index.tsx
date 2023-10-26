@@ -205,7 +205,7 @@ export default function JubmojisPage() {
           ) : (
             <Button
               icon={<Icons.download className="text-black" />}
-              size="sm"
+              size="tiny"
               variant="blue"
               onClick={() => setBackupModalOpen(true)}
               className="!font-semibold"

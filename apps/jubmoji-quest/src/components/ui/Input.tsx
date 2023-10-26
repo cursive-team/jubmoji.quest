@@ -5,7 +5,7 @@ import { Icons } from "../Icons";
 
 const InputComponent = classed(
   "input",
-  "font-dm-sans bg-transparent font-medium ring-0 focus:ring-0 focus:outline-none w-full",
+  "font-dm-sans bg-transparent font-semibold ring-0 focus:ring-0 focus:outline-none w-full leading-[120%]",
   {
     variants: {
       size: {
