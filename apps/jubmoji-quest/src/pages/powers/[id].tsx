@@ -28,12 +28,26 @@ export interface PowerContentProps {
 
 const PagePlaceholder = () => {
   return (
-    <div className="grid grid-cols-1 gap-4 py-4">
+    <div className="grid grid-cols-1 gap-3 py-4">
       <div className="py-3">
         <Placeholder.Base className="w-4 h-4" />
       </div>
-      <Placeholder.Card size="md" />
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
+          <Placeholder.Line />
+          <Placeholder.Line size="md" />
+        </div>
+      </div>
       <Placeholder.Card size="xs" />
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
+          <Placeholder.Line />
+        </div>
+      </div>
+
+      <div className="fixed left-0 bottom-[62px] xs:bottom-[78px] right-0 mt-auto">
+        <Placeholder.Card className="!rounded-t-[32px]" size="md" />
+      </div>
     </div>
   );
 };
@@ -64,12 +78,20 @@ export default function PowerDetailPage() {
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
-    powerId as string
-  );
+  const {
+    isError,
+    isLoading: isLoadingPower,
+    data: power = null,
+  } = useFetchPowerById(powerId as string);
 
   if (isLoadingPower) return <PagePlaceholder />;
-  if (!power) return null;
+  if (!power) {
+    return (
+      <span className="mt-4 text-center font-dm-sans text-base">
+        No power detail available.
+      </span>
+    );
+  }
 
   const powerIcon = PowerTypeIconMapping[power.powerType];
 
