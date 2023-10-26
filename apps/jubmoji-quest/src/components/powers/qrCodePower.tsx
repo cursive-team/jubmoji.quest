@@ -1,80 +1,100 @@
-import { Button } from "@/components/ui/Button";
-import { JubmojiPower } from "@/types";
-import { Jubmoji } from "jubmoji-api";
 import QRCode from "react-qr-code";
-import {
-  createJubmojiQuestProof,
-  jubmojiPowerToQuestProofConfig,
-} from "@/lib/proving";
 import { useState } from "react";
+import { PowerWrapper } from "../PowerWrapper";
+import Image from "next/image";
+import { Icons } from "../Icons";
+import { usePowerMutation } from "@/hooks/useFetchPowers";
+import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { classed } from "@tw-classed/react";
+import { PowerContentProps } from "@/pages/powers/[id]";
 
-export type QRCodePowerProps = {
-  power: JubmojiPower;
-  jubmojis: Jubmoji[];
-};
+const QrCodeWrapper = classed.div(
+  "bg-white rounded-[8px] w-full max-w-[156px]"
+);
 
-export default function QRCodePower({ power, jubmojis }: QRCodePowerProps) {
+const QrCodePower = ({ power, jubmojis }: PowerContentProps) => {
   const [url, setUrl] = useState<string>();
 
-  const onUsePower = async () => {
-    alert("Using power...");
-
-    const config = jubmojiPowerToQuestProofConfig(power);
-    let serializedProof;
-    try {
-      serializedProof = await createJubmojiQuestProof({
-        config,
-        jubmojis,
-        overrideSigNullifierRandomness:
-          power.sigNullifierRandomness || undefined,
-        pathToCircuits: __dirname + "circuits/",
-      });
-    } catch (error) {
-      console.log(error);
-      alert("Failed to use your power!");
-      return;
-    }
-
-    const response = await fetch(`/api/qr`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        powerId: power.id,
-        serializedProof,
-      }),
-    });
-
-    if (!response.ok) {
-      alert("Failed to use your power!");
-      return;
-    }
-
-    const { qrCodeUuid } = await response.json();
-    setUrl(`${window.location.origin}/qr/${qrCodeUuid}`);
-  };
-
-  if (!url) {
-    return (
-      <div>
-        <Button variant="secondary" onClick={onUsePower}>
-          Use Power
-        </Button>
-      </div>
-    );
-  }
+  const powerMutation = usePowerMutation();
 
   return (
-    <div
-      style={{ height: "auto", margin: "0 auto", maxWidth: 256, width: "100%" }}
-    >
-      <QRCode
-        size={512}
-        style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-        value={url}
-        viewBox={`0 0 512 512`}
-      />
-    </div>
+    <PowerWrapper>
+      {!url ? (
+        <div className="flex items-center gap-4 justify-between">
+          <div className="relative">
+            <span className="absolute top-[6px] left-[12px] text-[13px] font-normal font-dm-sans text-shark-300">
+              Tap and hold to prove
+            </span>
+            <Icons.bubble className="text-shark-800" />
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              powerMutation
+                .mutateAsync({
+                  power,
+                  jubmojis,
+                })
+                .then((data) => {
+                  if (typeof data === "string") {
+                    setUrl(data);
+                  } else {
+                    toast.error(data.error);
+                  }
+                })
+            }
+          >
+            <Image
+              src="/images/zkp-maker.png"
+              width={150}
+              height={150}
+              alt="zkp marker"
+              className={cn("", {
+                "animate animate-pulse": powerMutation.isLoading,
+              })}
+            />
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <span className=" font-dm-sans text-base font-medium text-shark-50">
+              Title
+            </span>
+            <span className="flex flex-col gap-1 text-[13px] font-dm-sans text-shark-300 font-semibold">
+              <span className="block">
+                {new Intl.DateTimeFormat("en-US", {
+                  dateStyle: "long",
+                }).format(new Date())}
+              </span>
+              <span className="block text-tiny font-dm-sans text-shark-300 font-normal">
+                {new Intl.DateTimeFormat("en-US", {
+                  timeStyle: "medium",
+                }).format(new Date())}
+              </span>
+            </span>
+            <span className="text-[13px] font-dm-sans text-shark-300 font-semibold">
+              Owner
+            </span>
+            <span className="text-tiny font-dm-sans text-shark-300">
+              Location
+            </span>
+          </div>
+          <QrCodeWrapper>
+            <QRCode
+              size={156}
+              className="ml-auto p-4 h-auto w-full max-w-full"
+              value={url}
+              viewBox={`0 0 156 156`}
+            />
+          </QrCodeWrapper>
+        </div>
+      )}
+    </PowerWrapper>
   );
-}
+};
+
+QrCodePower.displayName = "QrCodePower";
+
+export { QrCodePower };

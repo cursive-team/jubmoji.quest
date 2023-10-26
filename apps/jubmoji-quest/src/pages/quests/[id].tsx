@@ -10,6 +10,10 @@ import React from "react";
 import { useFetchQuestById } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
+import { Prisma, $Enums } from "@prisma/client";
+import { useJubmojis } from "@/hooks/useJubmojis";
+import { createJubmojiQuestProof } from "@/lib/proving";
+import { getClientPathToCircuits } from "@/lib/config";
 
 const PagePlaceholder = () => {
   return (
@@ -28,6 +32,7 @@ const PagePlaceholder = () => {
 export default function QuestDetailPage() {
   const router = useRouter();
   const { id: questId } = router.query;
+  const { data: jubmojis } = useJubmojis();
 
   const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
     questId as string

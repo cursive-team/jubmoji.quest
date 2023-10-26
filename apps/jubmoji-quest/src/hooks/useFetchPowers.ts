@@ -1,4 +1,8 @@
-import { createJubmojiPowerProof } from "@/lib/proving";
+import { getClientPathToCircuits } from "@/lib/config";
+import {
+  createJubmojiQuestProof,
+  jubmojiPowerToQuestProofConfig,
+} from "@/lib/proving";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { useMutation, useQuery } from "react-query";
@@ -58,13 +62,16 @@ export const usePowerMutation = () => {
   return useMutation({
     mutationKey: "usePower",
     mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
+      const config = jubmojiPowerToQuestProofConfig(power);
       let serializedProof;
       try {
-        serializedProof = await createJubmojiPowerProof(
-          power,
+        serializedProof = await createJubmojiQuestProof({
+          config,
           jubmojis,
-          __dirname + "circuits/"
-        );
+          overrideSigNullifierRandomness:
+            power.sigNullifierRandomness || undefined,
+          pathToCircuits: getClientPathToCircuits(),
+        });
       } catch (error) {
         console.log(error);
         return { error: "Failed to use your power!" };

@@ -12,7 +12,7 @@ import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
 import { TelegramPower } from "@/components/powers/TelegramPower";
 import { TwitterPower } from "@/components/powers/TwitterPower";
-import { PowerQrCode } from "@/components/powers/PowerQrCode";
+import { QrCodePower } from "@/components/powers/QrCodePower";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 
@@ -66,7 +66,7 @@ const PowerDetailLabel = ({ label, value }: PowerDetailLabelProps) => {
 };
 
 const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
-  QR_CODE: PowerQrCode,
+  QR_CODE: QrCodePower,
   TELEGRAM: TelegramPower,
   TWITTER: TwitterPower,
 };
