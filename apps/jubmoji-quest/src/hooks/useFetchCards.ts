@@ -1,6 +1,7 @@
 import { JubmojiCollectionCard } from "@/types";
 import { Jubmoji, cardPubKeys } from "jubmoji-api";
 import { useQuery } from "react-query";
+import { useJubmojis } from "./useJubmojis";
 
 type JubmojiCardMap = Record<number, JubmojiCollectionCard>;
 
@@ -29,12 +30,41 @@ export const useFetchCards = () => {
   );
 };
 
+/**
+ * Get list of the collected cards with all the information
+ * @returns JubmojiCardProps
+ */
+export const useFetchCollectedCards = () => {
+  const { isLoading, data: jubmojiCollectionCards = [] } = useFetchCards();
+  const { isLoading: isLoadingJubmojis, data: jubmojis = [] } = useJubmojis();
+
+  return useQuery(
+    ["collectedCards", jubmojis?.length],
+    async (): Promise<JubmojiCardProps[]> => {
+      // get all jubmojis collected infos
+      const collectedPubKeys = Object.entries(jubmojis).map(
+        ([_index, { pubKeyIndex }]) => pubKeyIndex
+      );
+
+      const collectedJubmojis =
+        collectedPubKeys.map((pubKeyIndex) => {
+          return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
+        }) ?? [];
+
+      return collectedJubmojis as JubmojiCardProps[];
+    },
+    {
+      enabled: !isLoading && !isLoadingJubmojis,
+    }
+  );
+};
+
 export const getJubmojiCardByPubIndex = (
   cards: JubmojiCardMap,
   pubKeyIndex: Jubmoji["pubKeyIndex"]
-): JubmojiCardProps | null => {
+): JubmojiCardProps | undefined => {
   if (!cards[pubKeyIndex]) {
-    return null;
+    return undefined;
   }
 
   // Emoji is fixed in hardware and fetched from hardcoded card metadata file

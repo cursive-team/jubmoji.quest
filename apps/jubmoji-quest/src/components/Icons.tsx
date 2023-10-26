@@ -15,6 +15,20 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  arrowButton: () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="25"
+      viewBox="0 0 24 25"
+      fill="none"
+    >
+      <path
+        d="M12 13.672L16.95 8.72198L18.364 10.136L12 16.5L5.63599 10.136L7.04999 8.72198L12 13.672Z"
+        fill="#92D7FE"
+      />
+    </svg>
+  ),
   quest: (props: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -1,5 +1,3 @@
-import { JubmojiPower } from "@/types";
-import { Jubmoji } from "jubmoji-api";
 import QRCode from "react-qr-code";
 import { useState } from "react";
 import { PowerWrapper } from "../PowerWrapper";
@@ -9,17 +7,13 @@ import { usePowerMutation } from "@/hooks/useFetchPowers";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { classed } from "@tw-classed/react";
-
-export type QRCodePowerProps = {
-  power: JubmojiPower;
-  jubmojis: Jubmoji[];
-};
+import { PowerContentProps } from "@/pages/powers/[id]";
 
 const QrCodeWrapper = classed.div(
   "bg-white rounded-[8px] w-full max-w-[156px]"
 );
 
-const PowerQrCode = ({ power, jubmojis }: QRCodePowerProps) => {
+const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
   const [url, setUrl] = useState<string>();
 
   const powerMutation = usePowerMutation();

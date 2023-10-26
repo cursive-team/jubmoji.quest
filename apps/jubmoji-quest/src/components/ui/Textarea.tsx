@@ -1,27 +1,27 @@
 import { DerivedComponentType, classed } from "@tw-classed/react";
-import React, {
-  TextareaHTMLAttributes,
-  forwardRef,
-} from "react";
+import React, { TextareaHTMLAttributes, forwardRef } from "react";
 import type * as Classed from "@tw-classed/react";
 
-const TextareaComponent = classed("textarea", "", {
-  variants: {
-    size: {
-      sm: "sm",
-      md: "md",
-      lg: "lg",
+const TextareaComponent = classed(
+  "textarea",
+  "font-dm-sans py-3 px-4 text-base text-shark-300 rounded-[4px] ring-0 outline-none focus:border-baby-blue-default",
+  {
+    variants: {
+      size: {
+        sm: "",
+        md: "",
+        lg: "",
+      },
+      variant: {
+        transparent: "bg-transparent border border-shark-300",
+      },
     },
-    variant: {
-      primary: "primary",
-      secondary: "secondary",
+    defaultVariants: {
+      size: "md",
+      variant: "transparent",
     },
-  },
-  defaultVariants: {
-    size: "md",
-    variant: "primary",
-  },
-});
+  }
+);
 
 type TextareaComponentVariants = Classed.VariantProps<typeof TextareaComponent>;
 
