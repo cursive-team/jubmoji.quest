@@ -20,7 +20,7 @@ const backfaceVisibility = plugin(function ({ addUtilities }: any) {
     },
     ".fixed-bottom": {
       position: "fixed",
-      bottom: "80px", // avoid the footer
+      zIndex: 9,
     },
   });
 });
@@ -50,7 +50,7 @@ const config: Config = {
         tiny: ["11px", "120%"],
       },
       screens: {
-        xs: "420px",
+        xs: "380px",
       },
       fontFamily: {
         "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],

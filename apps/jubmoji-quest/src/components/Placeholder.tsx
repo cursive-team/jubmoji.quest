@@ -36,7 +36,7 @@ const PlaceholderButton = classed.button(PlaceholderBase, "w-full", {
 
 const PlaceholderCardArc = classed.div(
   PlaceholderBase,
-  " h-[255px] rounded-t-full"
+  "h-[180px] xs:h-[255px] rounded-t-full"
 );
 
 export const Placeholder = {

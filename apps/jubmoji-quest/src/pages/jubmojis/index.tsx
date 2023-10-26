@@ -1,6 +1,5 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
@@ -15,12 +14,16 @@ import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 
+const BottomWrapper = classed.div(
+  "fixed-bottom bottom-[62px] xs:bottom-[78px]"
+);
+
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
   {
     variants: {
       size: {
-        md: "w-8 h-16",
+        md: "w-8 h-full",
         full: "w-full",
       },
       active: {
@@ -36,7 +39,8 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 right-0 bottom-[80px] w-full overflow-scroll bg-shark-970 justify-center"
+  BottomWrapper,
+  "grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 left-0 right-0 w-full overflow-x-scroll bg-shark-970 mx-auto"
 );
 
 export default function JubmojisPage() {
@@ -92,16 +96,16 @@ export default function JubmojisPage() {
   const JubmojiContent = () => {
     if (isLoadingJubmojis)
       return (
-        <div className="grid grid-cols-1 divide-y">
-          <Placeholder.CardArc />
-          <Placeholder.Card className=" !rounded-t-none" size="xs" />
+        <div className="flex flex-col mx-auto">
+          <Placeholder.CardArc className="w-[300px]" />
+          <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
         </div>
       );
 
     return (
       <>
         {name && owner && (
-          <div className="mt-4">
+          <div>
             <CollectionCardArc
               label={name}
               icon={emoji}
@@ -160,7 +164,7 @@ export default function JubmojisPage() {
         Info for Jubmojis
       </Modal>
       <div
-        className={cn("flex flex-col gap-4", {
+        className={cn("flex flex-col gap-3 xs:gap-4", {
           invisible: infoModalOpen || backupModalOpen,
         })}
       >
@@ -176,9 +180,9 @@ export default function JubmojisPage() {
           }
         />
         <div
-          className={cn("grid  justify-between gap-2", {
+          className={cn("grid justify-between gap-2", {
             "grid-cols-[1fr_70px]": isSearchMode,
-            "grid-cols-[1fr_120px]": !isSearchMode,
+            "grid-cols-[1fr_110px]": !isSearchMode,
           })}
         >
           <Input
@@ -200,6 +204,7 @@ export default function JubmojisPage() {
               size="sm"
               variant="blue"
               onClick={() => setBackupModalOpen(true)}
+              className="!font-semibold"
             >
               Back up!
             </Button>
