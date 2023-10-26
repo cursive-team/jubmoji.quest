@@ -162,7 +162,8 @@ export default function QuestConsole() {
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="prerequisiteCardIndices"
           >
-            Prerequisite Card Indices (comma-separated)
+            Prerequisite Card Indices (comma-separated) (used as team card
+            indices for team leaderboard)
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -202,6 +203,7 @@ export default function QuestConsole() {
             <option value="N_UNIQUE_IN_COLLECTION">
               N Unique In Collection
             </option>
+            <option value="TEAM_LEADERBOARD">Team Leaderboard</option>
           </select>
         </div>
         {proofType === "N_UNIQUE_IN_COLLECTION" && (
