@@ -5,6 +5,14 @@ import { babyjubjub, hexToBigInt } from "babyjubjub-ecdsa";
 
 export const HASH_DIGEST_LENGTH = 256;
 
+// Hashes a message using SHA256 and returns the hash as a bigint
+export const getMessageHash = (msg: string): bigint => {
+  const hasher = sha256.create();
+  const hash = hasher.update(msg).hex();
+
+  return hexToBigInt(hash);
+};
+
 // Prepares a message for ECDSA signing by hashing it and truncating the hash
 export const getECDSAMessageHash = (msg: Buffer): bigint => {
   const hasher = sha256.create();

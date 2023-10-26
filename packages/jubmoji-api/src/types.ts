@@ -1,9 +1,4 @@
 import { VerificationResult } from "babyjubjub-ecdsa";
-import {
-  JubmojiInCollection,
-  JubmojiInCollectionWithNonce,
-  PublicMessageSignature,
-} from "./proofs";
 
 export type Jubmoji = {
   pubKeyIndex: number; // Index of the card's public key within the list of public keys
@@ -17,6 +12,17 @@ export type Jubmoji = {
   R: string;
   T: string;
   U: string;
+};
+
+// Result of signing a message with an Arx card
+export type NfcCardSignMessageResult = {
+  digest: string;
+  rawSignature: {
+    r: string;
+    s: string;
+    v: number;
+  };
+  publicKey: string;
 };
 
 // Defines a class used to create and verify proofs
