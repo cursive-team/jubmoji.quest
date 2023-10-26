@@ -9,11 +9,11 @@ import toast from "react-hot-toast";
 import { classed } from "@tw-classed/react";
 import { PowerContentProps } from "@/pages/powers/[id]";
 
-const QrCodeWrapper = classed.div(
+const QRCodeWrapper = classed.div(
   "bg-white rounded-[8px] w-full max-w-[156px]"
 );
 
-const QrCodePower = ({ power, jubmojis }: PowerContentProps) => {
+const QRCodePower = ({ power, jubmojis }: PowerContentProps) => {
   const [url, setUrl] = useState<string>();
 
   const powerMutation = usePowerMutation();
@@ -81,20 +81,20 @@ const QrCodePower = ({ power, jubmojis }: PowerContentProps) => {
               Location
             </span>
           </div>
-          <QrCodeWrapper>
+          <QRCodeWrapper>
             <QRCode
               size={156}
               className="ml-auto p-4 h-auto w-full max-w-full"
               value={url}
               viewBox={`0 0 156 156`}
             />
-          </QrCodeWrapper>
+          </QRCodeWrapper>
         </div>
       )}
     </PowerWrapper>
   );
 };
 
-QrCodePower.displayName = "QrCodePower";
+QRCodePower.displayName = "QRCodePower";
 
-export { QrCodePower };
+export { QRCodePower };
