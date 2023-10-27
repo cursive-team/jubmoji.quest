@@ -1,4 +1,3 @@
-import { LeaderBoard } from "@/components/LeaderBoard";
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
@@ -71,10 +70,7 @@ export default function QuestDetailPage() {
         success: (score: any) =>
           `Added ${score} points to your team's score!` ||
           "Team score updated!",
-        error: (err: any) => {
-          console.log(err.error);
-          return err.message;
-        },
+        error: (err: any) => err.message,
       }
     );
   };

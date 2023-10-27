@@ -4,7 +4,11 @@ import { classed } from "@tw-classed/react";
 import { Icons } from "./Icons";
 import { Placeholder } from "./Placeholder";
 import { Message } from "./Message";
-import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
+import {
+  getJubmojiCardByPubIndex,
+  useFetchCards,
+  useFetchCollectedCards,
+} from "@/hooks/useFetchCards";
 
 type LeaderBoardProps = {
   items: Record<number, string | number>;
@@ -50,8 +54,8 @@ const LeaderBoard = ({ items, loading = false }: LeaderBoardProps) => {
     ([, a], [, b]) => (b as number) - (a as number)
   );
 
-  const { isLoading: isLoadingJubmojis, data: jubmojiCollectionCards = [] } =
-    useFetchCards();
+  const { data: jubmojiCollectionCards = [] } = useFetchCards();
+  const { data: jubmojiQuestCards = [] } = useFetchCollectedCards();
 
   const hasRanking = ranking.length > 0;
 
@@ -85,15 +89,21 @@ const LeaderBoard = ({ items, loading = false }: LeaderBoardProps) => {
                   Number(pubKeyIndex)
                 );
 
+                const isPartOfTeam = jubmojiQuestCards.find(
+                  (card) => card.pubKeyIndex === Number(pubKeyIndex)
+                );
+
+                const variant = isPartOfTeam ? "active" : "secondary";
+
                 return (
                   <LeaderBoardContent key={pubKeyIndex}>
-                    <RankLabel>{rank}</RankLabel>
-                    <RankLabel>
+                    <RankLabel variant={variant}>{rank}</RankLabel>
+                    <RankLabel variant={variant}>
                       <span>
                         {card?.emoji} {card?.name}
                       </span>
                     </RankLabel>
-                    <RankLabel>{score}</RankLabel>
+                    <RankLabel variant={variant}>{score}</RankLabel>
                   </LeaderBoardContent>
                 );
               })}
