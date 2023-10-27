@@ -12,6 +12,7 @@ interface CardProps extends Classed.VariantProps<typeof Card.Base> {
   collectionTotalItems?: number;
   showProgress?: boolean;
   children?: React.ReactNode;
+  spacing?: "sm" | "md";
 }
 
 const QuestCard = ({
@@ -23,6 +24,7 @@ const QuestCard = ({
   collectionTotalItems = 0,
   showProgress = false,
   disabled = false,
+  spacing = "md",
   children,
 }: CardProps) => {
   const percentageProgress = (collected / (collectionTotalItems || 1)) * 100;
@@ -34,7 +36,7 @@ const QuestCard = ({
           backgroundImage: `url("${image}")`,
         }}
       />
-      <Card.Content>
+      <Card.Content spacing={spacing}>
         <div className="flex justify-between items-start self-stretch">
           <Card.Title>{title}</Card.Title>
           <div className="flex items-start gap-2 w-6 h-6">
