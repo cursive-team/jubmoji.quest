@@ -3,6 +3,7 @@ import { Card } from "./Card";
 import { PowerIcons } from "../icons/PowerIcons";
 import { $Enums } from "@prisma/client";
 import { Icons } from "../Icons";
+import { cn } from "@/lib/utils";
 
 export interface PowerCardProps {
   title: string;
@@ -32,25 +33,41 @@ const PowerCard = ({
   const powerIcon = PowerTypeIconMapping[powerType];
 
   return (
-    <Card.Base disabled={disabled}>
-      <Card.Content spacing="sm">
-        <div className="flex gap-4 items-center self-stretch">
-          <div className="flex items-start gap-2 h-12">{powerIcon}</div>
-          <div className="flex gap-2">
-            <div>
-              <div className="flex justify-between items-start self-stretch gap-2 w-full">
-                <Card.Title>{title}</Card.Title>
-                <div className="flex items-start ml-auto w-6 h-6">
-                  {bookmarked ? <Icons.starSolid /> : <Icons.star />}
-                </div>
-              </div>
+    <Card.Base>
+      <Card.Content className="relative" spacing="sm">
+        <div className="flex gap-2 self-stretch">
+          <div className="flex gap-3">
+            <div
+              className={cn(
+                "flex items-start gap-2 h-12",
+                disabled ? "disabled-element" : ""
+              )}
+            >
+              {powerIcon}
+            </div>
+            <div className="flex flex-col">
+              <Card.Title disabled={disabled}>{title}</Card.Title>
               {description && (
-                <Card.Description truncate={shortDescription}>
+                <Card.Description
+                  disabled={disabled}
+                  truncate={shortDescription}
+                >
                   {description}
                 </Card.Description>
               )}
             </div>
           </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              console.log("button clicked");
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+            }}
+            className="flex items-start ml-auto w-6 h-6 z-[2] p-1"
+          >
+            {bookmarked ? <Icons.starSolid /> : <Icons.star />}
+          </button>
         </div>
       </Card.Content>
     </Card.Base>

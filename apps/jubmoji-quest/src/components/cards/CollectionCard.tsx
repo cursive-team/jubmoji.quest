@@ -16,6 +16,7 @@ export interface CollectionCardProps
   centred?: boolean;
   canFlip?: boolean;
   size?: "sm" | "md";
+  disabled?: boolean;
   quests?: {
     id: number;
     name: string;
@@ -87,6 +88,7 @@ const CollectionCard = ({
   size = "md",
   centred = false,
   canFlip = true,
+  disabled = false,
   ...props
 }: CollectionCardProps) => {
   const [flipped, setFlip] = useState(false);
@@ -178,6 +180,7 @@ const CollectionCard = ({
                   icon={showQuest ? <Icons.arrowBack /> : <Icons.compass />}
                   onClick={() => setShowQuest(!showQuest)}
                   rounded
+                  disabled={disabled}
                 >
                   {showQuest ? "Back" : "Quests"}
                 </Button>

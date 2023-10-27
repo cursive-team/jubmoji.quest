@@ -2,7 +2,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
 import { useJubmojis } from "../hooks/useJubmojis";
-import Options from "@/components/Options";
+import { Filters } from "@/components/Filters";
 import Link from "next/link";
 import { useState } from "react";
 import { filterItems } from "@/lib/utils";
@@ -122,13 +122,13 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
-            <Options
+            <Filters
               defaultValue="all"
               object={QuestTagMapping}
               onChange={setSelectedOption}
               disabled={isLoadingQuests}
             />
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               {isLoadingQuests ? (
                 <>
                   <Placeholder.Card />

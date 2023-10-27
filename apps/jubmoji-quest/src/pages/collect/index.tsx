@@ -22,6 +22,7 @@ import {
 } from "@/hooks/useFetchCards";
 import Image from "next/image";
 import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
+import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
@@ -49,7 +50,7 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
           </div>
         </Card.Header>
         <Card.Content className="!gap-4" spacing="sm">
-          <Card.Title font="giorgio" size="md">
+          <Card.Title centred font="giorgio" size="md">
             It lives in your browser
           </Card.Title>
           <Card.Description centred font="giorgio">
@@ -194,15 +195,15 @@ export default function CollectJubmojiPage() {
             ) : (
               <>
                 {collectedCard && (
-                  <CollectionCard
+                  <CollectionCardArc
                     className="text-center"
                     label={collectedCard.name}
                     icon={collectedCard.emoji}
                     owner={collectedCard.owner}
                     edition={collectedJubmoji?.msgNonce}
+                    cardBackImage={collectedCard.imagePath}
                     size="sm"
-                    centred
-                    canFlip={false}
+                    disabled
                   />
                 )}
               </>

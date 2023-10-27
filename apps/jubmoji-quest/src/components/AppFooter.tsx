@@ -36,8 +36,8 @@ export default function AppFooter() {
     {
       label: "Jubmojis",
       href: "/jubmojis",
-      icon: Icons.folder,
-      iconActive: Icons.folderSolid,
+      icon: Icons.jubmojis,
+      iconActive: Icons.jubmojisSolid,
     },
     {
       label: "Quests",
@@ -55,7 +55,7 @@ export default function AppFooter() {
 
   return (
     <div className="fixed border-t border-t-shark-700 bg-shark-970 w-full bottom-0">
-      <div className="grid grid-cols-3 bottom-0 py-2 xs:py-4">
+      <div className="md:container grid grid-cols-3 bottom-0 py-2 xs:py-4">
         {routerItems?.map((route, index) => {
           const isActive = activeRoute === route.href;
           return <TabItem key={index} {...route} isActive={isActive} />;

@@ -38,7 +38,7 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "1.6rem",
+      padding: "16px",
     },
     extend: {
       fontSize: {
