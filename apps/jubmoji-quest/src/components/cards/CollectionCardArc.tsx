@@ -193,7 +193,9 @@ const CollectionCardArc = ({
           <CardArcImage
             className={cn(
               `duration-500 h-full`,
-              showQuest ? "scale-0 rounded-t-full" : "scale-105",
+              showQuest
+                ? "scale-0 opacity-0 rounded-t-full"
+                : "scale-105 opacity-100",
               extraSmallDevice ? "h-[230px]" : "h-[250px]"
             )}
             style={{

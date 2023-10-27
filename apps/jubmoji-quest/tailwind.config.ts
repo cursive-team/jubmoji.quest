@@ -18,10 +18,6 @@ const backfaceVisibility = plugin(function ({ addUtilities }: any) {
     ".rotate-y-180": {
       transform: "rotateY(180deg)",
     },
-    ".fixed-bottom": {
-      position: "fixed",
-      zIndex: 9,
-    },
   });
 });
 

@@ -46,7 +46,7 @@ const PagePlaceholder = () => {
         </div>
       </div>
 
-      <div className="fixed left-0 bottom-[62px] xs:bottom-[78px] right-0 mt-auto">
+      <div className="left-0 fixed-bottom right-0 mt-auto">
         <Placeholder.Card className="!rounded-t-[32px]" size="md" />
       </div>
     </div>

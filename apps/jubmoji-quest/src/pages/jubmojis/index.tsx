@@ -15,10 +15,6 @@ import { useRouter } from "next/router";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { Message } from "@/components/Message";
 
-const BottomWrapper = classed.div(
-  "fixed-bottom bottom-[62px] xs:bottom-[78px]"
-);
-
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
   {
@@ -40,8 +36,7 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  BottomWrapper,
-  "grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 left-0 right-0 w-full overflow-x-scroll bg-shark-970 mx-auto"
+  "fixed-bottom grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
 );
 
 export default function JubmojisPage() {
