@@ -59,11 +59,6 @@ const PowerCard = ({
           </div>
           <button
             type="button"
-            onClick={(e) => {
-              console.log("button clicked");
-              e.stopPropagation();
-              e.nativeEvent.stopImmediatePropagation();
-            }}
             className="flex items-start ml-auto w-6 h-6 z-[2] p-1"
           >
             {bookmarked ? <Icons.starSolid /> : <Icons.star />}
