@@ -1,6 +1,5 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
@@ -14,6 +13,7 @@ import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { Message } from "@/components/Message";
+import { InfoModal } from "@/components/modals/InfoModal";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
@@ -159,9 +159,7 @@ export default function JubmojisPage() {
   return (
     <>
       <BackupModal isOpen={backupModalOpen} setIsOpen={setBackupModalOpen} />
-      <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
-        Info for Jubmojis
-      </Modal>
+      <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div
         className={cn("flex flex-col gap-3 xs:gap-4", {
           invisible: infoModalOpen || backupModalOpen,
