@@ -63,7 +63,7 @@ export default async function handler(
     linksModuleData: {
       uris: [
         {
-          uri: APP_CONFIG.RECOVERY_URL(`${collection}`),
+          uri: APP_CONFIG.RECOVERY_URL(collection.toString()),
           description: "Restore your collection",
           id: "official_site",
         },

@@ -113,7 +113,7 @@ export default async function handler(
   pkPass.backFields.push({
     key: "retrieve-link",
     label: "Restore your collection",
-    value: APP_CONFIG.RECOVERY_URL(`${collection}`),
+    value: APP_CONFIG.RECOVERY_URL(collection.toString()),
   });
 
   const buffer = pkPass.getAsBuffer();

@@ -6,9 +6,9 @@
   "organizationName": "jubmoji.quest",
   "description": "Jubmojis Backup",
   "logoText": "Jubmoji Backup",
-  "foregroundColor": "rgb(146, 215, 254)",
+  "foregroundColor": "rgb(255, 255, 255)",
   "backgroundColor": "rgb(30, 30, 31)",
-  "labelColor": "rgb(146, 215, 254)",
+  "labelColor": "rgb(255, 255, 255)",
   "eventTicket": {
     "headerFields": [],
     "primaryFields": [],

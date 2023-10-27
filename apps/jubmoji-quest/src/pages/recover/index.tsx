@@ -31,11 +31,14 @@ export default function RecoverJubmojiPage() {
   useEffect(() => {
     async function getCollectionFromUrl() {
       const urlParams = new URLSearchParams(location.hash.slice(1));
-      const succinctSerialization = urlParams.get("collection");
-      if (!succinctSerialization) {
+      const succinctSerializationURI = urlParams.get("collection");
+      if (!succinctSerializationURI) {
         router.push("/");
         return;
       }
+      const succinctSerialization = decodeURIComponent(
+        succinctSerializationURI
+      );
       const recoveredJubmojis = succinctDeserializeJubmojiList(
         succinctSerialization
       );

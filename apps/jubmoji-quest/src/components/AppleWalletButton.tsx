@@ -30,9 +30,7 @@ export const AppleWalletButton = () => {
       type: "apple",
       serialNum: serial,
     });
-    window.location.href = `/api/generateApplePass?number=${
-      jubmojis.length
-    }&serial=${serial}&collection=${encodeURIComponent(succinctSerialization)}`;
+    window.location.href = `/api/generateApplePass?number=${jubmojis.length}&serial=${serial}&collection=${succinctSerialization}`;
   };
 
   return (
