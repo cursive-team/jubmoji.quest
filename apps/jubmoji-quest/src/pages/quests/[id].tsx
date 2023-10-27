@@ -68,7 +68,9 @@ export default function QuestDetailPage() {
       updateLeaderBoardMutation.mutateAsync({ jubmojis, quest }),
       {
         loading: "Updating team score...",
-        success: (res: any) => res?.message || "Team score updated!",
+        success: (score: any) =>
+          `Added ${score} points to your team's score!` ||
+          "Team score updated!",
         error: (err: any) => {
           console.log(err.error);
           return err.message;

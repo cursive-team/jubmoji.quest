@@ -33,7 +33,6 @@ export const useGetLeaderBoard = (questId: string | number) => {
 
       const { scoreMap } = await leaderboardResponse.json();
       return scoreMap;
-      console.log("Team scores: ", scoreMap);
     },
   });
 };
