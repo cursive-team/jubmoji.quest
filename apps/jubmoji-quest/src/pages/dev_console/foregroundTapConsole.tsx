@@ -16,15 +16,6 @@ export default function ForegroundTapConsole() {
   const [randomness, setRandomness] = useState<string>(crypto.randomUUID());
   const [isTapping, setIsTapping] = useState(false);
 
-  useEffect(() => {
-    console.log(
-      bigIntToHex(
-        BigInt(
-          "97146071573832070928654477453182750911772222090476581261472240282703308625736"
-        )
-      )
-    );
-  });
   const generateNewRandomness = () => {
     setRandomness(crypto.randomUUID());
   };
@@ -34,9 +25,8 @@ export default function ForegroundTapConsole() {
     rawSig,
     pubKey,
   }: NfcCardSignMessageResult) => {
-    const randStr = crypto.randomUUID();
     const proofInstance = createProofInstance(PublicMessageSignature, {
-      randStr, // Add some randomness to message before signing
+      randStr: randomness, // Add some randomness to message before signing
     });
     const pubKeyIndex = cardPubKeys.findIndex(
       (key) => key.pubKeySlot1 === pubKey // Use secp256k1 key here, which is in slot 1
@@ -65,7 +55,12 @@ export default function ForegroundTapConsole() {
         Enter a message, tap a card, and verify the signature!
       </h1>
       <div className="bg-transparent w-96 shadow-lg rounded-lg p-5">
-        <button onClick={generateNewRandomness}>Generate New Randomness</button>
+        <button
+          onClick={generateNewRandomness}
+          className="w-full h-12 text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg focus:outline-none transition"
+        >
+          Generate New Randomness
+        </button>
         <h2>Current randomness: {randomness}</h2>
       </div>
       <div className="bg-transparent w-96 shadow-lg rounded-lg p-5">
