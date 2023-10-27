@@ -1,6 +1,5 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
@@ -13,13 +12,15 @@ import BackupModal from "@/components/modals/BackupModal";
 import { cn } from "@/lib/utils";
 import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
+import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
+import { Message } from "@/components/Message";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
   {
     variants: {
       size: {
-        md: "w-8 h-16",
+        md: "w-8 h-full",
         full: "w-full",
       },
       active: {
@@ -35,7 +36,7 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  "grid grid-flow-col auto-cols-max h-20 py-[6px] gap-[1px] px-2 fixed left-0 right-0 bottom-[80px] w-full overflow-scroll bg-shark-970 justify-center"
+  "fixed-bottom grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
 );
 
 export default function JubmojisPage() {
@@ -89,20 +90,28 @@ export default function JubmojisPage() {
     .filter(Boolean);
 
   const JubmojiContent = () => {
-    if (isLoadingJubmojis) return <Placeholder.Card size="2xl" />;
+    if (isLoadingJubmojis)
+      return (
+        <div className="flex flex-col mx-auto">
+          <Placeholder.CardArc className="w-[300px]" />
+          <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
+        </div>
+      );
 
     return (
       <>
         {name && owner && (
-          <CollectionCard
-            label={name}
-            icon={emoji}
-            edition={msgNonce}
-            owner={owner}
-            cardBackImage={imagePath}
-            actions={null}
-            quests={collectsFor}
-          />
+          <div>
+            <CollectionCardArc
+              label={name}
+              icon={emoji}
+              edition={msgNonce}
+              owner={owner}
+              cardBackImage={imagePath}
+              actions={null}
+              quests={collectsFor}
+            />
+          </div>
         )}
       </>
     );
@@ -110,8 +119,11 @@ export default function JubmojisPage() {
 
   const JubmojiSearchItems = () => {
     if (filteredJubmojis.length === 0) {
-      return <span>No results found.</span>;
+      return <Message>No results found.</Message>;
     }
+
+    if (jubmojis.length !== 0)
+      return <Message>No Jubmoji collected yet.</Message>;
 
     return (
       <div className="grid grid-cols-4 gap-3">
@@ -150,7 +162,11 @@ export default function JubmojisPage() {
       <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
         Info for Jubmojis
       </Modal>
-      <div className="flex flex-col gap-4">
+      <div
+        className={cn("flex flex-col gap-3 xs:gap-4", {
+          invisible: infoModalOpen || backupModalOpen,
+        })}
+      >
         <AppHeader
           title="YOUR JUBMOJIS"
           actions={
@@ -163,10 +179,10 @@ export default function JubmojisPage() {
           }
         />
         <div
-          className={cn("grid  justify-between gap-2", {
-            "grid-cols-[1fr_70px]": isSearchMode,
-            "grid-cols-[1fr_120px]": !isSearchMode,
-          })}
+          className={cn(
+            "grid justify-between gap-2",
+            isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr_110px]"
+          )}
         >
           <Input
             type="search"
@@ -184,9 +200,10 @@ export default function JubmojisPage() {
           ) : (
             <Button
               icon={<Icons.download className="text-black" />}
-              size="sm"
+              size="tiny"
               variant="blue"
               onClick={() => setBackupModalOpen(true)}
+              className="!font-semibold"
             >
               Back up!
             </Button>

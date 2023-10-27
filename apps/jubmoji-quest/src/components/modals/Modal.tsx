@@ -19,13 +19,13 @@ const Modal = ({
   onClose, // run when modal close
 }: ModalProps) => {
   const onCloseModal = () => {
-    setIsOpen(false);
     onClose?.();
+    setIsOpen(false);
   };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onCloseModal}>
+      <Dialog as="div" className="relative z-100" onClose={onCloseModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -51,7 +51,7 @@ const Modal = ({
             >
               <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-w-md transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
                 {closable && (
-                  <div className="fixed z-10 right-[24px] top-[9px] flex items-center h-12 py-8">
+                  <div className="fixed z-100 right-[24px] top-[9px] flex items-center h-12 py-8">
                     <button
                       type="button"
                       className="ml-auto ring-0 focus:right-0 focus:outline-none outline-none cursor-pointer"

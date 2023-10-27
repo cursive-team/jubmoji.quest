@@ -10,6 +10,7 @@ import { JubmojiPower } from "../../types";
 import Link from "next/link";
 import { useFetchPowers } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
+import { Message } from "@/components/Message";
 
 export const PowerOptionsMapping: Record<
   "ALL" | "STARRED" | "NEW" | "LOCKED",
@@ -60,13 +61,10 @@ export default function PowersPage() {
             </button>
           }
         />
-        <Input placeholder="Search your private collection" />
+        <Input placeholder="Find a zk proof to use" />
       </div>
       <div className="flex flex-col gap-2 mt-4">
         <div className="grid grid-cols-1 gap-6">
-          <span className="text-lg font-bold text-white">
-            Unlocked from quests
-          </span>
           <Options
             defaultValue="all"
             object={PowerOptionsMapping}
@@ -79,9 +77,7 @@ export default function PowersPage() {
             ) : (
               <>
                 {powers.length === 0 ? (
-                  <span className="text-base font-normal">
-                    {MESSAGES.NO_RESULTS}
-                  </span>
+                  <Message>{MESSAGES.NO_RESULTS}</Message>
                 ) : (
                   <>
                     {powers?.map(

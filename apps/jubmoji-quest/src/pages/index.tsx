@@ -13,6 +13,7 @@ import { QuestCard } from "@/components/cards/QuestCard";
 import { JubmojiQuest } from "@/types";
 import { useFetchQuests } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
+import { Message } from "@/components/Message";
 
 export const QuestTagMapping: Record<
   "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
@@ -42,7 +43,7 @@ export default function Home() {
     return (
       <>
         {!hasItemsForActiveOption ? (
-          <span className="text-base font-normal">{MESSAGES.NO_RESULTS}</span>
+          <Message>{MESSAGES.NO_RESULTS}</Message>
         ) : (
           <>
             {filteredItems?.map(
@@ -111,16 +112,16 @@ export default function Home() {
         <div className="grid grid-cols-[1fr_120px] justify-between gap-2">
           <Input placeholder="Find a quest to complete" type="search" />
           <Button
-            icon={<Icons.plus className="text-black" />}
-            size="sm"
+            icon={<Icons.plus className="text-black !text-[8px]" />}
+            size="tiny"
             variant="blue"
+            className="font-semibold"
           >
             Assisted tap
           </Button>
         </div>
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
-            <span className="text-lg font-bold text-white">Begin a quest!</span>
             <Options
               defaultValue="all"
               object={QuestTagMapping}

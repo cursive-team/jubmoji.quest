@@ -8,13 +8,13 @@ interface AppHeaderProps
 }
 
 const AppHeaderTitle = classed.span(
-  "flex items-center h-8 text-lg font-semibold tracking-[0.36px] text-white uppercase"
+  "flex items-center h-4 xs:h-8 text-lg font-semibold tracking-[0.36px] text-white uppercase"
 );
 
 const AppHeader = ({ title, actions }: AppHeaderProps) => {
   return (
-    <div className="py-4">
-      <div className="flex items-center justify-between py-3">
+    <div className="py-2 xs:py-3">
+      <div className="flex items-center justify-between py-2 xs:py-3">
         <div className="flex items-center gap-2 w-full">
           {typeof title === "string" ? (
             <AppHeaderTitle>{title}</AppHeaderTitle>

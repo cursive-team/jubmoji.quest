@@ -17,10 +17,6 @@ export default function BackupModal({ children, ...props }: ModalProps) {
           <div className="flex flex-col gap-4 xs:gap-8">
             <GoogleWalletButton />
             <AppleWalletButton />
-            <Button disabled variant="dark">
-              Whatsapp
-            </Button>
-            <Button variant="dark">PCD Pass</Button>
           </div>
           <div className="flex flex-col gap-4 mt-auto">
             <span className="font-hind-siliguri font-normal text-[13px] text-[#888]">

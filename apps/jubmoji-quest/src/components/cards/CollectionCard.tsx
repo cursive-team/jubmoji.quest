@@ -5,7 +5,8 @@ import { Button } from "../ui/Button";
 import Link from "next/link";
 import { cn } from "../../lib/utils";
 
-interface CollectionCardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface CollectionCardProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   icon: string;
   label: string;
   edition?: number | string;

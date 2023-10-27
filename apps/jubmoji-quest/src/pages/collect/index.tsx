@@ -21,6 +21,7 @@ import {
   useFetchCards,
 } from "@/hooks/useFetchCards";
 import Image from "next/image";
+import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
 
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
@@ -31,12 +32,13 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             {jubmoji.emoji}
           </span>
         </Card.Header>
-        <Card.Content spacing="sm">
+        <Card.Content className="!gap-4" spacing="sm">
           <Card.Title centred font="giorgio" size="md">
-            Congrats!
+            Yay, you got a jubmoji!
           </Card.Title>
           <Card.Description font="giorgio">
-            You now hold a tangible memory of a one-of-a-kind experience
+            You have just collected a Jubmoji, a memento that’s unique and
+            verifiable
           </Card.Description>
         </Card.Content>
       </Card.Base>
@@ -44,46 +46,81 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
         <Card.Header>
           <div className="flex flex-col gap-4">
             <span className="text-[40px]">{jubmoji.emoji}</span>
-            <Button
-              icon={<Icons.download className="text-white" />}
-              rounded
-              size="sm"
-            >
-              Back up!
-            </Button>
           </div>
         </Card.Header>
-        <Card.Content spacing="sm">
+        <Card.Content className="!gap-4" spacing="sm">
           <Card.Title font="giorgio" size="md">
-            You are the only one that can see your collection
+            It lives in your browser
           </Card.Title>
           <Card.Description centred font="giorgio">
-            Make sure you back it up!
+            Our server never sees your collection as your data lives in a
+            temporary store in your browser.
           </Card.Description>
         </Card.Content>
       </Card.Base>
       <Card.Base centred>
-        <Card.Header></Card.Header>
-        <Card.Content spacing="sm">
+        <Card.Header>
+          <Button
+            icon={<Icons.download className="text-black" />}
+            className="max-w-[150px]"
+            variant="blue"
+          >
+            Back up!
+          </Button>
+        </Card.Header>
+        <Card.Content className="!gap-4" spacing="sm">
           <Card.Title centred font="giorgio" size="md">
-            lorem ipsum
+            Make sure to back up!
           </Card.Title>
           <Card.Description font="giorgio">
-            Lorem ipsum dolor sit amet consectetur. Fringilla amet egestas.
+            You can use a mobile wallet, password manager, or an E2EE messaging
+            app!
           </Card.Description>
         </Card.Content>
       </Card.Base>
       <Card.Base centred>
-        <Card.Header></Card.Header>
-        <Card.Content spacing="sm" centred>
+        <Card.Header>
+          <div className="flex flex-col gap-1">
+            <span className="text-[13px] text-left">Collect:</span>
+            <Image
+              height={20}
+              width={100}
+              className="w-full"
+              src="/images/collection-items.svg"
+              alt="collection items"
+            />
+          </div>
+        </Card.Header>
+        <Card.Content className="!gap-4" spacing="sm">
           <Card.Title centred font="giorgio" size="md">
-            Itching to understand how your data remains private?
+            Complete quests!
+          </Card.Title>
+          <Card.Description font="giorgio">
+            Quests involve collecting some set of jubmojis and unlocking a power
+            at the end.
+          </Card.Description>
+        </Card.Content>
+      </Card.Base>
+      <Card.Base centred>
+        <Card.Header>
+          <div
+            className={`grid grid-flow-col gap-4 grid-cols-[${
+              Object.keys(PowerTypeIconMapping).length
+            }]`}
+          >
+            {Object.entries(PowerTypeIconMapping).map(([key, icon]) => {
+              console.log(key);
+              return <span key={key}>{icon}</span>;
+            })}
+          </div>
+        </Card.Header>
+        <Card.Content className="!gap-4" spacing="sm" centred>
+          <Card.Title centred font="giorgio" size="md">
+            Use your new powers!
           </Card.Title>
           <Card.Description font="giorgio" centred>
-            Find out more{" "}
-            <Link className="text-baby-blue-default" href="/">
-              here.
-            </Link>
+            Get event tickets, discounts, or post verifiably by making a ZK
+            proof of completing a quest!
           </Card.Description>
         </Card.Content>
       </Card.Base>

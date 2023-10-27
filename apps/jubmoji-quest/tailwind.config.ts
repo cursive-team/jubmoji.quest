@@ -18,10 +18,6 @@ const backfaceVisibility = plugin(function ({ addUtilities }: any) {
     ".rotate-y-180": {
       transform: "rotateY(180deg)",
     },
-    ".fixed-bottom": {
-      position: "fixed",
-      bottom: "80px", // avoid the footer
-    },
   });
 });
 
@@ -50,7 +46,7 @@ const config: Config = {
         tiny: ["11px", "120%"],
       },
       screens: {
-        xs: "420px",
+        xs: "380px",
       },
       fontFamily: {
         "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],
@@ -62,6 +58,7 @@ const config: Config = {
         "baby-blue": {
           default: "#92D7FE",
         },
+        yellow: "#FFEC44",
         shark: {
           50: "#F5F5F6",
           100: "#E6E6E7",

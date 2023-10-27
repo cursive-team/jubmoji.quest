@@ -10,11 +10,12 @@ import { useFetchPowerById } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
+import { PowerQrCode } from "@/components/powers/PowerQrCode";
 import { TelegramPower } from "@/components/powers/TelegramPower";
 import { TwitterPower } from "@/components/powers/TwitterPower";
-import { PowerQrCode } from "@/components/powers/PowerQrCode";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
+import { Message } from "@/components/Message";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -45,7 +46,7 @@ const PagePlaceholder = () => {
         </div>
       </div>
 
-      <div className="fixed left-0 bottom-[62px] xs:bottom-[78px] right-0 mt-auto">
+      <div className="left-0 fixed-bottom right-0 mt-auto">
         <Placeholder.Card className="!rounded-t-[32px]" size="md" />
       </div>
     </div>
@@ -87,9 +88,9 @@ export default function PowerDetailPage() {
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) {
     return (
-      <span className="mt-4 text-center font-dm-sans text-base">
+      <Message centred className="mt-4">
         No power detail available.
-      </span>
+      </Message>
     );
   }
 
