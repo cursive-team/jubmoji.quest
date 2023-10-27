@@ -3,21 +3,12 @@
   "passTypeIdentifier": "pass.com.example.jubmoji",
   "teamIdentifier": "BV3BXTVJUF",
   "serialNumber": "0000001",
-  "maxDistance": 1000,
-  "organizationName": "nfctap.xyz",
-  "description": "Sigmojis",
-  "logoText": "nfctap.xyz",
-  "barcodes": [
-    {
-      "format": "PKBarcodeFormatQR",
-      "message": "http://nfctap.xyz",
-      "messageEncoding": "iso-8859-1",
-      "altText": "nfctap.xyz"
-    }
-  ],
-  "foregroundColor": "rgb(246,246,246)",
-  "backgroundColor": "rgb(26,26,26)",
-  "labelColor": "rgb(119,119,119)",
+  "organizationName": "jubmoji.quest",
+  "description": "Jubmojis Backup",
+  "logoText": "Jubmoji Backup",
+  "foregroundColor": "rgb(146, 215, 254)",
+  "backgroundColor": "rgb(30, 30, 31)",
+  "labelColor": "rgb(146, 215, 254)",
   "eventTicket": {
     "headerFields": [],
     "primaryFields": [],
@@ -25,14 +16,19 @@
     "auxiliaryFields": [],
     "backFields": [
       {
-        "key": "game-rules",
-        "label": "Collect early sigmojis to win!",
-        "value": "A private digital collectible where the early editions are more valuable."
+        "key": "collect",
+        "label": "Collect jubmojis!",
+        "value": "A jubmoji is a unique, verifiable memento of an in-person experience."
       },
       {
-        "key": "zk",
-        "label": "Safely reveal edition using ZK!",
-        "value": "Prove you have a valid signature on an edition without giving it away."
+        "key": "quests",
+        "label": "Embark on quests!",
+        "value": "Collect the specified jubmojis in a quest to unlock powers."
+      },
+      {
+        "key": "powers",
+        "label": "Use your powers!",
+        "value": "Make ZK proofs about your jubmojis to verifiably post or unlock tickets and discounts."
       }
     ]
   }

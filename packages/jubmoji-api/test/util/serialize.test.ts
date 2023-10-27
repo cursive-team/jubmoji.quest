@@ -71,6 +71,7 @@ describe("serialization and deserialization should not lose data", () => {
   });
 
   test("succinct serialization works", () => {
+    // this test case takes a while as we need to recompute the R, T, U
     const serialized = succinctSerializeJubmojiList(testJubmojis);
     const deserialized = succinctDeserializeJubmojiList(serialized);
     expect(deserialized).toEqual(testJubmojis);

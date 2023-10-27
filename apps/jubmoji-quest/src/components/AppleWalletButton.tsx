@@ -1,6 +1,6 @@
 import { loadBackupState, saveBackupState } from "../lib/localStorage";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { serializeJubmojiList } from "jubmoji-api";
+import { succinctSerializeJubmojiList } from "jubmoji-api";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -25,13 +25,14 @@ export const AppleWalletButton = () => {
 
   const onAddToWallet = async () => {
     if (!jubmojis || !serial) return;
+    const succinctSerialization = succinctSerializeJubmojiList(jubmojis);
     saveBackupState({
       type: "apple",
       serialNum: serial,
     });
     window.location.href = `/api/generateApplePass?number=${
       jubmojis.length
-    }&serial=${serial}&collection=${serializeJubmojiList(jubmojis)}`;
+    }&serial=${serial}&collection=${encodeURIComponent(succinctSerialization)}`;
   };
 
   return (

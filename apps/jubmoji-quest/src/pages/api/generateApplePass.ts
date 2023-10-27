@@ -17,16 +17,11 @@ export default async function handler(
   request: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const {
-    number,
-    serial,
-    collection,
-    score = 0,
-  } = request.query ?? ({} as any);
+  const { serial, collection } = request.query ?? ({} as any);
   const { COLLECTION_SIZE } = APP_CONFIG;
 
   // Check for required params
-  if (!number || !serial || !collection) {
+  if (!serial || !collection) {
     console.error(
       "[/api/generateApplePass] missing 'number', 'serial', or 'collection' field"
     );
@@ -36,7 +31,9 @@ export default async function handler(
     });
   }
 
-  if (parseInt(number as string) > COLLECTION_SIZE) {
+  const serializedJubmojis = collection.toString().split(",");
+
+  if (serializedJubmojis.length > COLLECTION_SIZE) {
     console.error(`[/api/generateApplePass] number > ${COLLECTION_SIZE}`);
     return res.status(400).json({
       success: false,
@@ -73,21 +70,16 @@ export default async function handler(
     }
   );
 
-  const collectedItemsLabel = `${number.toString()}/${
-    APP_CONFIG.COLLECTION_SIZE
-  }`;
-
-  // secondaryFields
+  // only secondaryField is emojis
+  let emojiString = "";
+  for (const serializedJubmoji of serializedJubmojis) {
+    const emoji = serializedJubmoji.split("-")[0];
+    emojiString += emoji;
+  }
   pkPass.secondaryFields.push({
-    key: "collection",
-    label: "Collection",
-    value: APP_CONFIG.APP_NAME,
-  });
-
-  pkPass.secondaryFields.push({
-    key: "score",
-    label: "Score",
-    value: score?.toString(),
+    key: "Emojis",
+    label: "Jubmojis",
+    value: emojiString,
   });
 
   // auxiliaryFields
@@ -110,6 +102,7 @@ export default async function handler(
   });
 
   // headerFields
+  const collectedItemsLabel = `${serializedJubmojis.length}/${APP_CONFIG.COLLECTION_SIZE}`;
   pkPass.headerFields.push({
     key: "collected",
     label: "Collected",
