@@ -19,6 +19,7 @@ export default function ForegroundTapModal({
   useEffect(() => {
     async function runScan() {
       const messageHash = bigIntToHex(getMessageHash(message));
+      console.log("foreground tap message hash: ", messageHash);
       let command = {
         name: "sign",
         keyNo: 1,
