@@ -16,6 +16,7 @@ import {
   useUpdateLeaderBoardMutation,
 } from "@/hooks/useLeaderboard";
 import toast from "react-hot-toast";
+import { LeaderBoard } from "@/components/LeaderBoard";
 
 const PagePlaceholder = () => {
   return (
