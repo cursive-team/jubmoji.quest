@@ -10,6 +10,7 @@ type UpdateLeaderboardMutationProps = {
   quest?: JubmojiQuest | null;
 };
 
+// Returns the leaderboard for a given quest
 export const useGetLeaderBoard = (questId: string | number) => {
   return useQuery({
     queryKey: ["leaderboard", questId],
@@ -37,6 +38,7 @@ export const useGetLeaderBoard = (questId: string | number) => {
   });
 };
 
+// Mutation for updating the leaderboard
 export const useUpdateLeaderBoardMutation = () => {
   return useMutation({
     mutationKey: "updateLeaderboard",
