@@ -53,7 +53,7 @@ const MainConsole = () => {
           Powers
         </button>
         <button
-          onClick={() => setSelectedConsole("Powers")}
+          onClick={() => setSelectedConsole("Foreground Tap")}
           className="focus:outline-none"
         >
           Foreground Tap
