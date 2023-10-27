@@ -9,13 +9,22 @@ import {
   createProofInstance,
   getMessageHash,
 } from "jubmoji-api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ForegroundTapConsole() {
   const [message, setMessage] = useState("");
   const [randomness, setRandomness] = useState<string>(crypto.randomUUID());
   const [isTapping, setIsTapping] = useState(false);
 
+  useEffect(() => {
+    console.log(
+      bigIntToHex(
+        BigInt(
+          "97146071573832070928654477453182750911772222090476581261472240282703308625736"
+        )
+      )
+    );
+  });
   const generateNewRandomness = () => {
     setRandomness(crypto.randomUUID());
   };
@@ -51,7 +60,7 @@ export default function ForegroundTapConsole() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900">
       <h1 className="text-white text-3xl font-bold">
         Enter a message, tap a card, and verify the signature!
       </h1>

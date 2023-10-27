@@ -6,6 +6,7 @@ import {
   batchProveMembership,
   batchVerifyMembership,
   bigIntToBytes,
+  bigIntToHex,
   deserializeMembershipProof,
   getPublicSignalsFromMembershipZKP,
   hexToBigInt,
@@ -325,7 +326,7 @@ export class PublicMessageSignature
     const fullMessage = this.randStr ? this.randStr + message : message;
     console.log("fullMessage: ", fullMessage);
     const msgHash = getMessageHash(fullMessage);
-    console.log("msgHash: ", msgHash);
+    console.log("msgHash: ", bigIntToHex(msgHash));
     const { r, s, v } = rawSig;
     const signature = new Signature(
       hexToBigInt(r),

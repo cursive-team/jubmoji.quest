@@ -18,6 +18,7 @@ export default function ForegroundTapModal({
 
   useEffect(() => {
     async function runScan() {
+      console.log("foreground tap message: ", message);
       const messageHash = bigIntToHex(getMessageHash(message));
       console.log("foreground tap message hash: ", messageHash);
       let command = {
