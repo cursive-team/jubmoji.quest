@@ -14,15 +14,17 @@ export type Jubmoji = {
   U: string;
 };
 
+export type NfcCardRawSignature = {
+  r: string;
+  s: string;
+  v: 27 | 28;
+};
+
 // Result of signing a message with an Arx card
 export type NfcCardSignMessageResult = {
   digest: string;
-  rawSignature: {
-    r: string;
-    s: string;
-    v: number;
-  };
-  publicKey: string;
+  rawSig: NfcCardRawSignature;
+  pubKey: string;
 };
 
 // Defines a class used to create and verify proofs
@@ -102,13 +104,13 @@ export interface PublicMessageSignatureClassArgs {
 
 export interface PublicMessageSignatureProofArgs {
   message: string;
-  sig: string;
+  rawSig: NfcCardRawSignature;
   pubKeyIndex: number;
 }
 
 export interface PublicMessageSignatureProof {
   message: string;
-  sig: string;
+  rawSig: NfcCardRawSignature;
   pubKeyIndex: number;
 }
 

@@ -1330,6 +1330,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/secp256k1@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@noble/secp256k1@npm:2.0.0"
+  checksum: 945d48a1142751658e89142c33a53c3d7cf8f0ce7cf43bd36b4dcfc1819bc7dc9c227737aca2c55a5699ff548122e21ca19395eb7682a1cea9d5e5e9cda22812
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -5453,6 +5460,7 @@ __metadata:
   dependencies:
     "@arx-research/libhalo": ^1.2.17
     "@headlessui/react": ^1.4.1
+    "@noble/secp256k1": ^2.0.0
     "@prisma/client": ^5.4.2
     "@tailwindcss/line-clamp": ^0.4.4
     "@tw-classed/react": ^1.5.2

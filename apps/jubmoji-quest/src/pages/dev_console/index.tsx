@@ -3,6 +3,7 @@ import JubmojiConsole from "./jubmojiConsole";
 import CardConsole from "./cardConsole";
 import QuestConsole from "./questConsole";
 import PowerConsole from "./powerConsole";
+import ForegroundTapConsole from "./foregroundTapConsole";
 
 const MainConsole = () => {
   const [selectedConsole, setSelectedConsole] = useState("Jubmojis");
@@ -17,6 +18,8 @@ const MainConsole = () => {
         return <QuestConsole />;
       case "Powers":
         return <PowerConsole />;
+      case "Foreground Tap":
+        return <ForegroundTapConsole />;
       default:
         return <div>No console selected</div>;
     }
@@ -48,6 +51,12 @@ const MainConsole = () => {
           className="focus:outline-none"
         >
           Powers
+        </button>
+        <button
+          onClick={() => setSelectedConsole("Powers")}
+          className="focus:outline-none"
+        >
+          Foreground Tap
         </button>
       </div>
 

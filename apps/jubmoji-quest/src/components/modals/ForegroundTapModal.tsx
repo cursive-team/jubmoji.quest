@@ -50,12 +50,9 @@ export default function ForegroundTapModal({
 
         await onTap({
           digest: res.input.digest,
-          rawSignature: res.signature.raw,
-          publicKey: res.publicKey,
+          rawSig: res.signature.raw,
+          pubKey: res.publicKey,
         });
-        console.log("Tapped card with public key: ", res.publicKey);
-        console.log("raw sig: ", res.signature.raw);
-        console.log("digest: ", res.input.digest);
         setStatusText("Tapped card! Process result...");
       } catch (error) {
         console.error(error);
