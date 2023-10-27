@@ -18,9 +18,7 @@ export default function ForegroundTapModal({
 
   useEffect(() => {
     async function runScan() {
-      console.log("foreground tap message: ", message);
       const messageHash = bigIntToHex(getMessageHash(message));
-      console.log("foreground tap message hash: ", messageHash);
       let command = {
         name: "sign",
         keyNo: 1,
@@ -55,9 +53,6 @@ export default function ForegroundTapModal({
           rawSig: res.signature.raw,
           pubKey: res.publicKey,
         });
-        console.log("pub key: ", res.publicKey);
-        console.log("signature: ", res.signature.raw);
-        console.log("digest: ", res.input.digest);
         setStatusText("Tapped card! Process result...");
       } catch (error) {
         console.error(error);

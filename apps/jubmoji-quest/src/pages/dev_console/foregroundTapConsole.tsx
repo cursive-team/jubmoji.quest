@@ -1,15 +1,13 @@
 "use client";
 
 import ForegroundTapModal from "@/components/modals/ForegroundTapModal";
-import { bigIntToHex } from "babyjubjub-ecdsa";
 import {
   NfcCardSignMessageResult,
   PublicMessageSignature,
   cardPubKeys,
   createProofInstance,
-  getMessageHash,
 } from "jubmoji-api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ForegroundTapConsole() {
   const [message, setMessage] = useState("");
@@ -31,7 +29,7 @@ export default function ForegroundTapConsole() {
     const pubKeyIndex = cardPubKeys.findIndex(
       (key) => key.pubKeySlot1 === pubKey // Use secp256k1 key here, which is in slot 1
     );
-    console.log("pub key index: ", pubKeyIndex);
+
     const proof = await proofInstance.prove({
       message,
       rawSig,
