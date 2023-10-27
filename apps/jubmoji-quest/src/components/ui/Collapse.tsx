@@ -14,7 +14,7 @@ const Collapse = ({ title, description }: CollapseProps) => {
     <Disclosure>
       {({ open }) => (
         <div>
-          <Disclosure.Button className="w-full border-t py-4 px-4">
+          <Disclosure.Button className="w-full border-t py-4 px-4 ring-0 outline-none">
             <Card.Title font="giorgio" className="flex gap-1 !text-[20px]">
               <span className="text-left">{title}</span>
               <div
