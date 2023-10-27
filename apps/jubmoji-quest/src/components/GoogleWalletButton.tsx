@@ -184,7 +184,7 @@ const getClaims = async ({
       uris: [
         {
           uri: APP_CONFIG.RECOVERY_URL(`${jubmojiWalletBackup}`),
-          description: "Retrieve your collection",
+          description: "Restore your collection",
           id: "official_site",
         },
       ],

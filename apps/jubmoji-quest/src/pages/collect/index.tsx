@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import {
   Jubmoji,
@@ -130,7 +130,6 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
 
 export default function CollectJubmojiPage() {
   const router = useRouter();
-  const params = useParams();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const { data: jubmojiCollectionCards = [], isLoading } = useFetchCards();
@@ -173,7 +172,7 @@ export default function CollectJubmojiPage() {
     if (typeof window !== "undefined") {
       getJubmojiFromUrl();
     }
-  }, [params, router, jubmojiCollectionCards]);
+  }, [router, jubmojiCollectionCards]);
 
   const onShowOnboarding = () => {
     setShowOnboarding(true);
