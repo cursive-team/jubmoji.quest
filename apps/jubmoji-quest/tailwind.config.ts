@@ -81,10 +81,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    require("@tailwindcss/line-clamp"),
-    backfaceVisibility,
-    perspective,
-  ],
+  plugins: [backfaceVisibility, perspective],
 };
 export default config;
