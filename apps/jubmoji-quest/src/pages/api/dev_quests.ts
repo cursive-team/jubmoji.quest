@@ -45,7 +45,6 @@ export default async function handler(
           proofType,
           proofParams,
           prerequisiteCards: {
-            // Assuming you have relation fields set up correctly
             connect: prerequisiteCardIndices.map((index: number) => ({
               index,
             })),

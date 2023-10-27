@@ -10,6 +10,10 @@ import React from "react";
 import { useFetchQuestById } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
+import { Prisma, $Enums } from "@prisma/client";
+import { useJubmojis } from "@/hooks/useJubmojis";
+import { createJubmojiQuestProof } from "@/lib/proving";
+import { getClientPathToCircuits } from "@/lib/config";
 
 const PagePlaceholder = () => {
   return (
@@ -28,6 +32,7 @@ const PagePlaceholder = () => {
 export default function QuestDetailPage() {
   const router = useRouter();
   const { id: questId } = router.query;
+  const { data: jubmojis } = useJubmojis();
 
   const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
     questId as string
@@ -42,6 +47,57 @@ export default function QuestDetailPage() {
 
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
+
+  const onUpdateTeamLeaderboardScore = async () => {
+    if (!jubmojis) {
+      alert("You must have jubmojis to participate in this quest!");
+      return;
+    }
+
+    const teamLeaderboardProof = await createJubmojiQuestProof({
+      config: { ...quest, proofParams: quest.proofParams as Prisma.JsonObject },
+      jubmojis,
+      pathToCircuits: getClientPathToCircuits(),
+    });
+
+    const response = await fetch(`/api/team-leaderboard`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        questId: quest.id,
+        serializedProof: teamLeaderboardProof,
+      }),
+    });
+
+    if (!response.ok) {
+      alert("Failed to update team leaderboard score!");
+      return;
+    }
+
+    const { scoreAdded } = await response.json();
+    alert(`Added ${scoreAdded} points to your team's score!`);
+
+    // After successful update, re-fetch the leaderboard
+    const url = new URL("/api/team-leaderboard", window.location.origin);
+    url.searchParams.append("questId", quest.id.toString());
+    const leaderboardResponse = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!leaderboardResponse.ok) {
+      console.error("Could not fetch new leaderboard");
+      return;
+    }
+
+    const { scoreMap } = await leaderboardResponse.json();
+    // Todo: Use scores to update leaderboard
+    console.log("Team scores: ", scoreMap);
+  };
 
   return (
     <div>
@@ -84,8 +140,14 @@ export default function QuestDetailPage() {
             </Link>
           );
         })}
-        <LeaderBoard></LeaderBoard>
-        <Button variant="secondary">Update team score</Button>
+        {quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD && (
+          <div>
+            <LeaderBoard></LeaderBoard>
+            <Button variant="secondary" onClick={onUpdateTeamLeaderboardScore}>
+              Update team score
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

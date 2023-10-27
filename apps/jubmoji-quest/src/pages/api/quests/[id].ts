@@ -40,7 +40,7 @@ export default async function handler(
     });
 
     if (!quest) {
-      return res.status(404).json({ message: "Quest not found" });
+      return res.status(500).json({ message: "Quest not found" });
     }
 
     res.status(200).json(quest);

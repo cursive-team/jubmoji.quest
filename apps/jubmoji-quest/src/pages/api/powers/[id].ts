@@ -26,6 +26,11 @@ export default async function handler(
             proofType: true,
             proofParams: true,
             imageLink: true,
+            prerequisiteCards: {
+              select: {
+                index: true,
+              },
+            },
             collectionCards: {
               select: {
                 index: true,
