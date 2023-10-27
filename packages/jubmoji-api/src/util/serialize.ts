@@ -1,5 +1,3 @@
-import { serialize } from "v8";
-import { JubmojiInCollection } from "../proofs";
 import { Jubmoji } from "../types";
 import { NonceSignature } from "../data";
 import { getJubmojiFromNonceSignature } from "./proving";
@@ -39,12 +37,13 @@ export const succinctDeserializeJubmojiList = (
   serialized: string
 ): Jubmoji[] => {
   const jubmojis: Jubmoji[] = [];
-  for (const serializedJubmoji of serialized.split(",")) {
+  const serializedJubmojis = serialized.split(",");
+  for (const serializedJubmoji of serializedJubmojis) {
     const [sig, msgNonce, msgRand, pubKeyIndex] = serializedJubmoji.split(";");
     const nonceSig: NonceSignature = {
-      sig: Buffer.from(sig, "base64").toString("hex"),
+      sig: Buffer.from(sig, "base64").toString("hex").toUpperCase(),
       nonce: parseInt(msgNonce),
-      rand: Buffer.from(msgRand, "base64").toString("hex"),
+      rand: Buffer.from(msgRand, "base64").toString("hex").toUpperCase(),
       pubKeyIndex: parseInt(pubKeyIndex),
     };
     jubmojis.push(getJubmojiFromNonceSignature(nonceSig));

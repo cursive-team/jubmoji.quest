@@ -3,13 +3,18 @@
   "version": "0.1.0",
   "main": "build/index.js",
   "scripts": {
-    "build": "tsc --noEmit false --declaration --incremental false"
+    "build": "tsc --noEmit false --declaration --incremental false",
+    "test": "jest"
   },
   "dependencies": {
     "babyjubjub-ecdsa": "^1.1.2",
     "js-sha256": "^0.10.1"
   },
   "devDependencies": {
-    "@types/node": "^20"
+    "@types/jest": "^29.5.6",
+    "@types/node": "^20",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
   }
 }
