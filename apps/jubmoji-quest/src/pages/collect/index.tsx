@@ -176,14 +176,16 @@ export default function CollectJubmojiPage() {
     setShowOnboarding(true);
   };
 
+  const navigateToJubmojis = () => {
+    router.push(`/jubmojis?pubKeyIndex=${collectedCard?.pubKeyIndex}`); // redirect to `/jubmojis` when modal is closed
+  };
+
   return (
     <Modal
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
       closable={!isFirstCollect}
-      onClose={() => {
-        router.push(`/jubmojis?pubKeyIndex=${collectedCard?.pubKeyIndex}`); // redirect to `/jubmojis` when modal is closed
-      }}
+      onClose={navigateToJubmojis}
     >
       <div className="my-auto flex flex-col gap-8">
         {showOnboarding ? (
@@ -218,16 +220,15 @@ export default function CollectJubmojiPage() {
               </Button>
             ) : (
               <div className="flex flex-col gap-8">
-                <Link href="/">
-                  <Button
-                    icon={<Icons.arrowRight className="text-black" />}
-                    iconPosition="right"
-                    variant="secondary"
-                    disabled={isLoading}
-                  >
-                    Back to app
-                  </Button>
-                </Link>
+                <Button
+                  icon={<Icons.arrowRight className="text-black" />}
+                  iconPosition="right"
+                  variant="secondary"
+                  disabled={isLoading}
+                  onClick={navigateToJubmojis}
+                >
+                  Back to app
+                </Button>
                 <Button
                   variant="transparent"
                   disabled={isLoading}

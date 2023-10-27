@@ -48,8 +48,8 @@ export default function AppFooter() {
     {
       label: "Powers",
       href: "/powers",
-      icon: Icons.flash,
-      iconActive: Icons.flashSolid,
+      icon: Icons.power,
+      iconActive: Icons.powerSolid,
     },
   ];
 
