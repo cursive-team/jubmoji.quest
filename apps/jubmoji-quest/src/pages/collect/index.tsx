@@ -151,7 +151,7 @@ export default function CollectJubmojiPage() {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    async function getJubmojiFromUrl() {
       const urlParams = new URLSearchParams(location.hash.slice(1));
       const sig = getHaLoArgs(urlParams);
       if (!sig) {
@@ -163,11 +163,15 @@ export default function CollectJubmojiPage() {
         jubmojiCollectionCards,
         sig.pubKeyIndex
       );
+      await addJubmoji(realJubmoji);
       setCollectedJubmoji(realJubmoji);
       if (card) {
         setCollectedCard(card);
       }
-      addJubmoji(realJubmoji); // async function, need to be careful
+    }
+
+    if (typeof window !== "undefined") {
+      getJubmojiFromUrl();
     }
   }, [params, router, jubmojiCollectionCards]);
 
