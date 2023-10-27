@@ -316,8 +316,16 @@ export class PublicMessageSignature
     pubKeyIndex,
   }: PublicMessageSignatureProof): Promise<VerificationResult> {
     // If there is a randStr, prepend it to the message
+    console.log("in verification");
+    console.log("message: ", message);
+    console.log("rawSig s: ", rawSig.s);
+    console.log("rawSig r: ", rawSig.r);
+    console.log("rawSig v: ", rawSig.v);
+    console.log("pubKeyIndex: ", pubKeyIndex);
     const fullMessage = this.randStr ? this.randStr + message : message;
+    console.log("fullMessage: ", fullMessage);
     const msgHash = getMessageHash(fullMessage);
+    console.log("msgHash: ", msgHash);
     const { r, s, v } = rawSig;
     const signature = new Signature(
       hexToBigInt(r),
@@ -331,10 +339,18 @@ export class PublicMessageSignature
       recoveredPublicKey = signature
         .recoverPublicKey(bigIntToBytes(msgHash))
         .toHex(false); // Get the uncompressed public key
-    } catch {
+    } catch (e) {
+      console.log("failed pub key recovery");
+      console.log(e);
       return Promise.resolve({ verified: false });
     }
 
+    console.log(
+      "keys equal",
+      claimedPublicKey,
+      recoveredPublicKey,
+      claimedPublicKey === recoveredPublicKey
+    );
     return Promise.resolve({
       verified: claimedPublicKey === recoveredPublicKey,
     });

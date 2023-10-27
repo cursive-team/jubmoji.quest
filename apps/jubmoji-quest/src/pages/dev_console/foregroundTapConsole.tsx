@@ -19,12 +19,14 @@ export default function ForegroundTapConsole() {
     pubKey,
   }: NfcCardSignMessageResult) => {
     const randStr = crypto.randomUUID();
+    console.log("rand str: ", randStr);
     const proofInstance = createProofInstance(PublicMessageSignature, {
       randStr, // Add some randomness to message before signing
     });
     const pubKeyIndex = cardPubKeys.findIndex(
       (key) => key.pubKeySlot1 === pubKey // Use secp256k1 key here, which is in slot 1
     );
+    console.log("pub key index: ", pubKeyIndex);
     const proof = await proofInstance.prove({
       message,
       rawSig,
