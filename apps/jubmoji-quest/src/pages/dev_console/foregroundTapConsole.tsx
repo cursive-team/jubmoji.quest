@@ -1,17 +1,24 @@
 "use client";
 
 import ForegroundTapModal from "@/components/modals/ForegroundTapModal";
+import { bigIntToHex } from "babyjubjub-ecdsa";
 import {
   NfcCardSignMessageResult,
   PublicMessageSignature,
   cardPubKeys,
   createProofInstance,
+  getMessageHash,
 } from "jubmoji-api";
 import { useState } from "react";
 
 export default function ForegroundTapConsole() {
   const [message, setMessage] = useState("");
+  const [randomness, setRandomness] = useState<string>(crypto.randomUUID());
   const [isTapping, setIsTapping] = useState(false);
+
+  const generateNewRandomness = () => {
+    setRandomness(crypto.randomUUID());
+  };
 
   const onTap = async ({
     digest,
@@ -19,7 +26,6 @@ export default function ForegroundTapConsole() {
     pubKey,
   }: NfcCardSignMessageResult) => {
     const randStr = crypto.randomUUID();
-    console.log("rand str: ", randStr);
     const proofInstance = createProofInstance(PublicMessageSignature, {
       randStr, // Add some randomness to message before signing
     });
@@ -40,7 +46,8 @@ export default function ForegroundTapConsole() {
   };
 
   if (isTapping) {
-    return <ForegroundTapModal message={message} onTap={onTap} />;
+    const fullMessage = randomness + message;
+    return <ForegroundTapModal message={fullMessage} onTap={onTap} />;
   }
 
   return (
@@ -48,6 +55,10 @@ export default function ForegroundTapConsole() {
       <h1 className="text-white text-3xl font-bold">
         Enter a message, tap a card, and verify the signature!
       </h1>
+      <div className="bg-transparent w-96 shadow-lg rounded-lg p-5">
+        <button onClick={generateNewRandomness}>Generate New Randomness</button>
+        <h2>Current randomness: {randomness}</h2>
+      </div>
       <div className="bg-transparent w-96 shadow-lg rounded-lg p-5">
         <form
           onSubmit={() => {
