@@ -73,10 +73,14 @@ const CardTitle = classed.span(
       centred: {
         true: "justify-center",
       },
+      disabled: {
+        true: "disabled-element",
+      },
     },
     defaultVariants: {
       font: "giorgio",
       size: "sm",
+      disabled: false,
     },
   }
 );
@@ -96,10 +100,14 @@ const CardDescription = classed.span(
       truncate: {
         true: "line-clamp-1",
       },
+      disabled: {
+        true: "disabled-element",
+      },
     },
     defaultVariants: {
       font: "dm",
       truncate: false,
+      disabled: false,
     },
   }
 );

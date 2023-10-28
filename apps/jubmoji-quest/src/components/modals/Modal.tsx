@@ -39,7 +39,7 @@ const Modal = ({
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="flex min-h-full w-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -49,7 +49,7 @@ const Modal = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-w-md transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
                 {closable && (
                   <div className="fixed z-100 right-[24px] top-[9px] flex items-center h-12 py-8">
                     <button
@@ -61,7 +61,9 @@ const Modal = ({
                     </button>
                   </div>
                 )}
-                <div className="flex flex-col grow h-full">{children}</div>
+                <div className="flex flex-col grow h-full max-w-md mx-auto">
+                  {children}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -15,19 +15,19 @@ const RadioOptionItem = classed.div(
   }
 );
 
-interface OptionsProps {
+interface FiltersProps {
   object?: Record<string, string>;
   defaultValue?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
 }
 
-export default function Options({
+const Filters = ({
   object = {},
   defaultValue,
   onChange,
   disabled,
-}: OptionsProps) {
+}: FiltersProps) => {
   let [option, setOption] = useState(defaultValue);
 
   const handleChange = (value: string) => {
@@ -55,4 +55,7 @@ export default function Options({
       })}
     </RadioGroup>
   );
-}
+};
+
+Filters.displayName = "Filters";
+export { Filters };

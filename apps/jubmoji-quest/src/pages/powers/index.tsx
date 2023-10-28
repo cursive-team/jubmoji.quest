@@ -1,6 +1,6 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import Options from "@/components/Options";
+import { Filters } from "@/components/Filters";
 import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { MESSAGES } from "../../messages";
@@ -65,13 +65,13 @@ export default function PowersPage() {
       </div>
       <div className="flex flex-col gap-2 mt-4">
         <div className="grid grid-cols-1 gap-6">
-          <Options
+          <Filters
             defaultValue="all"
             object={PowerOptionsMapping}
             onChange={setSelectedOption}
             disabled={isLoadingPowers}
           />
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {isLoadingPowers ? (
               <PlaceholderContent />
             ) : (
