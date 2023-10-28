@@ -61,7 +61,7 @@ const Modal = ({
                     </button>
                   </div>
                 )}
-                <div className="flex flex-col grow h-full max-w-md mx-auto">
+                <div className="flex flex-col grow h-full overflow-scroll pb-6">
                   {children}
                 </div>
               </Dialog.Panel>

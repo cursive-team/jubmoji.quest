@@ -8,12 +8,12 @@ import { useState } from "react";
 import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
-import { Modal } from "@/components/modals/Modal";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { JubmojiQuest } from "@/types";
 import { useFetchQuests } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
+import { InfoModal } from "@/components/modals/InfoModal";
 
 export const QuestTagMapping: Record<
   "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
@@ -90,9 +90,7 @@ export default function Home() {
 
   return (
     <>
-      <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
-        Info for Jubmoji quest
-      </Modal>
+      <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div>
         <AppHeader
           title={
