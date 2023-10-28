@@ -2,8 +2,9 @@ import React from "react";
 import { Card } from "./cards/Card";
 import { classed } from "@tw-classed/react";
 import { Icons } from "./Icons";
-import { Placeholder } from "./Placeholder";
 import { Message } from "./Message";
+import { Placeholder } from "./Placeholder";
+
 import {
   getJubmojiCardByPubIndex,
   useFetchCards,
