@@ -11,7 +11,7 @@ type UpdateLeaderboardMutationProps = {
 };
 
 // Returns the leaderboard for a given quest
-export const useGetLeaderBoard = (questId: string | number) => {
+export const useGetLeaderboard = (questId: string | number) => {
   return useQuery({
     queryKey: ["leaderboard", questId],
     queryFn: async (): Promise<

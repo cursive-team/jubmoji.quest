@@ -12,7 +12,7 @@ import { Card } from "@/components/cards/Card";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import {
-  useGetLeaderBoard,
+  useGetLeaderboard,
   useUpdateLeaderboardMutation,
 } from "@/hooks/useLeaderboard";
 import toast from "react-hot-toast";
@@ -47,7 +47,7 @@ export default function QuestDetailPage() {
     isLoading: isLoadingLeaderBoard,
     data: scoreMapping = {},
     refetch: refetchLeaderBoard,
-  } = useGetLeaderBoard(questId as string);
+  } = useGetLeaderboard(questId as string);
 
   useEffect(() => {
     // refetch the leaderboard when the mutation is successful
