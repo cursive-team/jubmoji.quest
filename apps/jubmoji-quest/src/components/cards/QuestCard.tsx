@@ -26,7 +26,6 @@ const QuestCard = ({
   disabled = false,
   spacing = "md",
   children,
-  spacing = "md",
 }: CardProps) => {
   const percentageProgress = (collected / (collectionTotalItems || 1)) * 100;
 
