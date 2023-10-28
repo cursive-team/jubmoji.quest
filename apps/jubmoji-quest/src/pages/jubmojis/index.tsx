@@ -1,6 +1,5 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import { Modal } from "@/components/modals/Modal";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
@@ -14,6 +13,7 @@ import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { Message } from "@/components/Message";
+import { InfoModal } from "@/components/modals/InfoModal";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
@@ -122,25 +122,23 @@ export default function JubmojisPage() {
       return <Message>No results found.</Message>;
     }
 
-    if (jubmojis.length !== 0)
-      return <Message>No Jubmoji collected yet.</Message>;
-
     return (
-      <div className="grid grid-cols-4 gap-3">
+      <div className="flex flex-wrap gap-3 mt-4 mx-auto">
         {filteredJubmojis?.map((jubmoji, index) => {
           if (!jubmoji) return null;
           return (
             <JubmojiNavItem
               key={index}
               size="full"
+              className="!w-[70px] !h-[70px]"
               onClick={() => {
                 setSearch(""); // clear search to show selected item
                 setIsSearchMode(false);
                 setSelectedPubKeyIndex(jubmoji?.pubKeyIndex);
               }}
             >
-              <div className="flex items-center content-center w-[80px]">
-                <span className="text-[50px] leading-none mx-auto py-auto mt-2">
+              <div className="flex items-center content-center">
+                <span className="text-[40px] leading-none mx-auto py-auto mt-2">
                   {jubmoji?.emoji}
                 </span>
               </div>
@@ -159,9 +157,7 @@ export default function JubmojisPage() {
   return (
     <>
       <BackupModal isOpen={backupModalOpen} setIsOpen={setBackupModalOpen} />
-      <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
-        Info for Jubmojis
-      </Modal>
+      <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div
         className={cn("flex flex-col gap-3 xs:gap-4", {
           invisible: infoModalOpen || backupModalOpen,
@@ -189,6 +185,7 @@ export default function JubmojisPage() {
             placeholder="Search your private collection"
             value={search}
             onChange={onSearch}
+            onFocus={() => setIsSearchMode(true)}
           />
           {isSearchMode ? (
             <button

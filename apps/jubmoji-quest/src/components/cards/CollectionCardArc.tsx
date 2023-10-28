@@ -61,6 +61,7 @@ const CollectionCardArc = ({
   icon,
   cardBackImage,
   quests = [],
+  disabled = false,
 }: CollectionCardProps) => {
   const [showQuest, setShowQuest] = useState(false);
   const [backedUp, setBackedUp] = useState(false);
@@ -88,7 +89,7 @@ const CollectionCardArc = ({
               )}
             </div>
             <div className="ml-auto">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <span className="text-lg">{icon}</span>
                 <span className="font-giorgio text-shark-50 text-lg tracking-[0.36px] ">{`#${edition}`}</span>
               </div>
@@ -108,17 +109,17 @@ const CollectionCardArc = ({
       );
     }
     return (
-      <div className="h-full flex flex-col gap-4 mt-4">
+      <div className="h-full flex flex-col gap-4 m-4">
         {quests?.map((quest) => {
           return (
-            <div key={quest.id} className="flex gap-2">
+            <div key={quest.id} className="flex items-center gap-2">
               <Icons.logo />
               <Link
                 className="text-baby-blue-default font-dm-sans text-[13px]"
                 href={`/quests/${quest.id}`}
               >
                 <div className="flex items-center gap-1 underline">
-                  <span> {quest.name}</span>
+                  <span>{quest.name}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -166,10 +167,12 @@ const CollectionCardArc = ({
 
       <QuestButtonWrapper small={extraSmallDevice}>
         <Button
-          onClick={() => setShowQuest(!showQuest)}
+          onClick={() => {
+            disabled ? null : setShowQuest(!showQuest);
+          }}
           size="tiny"
           variant="shark"
-          className="!border-[0.8px]"
+          className={cn("!border-[0.8px]", disabled ? " text-white/40" : "")}
           iconPosition="right"
           icon={
             <Icons.arrowUp

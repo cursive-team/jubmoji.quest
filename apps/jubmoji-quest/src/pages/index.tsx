@@ -2,18 +2,18 @@ import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/Button";
 import { useJubmojis } from "../hooks/useJubmojis";
-import Options from "@/components/Options";
+import { Filters } from "@/components/Filters";
 import Link from "next/link";
 import { useState } from "react";
 import { filterItems } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
-import { Modal } from "@/components/modals/Modal";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { JubmojiQuest } from "@/types";
 import { useFetchQuests } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
+import { InfoModal } from "@/components/modals/InfoModal";
 
 export const QuestTagMapping: Record<
   "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
@@ -90,9 +90,7 @@ export default function Home() {
 
   return (
     <>
-      <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
-        Info for Jubmoji quest
-      </Modal>
+      <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div>
         <AppHeader
           title={
@@ -122,13 +120,13 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
-            <Options
+            <Filters
               defaultValue="all"
               object={QuestTagMapping}
               onChange={setSelectedOption}
               disabled={isLoadingQuests}
             />
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               {isLoadingQuests ? (
                 <>
                   <Placeholder.Card />

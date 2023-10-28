@@ -1,7 +1,6 @@
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
-import Options from "@/components/Options";
-import { Modal } from "@/components/modals/Modal";
+import { Filters } from "@/components/Filters";
 import { Input } from "@/components/ui/Input";
 import { MESSAGES } from "../../messages";
 import React, { useState } from "react";
@@ -11,6 +10,7 @@ import Link from "next/link";
 import { useFetchPowers } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
+import { InfoModal } from "@/components/modals/InfoModal";
 
 export const PowerOptionsMapping: Record<
   "ALL" | "STARRED" | "NEW" | "LOCKED",
@@ -46,9 +46,7 @@ export default function PowersPage() {
 
   return (
     <>
-      <Modal isOpen={infoModalOpen} setIsOpen={setIsModalOpen}>
-        Info for Powers
-      </Modal>
+      <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div className="flex flex-col">
         <AppHeader
           title="YOUR POWERS"
@@ -65,13 +63,13 @@ export default function PowersPage() {
       </div>
       <div className="flex flex-col gap-2 mt-4">
         <div className="grid grid-cols-1 gap-6">
-          <Options
+          <Filters
             defaultValue="all"
             object={PowerOptionsMapping}
             onChange={setSelectedOption}
             disabled={isLoadingPowers}
           />
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {isLoadingPowers ? (
               <PlaceholderContent />
             ) : (
