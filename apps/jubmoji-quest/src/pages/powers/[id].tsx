@@ -3,7 +3,7 @@ import { Icons } from "@/components/Icons";
 import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "../../hooks/useJubmojis";
 import { useFetchPowerById } from "@/hooks/useFetchPowers";
@@ -16,6 +16,7 @@ import { TwitterPower } from "@/components/powers/TwitterPower";
 import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { Message } from "@/components/Message";
+import { cn } from "@/lib/utils";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -74,16 +75,15 @@ const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
 
 export default function PowerDetailPage() {
   const { data: jubmojis } = useJubmojis();
-  const [bookmarked, setBookmarked] = React.useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [powerIsLocked, setPowerIsLocked] = useState(true);
 
   const router = useRouter();
   const { id: powerId } = router.query;
 
-  const {
-    isError,
-    isLoading: isLoadingPower,
-    data: power = null,
-  } = useFetchPowerById(powerId as string);
+  const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
+    powerId as string
+  );
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) {
@@ -109,21 +109,27 @@ export default function PowerDetailPage() {
       <div className="grid grid-cols-1 gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="h-12">{powerIcon}</div>
-            <Card.Title className="!leading-none">{power.name}</Card.Title>
+            <div
+              className={cn("h-12", powerIsLocked ? "disabled-element" : "")}
+            >
+              {powerIcon}
+            </div>
+            <Card.Title disabled={powerIsLocked} className="!leading-none">
+              {power.name}
+            </Card.Title>
           </div>
           <div className="flex items-start ml-auto w-6 h-6">
             {bookmarked ? <Icons.starSolid /> : <Icons.star />}
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 py-5">
+        <div className="flex flex-col gap-2 py-5 px-2">
           <PowerDetailLabel
             label="Quest"
             value={
               <Link
                 href={`/quests/${power.quest.id}`}
-                className="underline text-baby-blue-default"
+                className="underline font-dm-sans text-baby-blue-default"
               >
                 {power.quest.name}
               </Link>
@@ -134,7 +140,7 @@ export default function PowerDetailPage() {
             value={<PowerLabel>{power.name}</PowerLabel>}
           />
         </div>
-        <div className="py-4">
+        <div className="py-4 px-2">
           <PowerLabel>{power.description}</PowerLabel>
         </div>
 

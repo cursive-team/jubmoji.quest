@@ -46,10 +46,10 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
             }
           >
             <Image
-              src="/images/zkp-maker.png"
+              src="/images/proof-icon.png"
               width={150}
               height={150}
-              alt="zkp marker"
+              alt="proof icon"
               className={cn("", {
                 "animate animate-pulse": powerMutation.isLoading,
               })}

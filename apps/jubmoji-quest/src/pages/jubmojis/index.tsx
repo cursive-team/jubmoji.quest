@@ -122,25 +122,23 @@ export default function JubmojisPage() {
       return <Message>No results found.</Message>;
     }
 
-    if (jubmojis.length !== 0)
-      return <Message>No Jubmoji collected yet.</Message>;
-
     return (
-      <div className="grid grid-cols-4 gap-3">
+      <div className="flex flex-wrap gap-3 mt-4 mx-auto">
         {filteredJubmojis?.map((jubmoji, index) => {
           if (!jubmoji) return null;
           return (
             <JubmojiNavItem
               key={index}
               size="full"
+              className="!w-[70px] !h-[70px]"
               onClick={() => {
                 setSearch(""); // clear search to show selected item
                 setIsSearchMode(false);
                 setSelectedPubKeyIndex(jubmoji?.pubKeyIndex);
               }}
             >
-              <div className="flex items-center content-center w-[80px]">
-                <span className="text-[50px] leading-none mx-auto py-auto mt-2">
+              <div className="flex items-center content-center">
+                <span className="text-[40px] leading-none mx-auto py-auto mt-2">
                   {jubmoji?.emoji}
                 </span>
               </div>
@@ -187,6 +185,7 @@ export default function JubmojisPage() {
             placeholder="Search your private collection"
             value={search}
             onChange={onSearch}
+            onFocus={() => setIsSearchMode(true)}
           />
           {isSearchMode ? (
             <button

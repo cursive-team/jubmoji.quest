@@ -22,6 +22,7 @@ import {
 } from "@/hooks/useFetchCards";
 import Image from "next/image";
 import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
+import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
@@ -49,7 +50,7 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
           </div>
         </Card.Header>
         <Card.Content className="!gap-4" spacing="sm">
-          <Card.Title font="giorgio" size="md">
+          <Card.Title centred font="giorgio" size="md">
             It lives in your browser
           </Card.Title>
           <Card.Description centred font="giorgio">
@@ -175,14 +176,16 @@ export default function CollectJubmojiPage() {
     setShowOnboarding(true);
   };
 
+  const navigateToJubmojis = () => {
+    router.push(`/jubmojis?pubKeyIndex=${collectedCard?.pubKeyIndex}`); // redirect to `/jubmojis` when modal is closed
+  };
+
   return (
     <Modal
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
       closable={!isFirstCollect}
-      onClose={() => {
-        router.push(`/jubmojis?pubKeyIndex=${collectedCard?.pubKeyIndex}`); // redirect to `/jubmojis` when modal is closed
-      }}
+      onClose={navigateToJubmojis}
     >
       <div className="my-auto flex flex-col gap-8">
         {showOnboarding ? (
@@ -194,15 +197,15 @@ export default function CollectJubmojiPage() {
             ) : (
               <>
                 {collectedCard && (
-                  <CollectionCard
+                  <CollectionCardArc
                     className="text-center"
                     label={collectedCard.name}
                     icon={collectedCard.emoji}
                     owner={collectedCard.owner}
                     edition={collectedJubmoji?.msgNonce}
+                    cardBackImage={collectedCard.imagePath}
                     size="sm"
-                    centred
-                    canFlip={false}
+                    disabled
                   />
                 )}
               </>
@@ -217,16 +220,15 @@ export default function CollectJubmojiPage() {
               </Button>
             ) : (
               <div className="flex flex-col gap-8">
-                <Link href="/">
-                  <Button
-                    icon={<Icons.arrowRight className="text-black" />}
-                    iconPosition="right"
-                    variant="secondary"
-                    disabled={isLoading}
-                  >
-                    Back to app
-                  </Button>
-                </Link>
+                <Button
+                  icon={<Icons.arrowRight className="text-black" />}
+                  iconPosition="right"
+                  variant="secondary"
+                  disabled={isLoading}
+                  onClick={navigateToJubmojis}
+                >
+                  Back to app
+                </Button>
                 <Button
                   variant="transparent"
                   disabled={isLoading}
