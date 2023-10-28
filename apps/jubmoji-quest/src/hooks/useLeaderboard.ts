@@ -38,7 +38,7 @@ export const useGetLeaderBoard = (questId: string | number) => {
 };
 
 // Mutation for updating the leaderboard
-export const useUpdateLeaderBoardMutation = () => {
+export const useUpdateLeaderboardMutation = () => {
   return useMutation({
     mutationKey: "updateLeaderboard",
     mutationFn: async ({ jubmojis, quest }: UpdateLeaderboardMutationProps) => {

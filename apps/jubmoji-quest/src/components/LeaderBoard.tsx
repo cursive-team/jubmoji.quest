@@ -10,7 +10,7 @@ import {
   useFetchCollectedCards,
 } from "@/hooks/useFetchCards";
 
-type LeaderBoardProps = {
+type LeaderboardProps = {
   items: Record<number, string | number>;
   loading?: boolean;
 };
@@ -31,24 +31,24 @@ const RankLabel = classed.span(
   }
 );
 
-const LeaderBoardContent = classed.div(
+const LeaderboardContent = classed.div(
   "grid grid-cols-[55px_1fr_100px] gap-2 w-full"
 );
 
 const LoadingContent = () => {
   return (
-    <LeaderBoardContent>
+    <LeaderboardContent>
       <Placeholder.Line size="md" />
       <Placeholder.Line size="md" />
       <Placeholder.Line size="md" />
-    </LeaderBoardContent>
+    </LeaderboardContent>
   );
 };
 
 /**
  * Component will automatically sort the items by score
  */
-const LeaderBoard = ({ items, loading = false }: LeaderBoardProps) => {
+const Leaderboard = ({ items, loading = false }: LeaderboardProps) => {
   // Sort the items by score
   const ranking = Object.entries(items).sort(
     ([, a], [, b]) => (b as number) - (a as number)
@@ -67,11 +67,11 @@ const LeaderBoard = ({ items, loading = false }: LeaderBoardProps) => {
       </div>
 
       <div className="flex flex-col gap-2 w-full">
-        <LeaderBoardContent>
+        <LeaderboardContent>
           <RankLabel variant="primary">Rank</RankLabel>
           <RankLabel variant="primary">Name</RankLabel>
           <RankLabel variant="primary">Score</RankLabel>
-        </LeaderBoardContent>
+        </LeaderboardContent>
         {loading ? (
           <>
             <LoadingContent />
@@ -96,7 +96,7 @@ const LeaderBoard = ({ items, loading = false }: LeaderBoardProps) => {
                 const variant = isPartOfTeam ? "active" : "secondary";
 
                 return (
-                  <LeaderBoardContent key={pubKeyIndex}>
+                  <LeaderboardContent key={pubKeyIndex}>
                     <RankLabel variant={variant}>{rank}</RankLabel>
                     <RankLabel variant={variant}>
                       <span>
@@ -104,19 +104,19 @@ const LeaderBoard = ({ items, loading = false }: LeaderBoardProps) => {
                       </span>
                     </RankLabel>
                     <RankLabel variant={variant}>{score}</RankLabel>
-                  </LeaderBoardContent>
+                  </LeaderboardContent>
                 );
               })}
             </div>
           </div>
         ) : (
-          <Message className="mx-auto"> No scores yet</Message>
+          <Message className="mx-auto">No scores yet</Message>
         )}
       </div>
     </Card.Base>
   );
 };
 
-LeaderBoard.displayName = "LeaderBoard";
+Leaderboard.displayName = "Leaderboard";
 
-export { LeaderBoard };
+export { Leaderboard };
