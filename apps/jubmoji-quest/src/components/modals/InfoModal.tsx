@@ -6,7 +6,7 @@ import { Collapse } from "../ui/Collapse";
 const InfoModal = ({ isOpen, setIsOpen, onClose }: ModalProps) => {
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen} onClose={onClose}>
-      <div className=" flex flex-col gap-12">
+      <div className="flex flex-col gap-12">
         <span className="text-[36px] font-giorgio text-center">
           ABOUT <br /> JUBMOJI.QUEST
         </span>
