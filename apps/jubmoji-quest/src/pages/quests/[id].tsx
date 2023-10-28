@@ -1,4 +1,3 @@
-import LeaderBoard from "@/components/LeaderBoard";
 import { AppHeader } from "@/components/AppHeader";
 import { Icons } from "@/components/Icons";
 import { PowerCard } from "@/components/cards/PowerCard";
@@ -6,14 +5,18 @@ import { QuestCard } from "@/components/cards/QuestCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useFetchQuestById } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
-import { Prisma, $Enums } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { createJubmojiQuestProof } from "@/lib/proving";
-import { getClientPathToCircuits } from "@/lib/config";
+import {
+  useGetLeaderboard,
+  useUpdateLeaderboardMutation,
+} from "@/hooks/useLeaderboard";
+import toast from "react-hot-toast";
+import { Leaderboard } from "@/components/ui/Leaderboard";
 
 const PagePlaceholder = () => {
   return (
@@ -33,10 +36,25 @@ export default function QuestDetailPage() {
   const router = useRouter();
   const { id: questId } = router.query;
   const { data: jubmojis } = useJubmojis();
+  const [powerIsLocked, setPowerIsLocked] = useState(true);
 
   const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
     questId as string
   );
+
+  const updateLeaderboardMutation = useUpdateLeaderboardMutation();
+  const {
+    isLoading: isLoadingLeaderBoard,
+    data: scoreMapping = {},
+    refetch: refetchLeaderBoard,
+  } = useGetLeaderboard(questId as string);
+
+  useEffect(() => {
+    // refetch the leaderboard when the mutation is successful
+    if (updateLeaderboardMutation.isSuccess) {
+      refetchLeaderBoard();
+    }
+  }, [refetchLeaderBoard, updateLeaderboardMutation.isSuccess]);
 
   const endDateLabel = quest?.endTime
     ? new Intl.DateTimeFormat("en-US", {
@@ -45,59 +63,23 @@ export default function QuestDetailPage() {
       }).format(new Date(quest.endTime))
     : undefined;
 
+  const onUpdateTeamLeaderboardScore = async () => {
+    await toast.promise(
+      updateLeaderboardMutation.mutateAsync({ jubmojis, quest }),
+      {
+        loading: "Updating team score...",
+        success: (score: any) =>
+          `Added ${score} points to your team's score!` ||
+          "Team score updated!",
+        error: (err: any) => err.message,
+      }
+    );
+  };
+
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
 
-  const onUpdateTeamLeaderboardScore = async () => {
-    if (!jubmojis) {
-      alert("You must have jubmojis to participate in this quest!");
-      return;
-    }
-
-    const teamLeaderboardProof = await createJubmojiQuestProof({
-      config: { ...quest, proofParams: quest.proofParams as Prisma.JsonObject },
-      jubmojis,
-      pathToCircuits: getClientPathToCircuits(),
-    });
-
-    const response = await fetch(`/api/team-leaderboard`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        questId: quest.id,
-        serializedProof: teamLeaderboardProof,
-      }),
-    });
-
-    if (!response.ok) {
-      alert("Failed to update team leaderboard score!");
-      return;
-    }
-
-    const { scoreAdded } = await response.json();
-    alert(`Added ${scoreAdded} points to your team's score!`);
-
-    // After successful update, re-fetch the leaderboard
-    const url = new URL("/api/team-leaderboard", window.location.origin);
-    url.searchParams.append("questId", quest.id.toString());
-    const leaderboardResponse = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!leaderboardResponse.ok) {
-      console.error("Could not fetch new leaderboard");
-      return;
-    }
-
-    const { scoreMap } = await leaderboardResponse.json();
-    // Todo: Use scores to update leaderboard
-    console.log("Team scores: ", scoreMap);
-  };
+  const showLeaderBoard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
   return (
     <div>
@@ -115,6 +97,7 @@ export default function QuestDetailPage() {
           title={quest.name}
           description={quest.description}
           image={quest.imageLink || ""}
+          spacing="sm"
         >
           <div className="flex flex-col gap-4 mt-6">
             <div className="flex flex-col">
@@ -128,6 +111,7 @@ export default function QuestDetailPage() {
             </div>
           </div>
         </QuestCard>
+
         {quest.powers.map((power) => {
           return (
             <Link key={power.id} href={`/powers/${power.id}`}>
@@ -135,18 +119,24 @@ export default function QuestDetailPage() {
                 title={power.name}
                 description={power.description}
                 powerType={power.powerType}
-                disabled={true} // Todo: Logic for enabling powers
+                disabled={powerIsLocked} // Todo: Logic for enabling powers
               />
             </Link>
           );
         })}
-        {quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD && (
-          <div>
-            <LeaderBoard></LeaderBoard>
-            <Button variant="secondary" onClick={onUpdateTeamLeaderboardScore}>
+
+        {showLeaderBoard && (
+          <>
+            <Leaderboard items={scoreMapping} loading={isLoadingLeaderBoard} />
+            <Button
+              variant="secondary"
+              onClick={onUpdateTeamLeaderboardScore}
+              disabled={updateLeaderboardMutation.isLoading}
+              loading={updateLeaderboardMutation.isLoading}
+            >
               Update team score
             </Button>
-          </div>
+          </>
         )}
       </div>
     </div>
