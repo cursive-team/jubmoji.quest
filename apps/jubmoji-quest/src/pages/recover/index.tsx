@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import { Jubmoji, succinctDeserializeJubmojiList } from "jubmoji-api";
-import { writeJubmojis } from "@/lib/localStorage";
+import { unionJubmojisUniquePubKey, writeJubmojis } from "@/lib/localStorage";
 import { Card } from "@/components/cards/Card";
 import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Button } from "@/components/ui/Button";
@@ -43,29 +43,11 @@ export default function RecoverJubmojiPage() {
         succinctSerialization
       );
 
-      const unionJubmojis = new Set([...recoveredJubmojis, ...jubmojis]);
-      const unionJubmojisArray = Array.from(unionJubmojis);
-
-      // make sure we only keep the lowest nonce for each pubKeyIndex
-      const uniquePubKeyJubmojisArray = unionJubmojisArray.reduce(
-        (acc: Jubmoji[], jubmoji: Jubmoji) => {
-          const existingJubmoji = acc.find(
-            (item) => item.pubKeyIndex === jubmoji.pubKeyIndex
-          );
-          if (!existingJubmoji) {
-            return [...acc, jubmoji];
-          } else if (existingJubmoji.msgNonce > jubmoji.msgNonce) {
-            return acc.map((item) =>
-              item.pubKeyIndex === jubmoji.pubKeyIndex ? jubmoji : item
-            );
-          } else {
-            return acc;
-          }
-        },
-        []
+      const uniquePubKeyJubmojis = await unionJubmojisUniquePubKey(
+        recoveredJubmojis,
+        jubmojis
       );
-
-      await writeJubmojis(uniquePubKeyJubmojisArray);
+      await writeJubmojis(uniquePubKeyJubmojis);
       setIsLoadingSerialization(false);
     }
 
