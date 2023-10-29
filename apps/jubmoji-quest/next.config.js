@@ -20,6 +20,16 @@ const nextConfig = {
           "https://airtable.com/apprikYUs5WuXJRbN/shrep6Pp59ukNJp34/tblEFhdjC2nEWP4cQ",
         permanent: true,
       },
+      {
+        source: "/zuhunt",
+        destination: "https://www.jubmoji.quest/quests/4",
+        permanent: true,
+      },
+      {
+        source: "/zuhunt-test",
+        destination: "https://www.jubmoji.quest/quests/3",
+        permanent: true,
+      },
     ];
   },
 };
