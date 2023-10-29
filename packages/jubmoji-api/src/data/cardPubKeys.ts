@@ -461,9 +461,9 @@ export const cardPubKeys: CardPubKey[] = [
   },
   {
     category: "applications",
-    emoji: "🧈",
-    cardName: "butter",
-    unicode: "U+1F9C8",
+    emoji: "🧙",
+    cardName: "sorceress",
+    unicode: "U+1F9D9 200D 2640 FE0F",
     pubKeySlot1:
       "04a759a8da273559b22b81715261f1e354ca06538421feaf21280558f42e451bb860429d60392139eb041c82db5f3f150f785a5d1bd14a1804689c2689bbaf3d5f",
     pubKeySlot2:
