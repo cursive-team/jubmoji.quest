@@ -58,6 +58,6 @@ const RecoverCard = ({
   );
 };
 
-RecoverCard.displayName = "CollectionCard";
+RecoverCard.displayName = "RecoverCard";
 
 export { RecoverCard };
