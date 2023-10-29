@@ -1,5 +1,3 @@
-"use client";
-
 import ForegroundTapModal from "@/components/modals/ForegroundTapModal";
 import {
   NfcCardSignMessageResult,
