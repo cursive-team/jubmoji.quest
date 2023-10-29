@@ -26,7 +26,7 @@ export const APP_CONFIG = {
   COUNTRY: "Turkey",
   YEAR: "2023",
   RECOVERY_URL: (collection: string) =>
-    `http://jubmoji.quest/recover#?collection=${encodeURIComponent(
+    `https://jubmoji.quest/recover#?collection=${encodeURIComponent(
       collection
     )}`,
 };

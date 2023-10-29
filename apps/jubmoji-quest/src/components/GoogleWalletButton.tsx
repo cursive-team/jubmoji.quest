@@ -17,6 +17,7 @@ export const GoogleWalletButton = () => {
   const [updateUrl, setUpdateUrl] = useState<string>();
   const [serial, setSerial] = useState<string>();
   const [updated, setUpdated] = useState<boolean>(false);
+  const [clicked, setClicked] = useState<boolean>(false);
 
   // determine if user already has a google backup
   useEffect(() => {
@@ -64,6 +65,8 @@ export const GoogleWalletButton = () => {
   const onAddToWallet = async () => {
     if (isDisabled) return;
 
+    setClicked(true);
+
     if (updateUrl) {
       const response = await fetch(updateUrl);
       if (response.status === 200) {
@@ -99,7 +102,7 @@ export const GoogleWalletButton = () => {
             width={264}
             height={52}
             sizes="100vw"
-            style={isDisabled ? { filter: "grayscale(100%)" } : {}}
+            style={isDisabled || clicked ? { filter: "grayscale(100%)" } : {}}
           />
         )}
       </button>

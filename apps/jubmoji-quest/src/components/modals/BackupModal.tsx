@@ -68,8 +68,7 @@ export default function BackupModal({ children, ...props }: ModalProps) {
                     "jubmoji.quest recovery link: " +
                       APP_CONFIG.RECOVERY_URL(succinctSerialization)
                   );
-                const newWindow = window.open(whatsappUrl, "_blank");
-                if (newWindow) newWindow.opener = null;
+                window.location.href = whatsappUrl;
               }}
             >
               <Image
