@@ -17,6 +17,7 @@ import {
 } from "@/hooks/useLeaderboard";
 import toast from "react-hot-toast";
 import { Leaderboard } from "@/components/ui/Leaderboard";
+import { cardPubKeys } from "jubmoji-api";
 
 const PagePlaceholder = () => {
   return (
@@ -81,6 +82,10 @@ export default function QuestDetailPage() {
 
   const showLeaderBoard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
+  const collectionEmojis = quest.collectionCards
+    .map((card) => cardPubKeys[card.index].emoji)
+    .join("");
+
   return (
     <div>
       <AppHeader
@@ -101,7 +106,9 @@ export default function QuestDetailPage() {
         >
           <div className="flex flex-col gap-4 mt-6">
             <div className="flex flex-col">
-              <Card.Title className="!text-base text-left">Collect:</Card.Title>
+              <Card.Title className="!text-base text-left">
+                {"Collect: " + collectionEmojis}
+              </Card.Title>
               <div className="flex gap-2"></div>
             </div>
             <div className="ml-auto">
