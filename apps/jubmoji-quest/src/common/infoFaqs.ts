@@ -31,7 +31,7 @@ export const FAQS: InfoProps[] = [
   {
     title: "Need help tapping?",
     description: `Click the “Assisted tap” button on the main page, which will make it easier to collect Jubmojis from the cards. Hold it for 1-2s against the top of your phone if it's an iPhone, and the center of your phone if it's an Android.` 
-  }
+  },
   {
     title: `What is the “Jub” in Jubmoji?`,
     description: `"Jub" comes from the term "Baby Jubjub Curve," the elliptic curve used for the card's signatures. It was found in 2019 by Barry WhiteHat, Marta Bellés, and Jordi Baylina.
