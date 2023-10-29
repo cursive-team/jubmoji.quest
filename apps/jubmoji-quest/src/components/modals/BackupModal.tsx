@@ -18,7 +18,9 @@ export default function BackupModal({ children, ...props }: ModalProps) {
     if (!jubmojis) return;
 
     const succinctSerialization = succinctSerializeJubmojiList(jubmojis);
-    const copyText = APP_CONFIG.RECOVERY_URL(succinctSerialization);
+    const copyText =
+      "jubmoji.quest recovery link: " +
+      APP_CONFIG.RECOVERY_URL(succinctSerialization);
 
     // Use Clipboard API where available
     if (navigator.clipboard) {
@@ -63,7 +65,8 @@ export default function BackupModal({ children, ...props }: ModalProps) {
                 const whatsappUrl =
                   "https://wa.me/?text=" +
                   encodeURIComponent(
-                    APP_CONFIG.RECOVERY_URL(succinctSerialization)
+                    "jubmoji.quest recovery link: " +
+                      APP_CONFIG.RECOVERY_URL(succinctSerialization)
                   );
                 const newWindow = window.open(whatsappUrl, "_blank");
                 if (newWindow) newWindow.opener = null;

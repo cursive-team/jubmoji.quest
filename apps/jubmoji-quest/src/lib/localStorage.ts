@@ -21,7 +21,7 @@ export const writeJubmojis = async (jubmojis: Jubmoji[]): Promise<void> => {
   window.localStorage["jubmojis"] = serialized;
 };
 
-export const unionJubmojisUniquePubKey = async (
+export const unionJubmojisByPubKey = async (
   jubmojis1: Jubmoji[],
   jubmojis2: Jubmoji[]
 ): Promise<Jubmoji[]> => {

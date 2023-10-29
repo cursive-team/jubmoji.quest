@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import { succinctDeserializeJubmojiList } from "jubmoji-api";
-import { unionJubmojisUniquePubKey, writeJubmojis } from "@/lib/localStorage";
+import { unionJubmojisByPubKey, writeJubmojis } from "@/lib/localStorage";
 import { Card } from "@/components/cards/Card";
 import { RecoverCard } from "@/components/cards/RecoverCard";
 import { Button } from "@/components/ui/Button";
@@ -42,7 +42,7 @@ export default function RecoverJubmojiPage() {
       const recoveredJubmojis = succinctDeserializeJubmojiList(
         succinctSerialization
       );
-      const uniquePubKeyJubmojis = await unionJubmojisUniquePubKey(
+      const uniquePubKeyJubmojis = await unionJubmojisByPubKey(
         recoveredJubmojis,
         jubmojis
       );
