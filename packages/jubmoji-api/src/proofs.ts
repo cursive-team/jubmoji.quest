@@ -5,14 +5,12 @@ import {
   areAllBigIntsTheSame,
   batchProveMembership,
   batchVerifyMembership,
-  derDecodeSignature,
+  bigIntToBytes,
   deserializeMembershipProof,
   getPublicSignalsFromMembershipZKP,
   hexToBigInt,
   proveMembership,
-  publicKeyFromString,
   serializeMembershipProof,
-  verifyEcdsaSignature,
   verifyMembership,
 } from "babyjubjub-ecdsa";
 import {
@@ -20,14 +18,12 @@ import {
   getMerkleProofListFromCache,
   getMerkleRootFromCache,
 } from "./merkleCache";
-import {
-  recoverArbitraryMessageHash,
-  recoverCounterMessageHash,
-} from "./nfcCard";
+import { recoverCounterMessageHash } from "./nfcCard";
 import {
   getCardPubKeyFromIndex,
   getRandomNullifierRandomness,
   getMembershipProofArgsFromJubmoji,
+  getMessageHash,
 } from "./util";
 import {
   ProofClass,
@@ -47,6 +43,8 @@ import {
   TeamLeaderboardProofArgs,
   TeamLeaderboardProof,
 } from "./types";
+import { Signature } from "@noble/secp256k1";
+import { cardPubKeys } from "./data";
 
 export class JubmojiInCollection {
   collectionPubKeys: string[];
@@ -314,17 +312,31 @@ export class PublicMessageSignature
 
   verify({
     message,
-    sig,
+    rawSig,
     pubKeyIndex,
   }: PublicMessageSignatureProof): Promise<VerificationResult> {
     // If there is a randStr, prepend it to the message
     const fullMessage = this.randStr ? this.randStr + message : message;
-    const msgHash = recoverArbitraryMessageHash(fullMessage);
-    const decodedSig = derDecodeSignature(sig);
-    const pubKey = publicKeyFromString(getCardPubKeyFromIndex(pubKeyIndex));
+    const msgHash = getMessageHash(fullMessage);
+    const { r, s, v } = rawSig;
+    const signature = new Signature(
+      hexToBigInt(r),
+      hexToBigInt(s),
+      v - 27 // The NFC card uses v = 27 or 28, but the secp library wants recovery to be 0 or 1
+    );
+
+    const claimedPublicKey = cardPubKeys[pubKeyIndex].pubKeySlot1; // Use secp256k1 key from slot 1
+    let recoveredPublicKey;
+    try {
+      recoveredPublicKey = signature
+        .recoverPublicKey(bigIntToBytes(msgHash))
+        .toHex(false); // Get the uncompressed public key
+    } catch {
+      return Promise.resolve({ verified: false });
+    }
 
     return Promise.resolve({
-      verified: verifyEcdsaSignature(decodedSig, msgHash, pubKey),
+      verified: claimedPublicKey === recoveredPublicKey,
     });
   }
 }
@@ -359,9 +371,8 @@ export class TeamLeaderboard
 
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(teamJubmoji);
-    const teamPubKey = getCardPubKeyFromIndex(teamJubmoji.pubKeyIndex);
     // We need to reveal which team we are on for the leaderboard
-    const teamMerkleProof = await getMerkleProofFromCache([teamPubKey], 0);
+    const teamMerkleProof = await getMerkleProofFromCache([pubKey], 0);
 
     const teamMembershipProof = await proveMembership({
       sig,

@@ -1,9 +1,4 @@
 import { VerificationResult } from "babyjubjub-ecdsa";
-import {
-  JubmojiInCollection,
-  JubmojiInCollectionWithNonce,
-  PublicMessageSignature,
-} from "./proofs";
 
 export type Jubmoji = {
   pubKeyIndex: number; // Index of the card's public key within the list of public keys
@@ -17,6 +12,19 @@ export type Jubmoji = {
   R: string;
   T: string;
   U: string;
+};
+
+export type NfcCardRawSignature = {
+  r: string;
+  s: string;
+  v: 27 | 28;
+};
+
+// Result of signing a message with an Arx card
+export type NfcCardSignMessageResult = {
+  digest: string;
+  rawSig: NfcCardRawSignature;
+  pubKey: string;
 };
 
 // Defines a class used to create and verify proofs
@@ -96,13 +104,13 @@ export interface PublicMessageSignatureClassArgs {
 
 export interface PublicMessageSignatureProofArgs {
   message: string;
-  sig: string;
+  rawSig: NfcCardRawSignature;
   pubKeyIndex: number;
 }
 
 export interface PublicMessageSignatureProof {
   message: string;
-  sig: string;
+  rawSig: NfcCardRawSignature;
   pubKeyIndex: number;
 }
 

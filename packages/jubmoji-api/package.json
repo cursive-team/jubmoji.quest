@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@noble/secp256k1": "^2.0.0",
     "babyjubjub-ecdsa": "^1.1.2",
     "js-sha256": "^0.10.1"
   },
