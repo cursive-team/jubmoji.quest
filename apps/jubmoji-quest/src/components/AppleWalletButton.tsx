@@ -25,7 +25,9 @@ export const AppleWalletButton = () => {
 
   const onAddToWallet = async () => {
     if (!jubmojis || !serial) return;
-    const succinctSerialization = succinctSerializeJubmojiList(jubmojis);
+    const succinctSerialization = encodeURIComponent(
+      succinctSerializeJubmojiList(jubmojis)
+    );
     saveBackupState({
       type: "apple",
       serialNum: serial,

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
-import { Jubmoji, succinctDeserializeJubmojiList } from "jubmoji-api";
+import { succinctDeserializeJubmojiList } from "jubmoji-api";
 import { unionJubmojisUniquePubKey, writeJubmojis } from "@/lib/localStorage";
 import { Card } from "@/components/cards/Card";
-import { CollectionCard } from "@/components/cards/CollectionCard";
+import { RecoverCard } from "@/components/cards/RecoverCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { Icons } from "@/components/Icons";
@@ -59,7 +59,7 @@ export default function RecoverJubmojiPage() {
     <Modal
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
-      closable={isLoadingSerialization}
+      closable={!isLoadingSerialization}
       onClose={() => {
         router.push(`/jubmojis`);
       }}
@@ -68,20 +68,18 @@ export default function RecoverJubmojiPage() {
         {isLoadingSerialization ? (
           <Card.Base className="h-[260px]" loading />
         ) : (
-          <CollectionCard
+          <RecoverCard
             className="text-center"
-            label={"Your jubmojis have been restored."}
+            title={"Jubmojis recovered!"}
             icon={"✅"}
-            owner={"If you had duplicates, only the lowest nonce was kept."}
-            edition={undefined}
-            size="sm"
-            centred
-            canFlip={false}
+            description={
+              "If you had duplicate jubmojis, only the lowest nonce was kept. This will not affect your app experience!"
+            }
           />
         )}
 
         <div className="flex flex-col gap-8">
-          <Link href="/">
+          <Link href="/jubmojis">
             <Button
               icon={<Icons.arrowRight className="text-black" />}
               iconPosition="right"
