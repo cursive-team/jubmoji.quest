@@ -106,11 +106,10 @@ export default function QuestDetailPage() {
         >
           <div className="flex flex-col gap-4 mt-6">
             <div className="flex flex-col">
-              <Card.Title className="!text-base text-left">
-                {"Collect: " + collectionEmojis}
-              </Card.Title>
+              <Card.Title className="!text-base text-left">Collect</Card.Title>
               <div className="flex gap-2"></div>
             </div>
+            <div className="mr-auto">{collectionEmojis}</div>
             <div className="ml-auto">
               <span className=" text-shark-400 text-[13px] font-dm-sans">
                 {`Ends on ${endDateLabel}`}
