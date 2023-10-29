@@ -104,7 +104,7 @@ export default function QuestDetailPage() {
           image={quest.imageLink || ""}
           spacing="sm"
         >
-          <div className="flex flex-col gap-4 mt-6">
+          <div className="flex flex-col gap-2 mt-6">
             <div className="flex flex-col">
               <Card.Title className="!text-base text-left">Collect</Card.Title>
               <div className="flex gap-2"></div>
