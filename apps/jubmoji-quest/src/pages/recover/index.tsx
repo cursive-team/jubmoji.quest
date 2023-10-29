@@ -42,7 +42,6 @@ export default function RecoverJubmojiPage() {
       const recoveredJubmojis = succinctDeserializeJubmojiList(
         succinctSerialization
       );
-
       const uniquePubKeyJubmojis = await unionJubmojisUniquePubKey(
         recoveredJubmojis,
         jubmojis

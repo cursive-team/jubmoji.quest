@@ -9,7 +9,6 @@ import {
 } from "../constants";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { cardPubKeys, succinctSerializeJubmojiList } from "jubmoji-api";
-import { BackupState } from "@/types";
 
 export const GoogleWalletButton = () => {
   const { data: jubmojis } = useJubmojis();

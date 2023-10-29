@@ -33,14 +33,6 @@ export default async function handler(
 
   const serializedJubmojis = collection.toString().split(",");
 
-  if (serializedJubmojis.length > COLLECTION_SIZE) {
-    console.error(`[/api/generateApplePass] number > ${COLLECTION_SIZE}`);
-    return res.status(400).json({
-      success: false,
-      message: `[/api/generateApplePass] number > ${COLLECTION_SIZE}`,
-    });
-  }
-
   assert(PASSKIT_WWDR_BASE64_PEM, "Missing passkit wwdr cert");
   assert(PASSKIT_SIGNERKEY_BASE64_PEM, "Missing passkit signer key");
   assert(PASSKIT_SIGNERCERT_BASE64_PEM, "Missing passkit signer cert");
