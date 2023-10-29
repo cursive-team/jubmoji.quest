@@ -9,7 +9,7 @@ type InfoProps = {
 export const FAQS: InfoProps[] = [
   {
     title: "What is jubmoji.quest?",
-    description: `Jubmoji.quest is place to keep personal, provable digital mementos from people you meet and places you visit IRL. Each time you tap a card, you collect a <b>Jubmoji</b>, a unique signature that you can store privately and share as you wish!`,
+    description: `Jubmoji.quest is place to keep personal, provable digital mementos from people you meet and places you visit IRL. Each time you tap a card, you collect a Jubmoji, a unique cryptographic signature that you can store privately and share as you wish!`,
   },
   {
     title: "What are quests?",
