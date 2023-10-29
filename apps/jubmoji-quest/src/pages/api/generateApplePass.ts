@@ -57,7 +57,7 @@ export default async function handler(
 
   const pkPass = await PKPass.from(
     {
-      model: path.resolve(process.cwd(), "./src/pages/api/models/sigmoji.pass"),
+      model: path.resolve(process.cwd(), "./src/pages/api/models/jubmoji.pass"),
       certificates: {
         wwdr: Buffer.from(PASSKIT_WWDR_BASE64_PEM, "base64").toString("utf8"),
         signerKeyPassphrase: PASSKIT_GENERATOR_PASSPHRASE,
@@ -118,7 +118,7 @@ export default async function handler(
 
   const buffer = pkPass.getAsBuffer();
 
-  res.setHeader("Content-Disposition", 'attachment; filename="sigmoji.pkpass"');
+  res.setHeader("Content-Disposition", 'attachment; filename="jubmoji.pkpass"');
   res.setHeader("Content-Type", "application/vnd.apple.pkpass");
 
   return res.send(buffer);
