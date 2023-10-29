@@ -14,6 +14,7 @@ import { useFetchQuests } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
+import { AssistedTapModal } from "@/components/modals/AssistedTapModal";
 
 export const QuestTagMapping: Record<
   "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
@@ -30,6 +31,7 @@ export const QuestTagMapping: Record<
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState("all");
   const [infoModalOpen, setIsModalOpen] = useState(false);
+  const [assistedTapModal, setAssistedTapModal] = useState(false);
   const { data: jubmojis = [] } = useJubmojis();
 
   const { isLoading: isLoadingQuests, data: quests = [] } = useFetchQuests();
@@ -91,6 +93,10 @@ export default function Home() {
   return (
     <>
       <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
+      <AssistedTapModal
+        isOpen={assistedTapModal}
+        setIsOpen={setAssistedTapModal}
+      />
       <div>
         <AppHeader
           title={
@@ -114,6 +120,7 @@ export default function Home() {
             size="tiny"
             variant="blue"
             className="font-semibold"
+            onClick={() => setAssistedTapModal(true)}
           >
             Assisted tap
           </Button>
