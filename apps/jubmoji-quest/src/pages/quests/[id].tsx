@@ -12,11 +12,11 @@ import { Card } from "@/components/cards/Card";
 import { $Enums } from "@prisma/client";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import {
-  useGetLeaderboard,
-  useUpdateLeaderboardMutation,
-} from "@/hooks/useLeaderboard";
+  useGetTeamLeaderboard,
+  useUpdateTeamLeaderboardMutation,
+} from "@/hooks/useTeamLeaderboard";
 import toast from "react-hot-toast";
-import { Leaderboard } from "@/components/ui/Leaderboard";
+import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import { cardPubKeys } from "jubmoji-api";
 
 const PagePlaceholder = () => {
@@ -43,19 +43,19 @@ export default function QuestDetailPage() {
     questId as string
   );
 
-  const updateLeaderboardMutation = useUpdateLeaderboardMutation();
+  const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
   const {
     isLoading: isLoadingLeaderBoard,
     data: scoreMapping = {},
     refetch: refetchLeaderBoard,
-  } = useGetLeaderboard(questId as string);
+  } = useGetTeamLeaderboard(questId as string);
 
   useEffect(() => {
     // refetch the leaderboard when the mutation is successful
-    if (updateLeaderboardMutation.isSuccess) {
+    if (updateTeamLeaderboardMutation.isSuccess) {
       refetchLeaderBoard();
     }
-  }, [refetchLeaderBoard, updateLeaderboardMutation.isSuccess]);
+  }, [refetchLeaderBoard, updateTeamLeaderboardMutation.isSuccess]);
 
   const endDateLabel = quest?.endTime
     ? new Intl.DateTimeFormat("en-US", {
@@ -66,7 +66,7 @@ export default function QuestDetailPage() {
 
   const onUpdateTeamLeaderboardScore = async () => {
     await toast.promise(
-      updateLeaderboardMutation.mutateAsync({ jubmojis, quest }),
+      updateTeamLeaderboardMutation.mutateAsync({ jubmojis, quest }),
       {
         loading: "Updating team score...",
         success: (score: any) =>
@@ -133,12 +133,15 @@ export default function QuestDetailPage() {
 
         {showLeaderBoard && (
           <>
-            <Leaderboard items={scoreMapping} loading={isLoadingLeaderBoard} />
+            <TeamLeaderboard
+              items={scoreMapping}
+              loading={isLoadingLeaderBoard}
+            />
             <Button
               variant="secondary"
               onClick={onUpdateTeamLeaderboardScore}
-              disabled={updateLeaderboardMutation.isLoading}
-              loading={updateLeaderboardMutation.isLoading}
+              disabled={updateTeamLeaderboardMutation.isLoading}
+              loading={updateTeamLeaderboardMutation.isLoading}
             >
               Update team score
             </Button>

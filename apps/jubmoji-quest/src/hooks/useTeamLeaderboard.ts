@@ -5,17 +5,17 @@ import { Prisma } from "@prisma/client";
 import { Jubmoji } from "jubmoji-api";
 import { useMutation, useQuery } from "react-query";
 
-type UpdateLeaderboardMutationProps = {
+type UpdateTeamLeaderboardMutationProps = {
   jubmojis?: Jubmoji[];
   quest?: JubmojiQuest | null;
 };
 
-// Returns the leaderboard for a given quest
-export const useGetLeaderboard = (questId: string | number) => {
+// Returns the team leaderboard for a given quest
+export const useGetTeamLeaderboard = (questId: string | number) => {
   return useQuery({
-    queryKey: ["leaderboard", questId],
+    queryKey: ["teamLeaderboard", questId],
     queryFn: async (): Promise<Record<number, number> | { error: string }> => {
-      // After successful update, re-fetch the leaderboard
+      // After successful update, re-fetch the team leaderboard
       const url = new URL("/api/team-leaderboard", window.location.origin);
       url.searchParams.append("questId", `${questId}`);
       const leaderboardResponse = await fetch(url, {
@@ -35,11 +35,14 @@ export const useGetLeaderboard = (questId: string | number) => {
   });
 };
 
-// Mutation for updating the leaderboard
-export const useUpdateLeaderboardMutation = () => {
+// Mutation for updating the team leaderboard
+export const useUpdateTeamLeaderboardMutation = () => {
   return useMutation({
-    mutationKey: "updateLeaderboard",
-    mutationFn: async ({ jubmojis, quest }: UpdateLeaderboardMutationProps) => {
+    mutationKey: "updateTeamLeaderboard",
+    mutationFn: async ({
+      jubmojis,
+      quest,
+    }: UpdateTeamLeaderboardMutationProps) => {
       if (!jubmojis) {
         throw new Error("You must have jubmojis to participate in this quest!");
       }

@@ -11,7 +11,8 @@ import {
   useFetchCollectedCards,
 } from "@/hooks/useFetchCards";
 
-type LeaderboardProps = {
+type TeamLeaderboardProps = {
+  // Items is a mapping from pubKeyIndex (which represents a team) to the team's score
   items: Record<number, number>;
   loading?: boolean;
 };
@@ -49,11 +50,12 @@ const LoadingContent = () => {
 /**
  * Component will automatically sort the items by score
  */
-const Leaderboard = ({ items, loading = false }: LeaderboardProps) => {
+const TeamLeaderboard = ({ items, loading = false }: TeamLeaderboardProps) => {
   // Sort the items by score
   let rank = 0;
   let prevScore: Number | undefined;
   let skip = 1;
+  // ranking: [pubKeyIndex, score, rank]
   const ranking: [number, number, number][] = Object.entries(items)
     .sort(([, a], [, b]) => b - a)
     .map(([pubKeyIndex, score], index) => {
@@ -129,6 +131,6 @@ const Leaderboard = ({ items, loading = false }: LeaderboardProps) => {
   );
 };
 
-Leaderboard.displayName = "Leaderboard";
+TeamLeaderboard.displayName = "TeamLeaderboard";
 
-export { Leaderboard };
+export { TeamLeaderboard };
