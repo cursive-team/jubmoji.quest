@@ -14,9 +14,7 @@ type UpdateLeaderboardMutationProps = {
 export const useGetLeaderboard = (questId: string | number) => {
   return useQuery({
     queryKey: ["leaderboard", questId],
-    queryFn: async (): Promise<
-      Record<number, string | number> | { error: string }
-    > => {
+    queryFn: async (): Promise<Record<number, number> | { error: string }> => {
       // After successful update, re-fetch the leaderboard
       const url = new URL("/api/team-leaderboard", window.location.origin);
       url.searchParams.append("questId", `${questId}`);

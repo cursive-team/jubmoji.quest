@@ -12,7 +12,7 @@ import {
 } from "@/hooks/useFetchCards";
 
 type LeaderboardProps = {
-  items: Record<number, string | number>;
+  items: Record<number, number>;
   loading?: boolean;
 };
 
@@ -51,9 +51,21 @@ const LoadingContent = () => {
  */
 const Leaderboard = ({ items, loading = false }: LeaderboardProps) => {
   // Sort the items by score
-  const ranking = Object.entries(items).sort(
-    ([, a], [, b]) => (b as number) - (a as number)
-  );
+  let rank = 0;
+  let prevScore: Number | undefined;
+  let skip = 1;
+  const ranking: [number, number, number][] = Object.entries(items)
+    .sort(([, a], [, b]) => b - a)
+    .map(([pubKeyIndex, score], index) => {
+      if (index === 0 || score !== prevScore) {
+        prevScore = score;
+        rank += skip;
+        skip = 1;
+      } else {
+        skip++;
+      }
+      return [Number(pubKeyIndex), score, rank];
+    });
 
   const { data: jubmojiCollectionCards = [] } = useFetchCards();
   const { data: jubmojiQuestCards = [] } = useFetchCollectedCards();
@@ -83,15 +95,14 @@ const Leaderboard = ({ items, loading = false }: LeaderboardProps) => {
         ) : hasRanking ? (
           <div className="overflow-scroll max-h-40 pr-1">
             <div className="flex flex-col gap-2 w-full">
-              {ranking?.map(([pubKeyIndex, score], index) => {
-                const rank = index + 1;
+              {ranking.map(([pubKeyIndex, score, rank]) => {
                 const card = getJubmojiCardByPubIndex(
                   jubmojiCollectionCards,
-                  Number(pubKeyIndex)
+                  pubKeyIndex
                 );
 
                 const isPartOfTeam = jubmojiQuestCards.find(
-                  (card) => card.pubKeyIndex === Number(pubKeyIndex)
+                  (card) => card.pubKeyIndex === pubKeyIndex
                 );
 
                 const variant = isPartOfTeam ? "active" : "secondary";
