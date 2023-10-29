@@ -9,6 +9,7 @@ import { useJubmojis } from "@/hooks/useJubmojis";
 import { succinctSerializeJubmojiList } from "jubmoji-api";
 import toast from "react-hot-toast";
 import { APP_CONFIG } from "@/constants";
+import Image from "next/image";
 
 export default function BackupModal({ children, ...props }: ModalProps) {
   const { data: jubmojis } = useJubmojis();
@@ -53,6 +54,29 @@ export default function BackupModal({ children, ...props }: ModalProps) {
           <div className="flex flex-col gap-4 xs:gap-8">
             <GoogleWalletButton />
             <AppleWalletButton />
+            <button
+              disabled={!jubmojis}
+              onClick={() => {
+                const succinctSerialization = succinctSerializeJubmojiList(
+                  jubmojis!
+                );
+                const whatsappUrl =
+                  "https://wa.me/?text=" +
+                  encodeURIComponent(
+                    APP_CONFIG.RECOVERY_URL(succinctSerialization)
+                  );
+                const newWindow = window.open(whatsappUrl, "_blank");
+                if (newWindow) newWindow.opener = null;
+              }}
+            >
+              <Image
+                src="/images/whatsapp.svg"
+                alt="Backup QR code"
+                width={264}
+                height={52}
+                sizes="100vw"
+              />
+            </button>
           </div>
           <div className="flex flex-col gap-4 mt-auto">
             <span className="font-hind-siliguri font-normal text-[13px] text-[#888] text-center">
