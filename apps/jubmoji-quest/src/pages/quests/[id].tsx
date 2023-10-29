@@ -84,7 +84,7 @@ export default function QuestDetailPage() {
 
   const collectionEmojis = quest.collectionCards
     .map((card) => cardPubKeys[card.index].emoji)
-    .join("");
+    .join(" ");
 
   return (
     <div>
