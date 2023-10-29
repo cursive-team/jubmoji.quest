@@ -2,10 +2,11 @@ import { DerivedComponentType, classed } from "@tw-classed/react";
 import React, { InputHTMLAttributes, forwardRef } from "react";
 import type * as Classed from "@tw-classed/react";
 import { Icons } from "../Icons";
+import { cn } from "@/lib/utils";
 
 const InputComponent = classed(
   "input",
-  "font-dm-sans bg-transparent font-semibold ring-0 focus:ring-0 focus:outline-none w-full leading-[120%]",
+  "font-dm-sans bg-transparent font-semibold ring-0 focus:ring-0 focus:outline-none w-full leading-[120%] disabled:opacity-50 disabled:cursor-not-allowed",
   {
     variants: {
       size: {
@@ -38,13 +39,22 @@ interface InputProps
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, variant, size, children, icon, loading, ...props }, ref) => {
+  (
+    { className, variant, size, children, icon, loading, disabled, ...props },
+    ref
+  ) => {
     const isSearch = props.type === "search";
 
     return (
       <div className="relative flex items-center bg-shark-50/10 p-2 gap-2 rounded-[4px]">
-        {isSearch && <Icons.search />}
-        <InputComponent ref={ref} variant={variant} size={size} {...props} />
+        {isSearch && <Icons.search className={cn(disabled ? "opacity-50" : '')} />}
+        <InputComponent
+          ref={ref}
+          variant={variant}
+          size={size}
+          disabled={disabled}
+          {...props}
+        />
       </div>
     );
   }

@@ -14,6 +14,8 @@ import { useRouter } from "next/router";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
+import Image from "next/image";
+import Link from "next/link";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer",
@@ -59,8 +61,11 @@ export default function JubmojisPage() {
     setSelectedPubKeyIndex(Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex);
   }, [isLoadingJubmojis]);
 
-  const { emoji, name, owner, collectsFor, imagePath } =
-    getJubmojiCardByPubIndex(jubmojiCollectionCards, selectedPubKeyIndex) ?? {};
+  const selectedJubmoji = getJubmojiCardByPubIndex(
+    jubmojiCollectionCards,
+    selectedPubKeyIndex
+  );
+  const { emoji, name, owner, collectsFor, imagePath } = selectedJubmoji ?? {};
 
   // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
@@ -97,6 +102,29 @@ export default function JubmojisPage() {
           <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
         </div>
       );
+
+    if (!selectedJubmoji) {
+      return (
+        <div className="flex flex-col mx-auto gap-2 mt-5">
+          <div className="mx-auto">
+            <Icons.starSolid />
+          </div>
+          <div className="mx-auto flex flex-col gap-5">
+            <Image
+              height={220}
+              width={300}
+              src="/images/no-jubmojis.png"
+              alt="no result"
+            />
+            <Link href="/">
+              <Button rounded size="sm" className="max-w-[100px] mx-auto">
+                {"Let's go"}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <>
@@ -186,6 +214,7 @@ export default function JubmojisPage() {
             value={search}
             onChange={onSearch}
             onFocus={() => setIsSearchMode(true)}
+            disabled={!selectedJubmoji}
           />
           {isSearchMode ? (
             <button
@@ -201,6 +230,7 @@ export default function JubmojisPage() {
               variant="blue"
               onClick={() => setBackupModalOpen(true)}
               className="!font-semibold"
+              disabled={!selectedJubmoji}
             >
               Back up!
             </Button>
