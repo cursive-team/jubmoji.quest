@@ -9,6 +9,7 @@ import {
 } from "../constants";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { cardPubKeys, succinctSerializeJubmojiList } from "jubmoji-api";
+import toast from "react-hot-toast";
 
 export const GoogleWalletButton = () => {
   const { data: jubmojis } = useJubmojis();
@@ -17,7 +18,6 @@ export const GoogleWalletButton = () => {
   const [updateUrl, setUpdateUrl] = useState<string>();
   const [serial, setSerial] = useState<string>();
   const [updated, setUpdated] = useState<boolean>(false);
-  const [clicked, setClicked] = useState<boolean>(false);
 
   // determine if user already has a google backup
   useEffect(() => {
@@ -65,7 +65,9 @@ export const GoogleWalletButton = () => {
   const onAddToWallet = async () => {
     if (isDisabled) return;
 
-    setClicked(true);
+    toast("Generating wallet backup...", {
+      icon: "⏳",
+    });
 
     if (updateUrl) {
       const response = await fetch(updateUrl);
@@ -102,7 +104,7 @@ export const GoogleWalletButton = () => {
             width={264}
             height={52}
             sizes="100vw"
-            style={isDisabled || clicked ? { filter: "grayscale(100%)" } : {}}
+            style={isDisabled ? { filter: "grayscale(100%)" } : {}}
           />
         )}
       </button>

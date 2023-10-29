@@ -3,11 +3,11 @@ import { useJubmojis } from "@/hooks/useJubmojis";
 import { succinctSerializeJubmojiList } from "jubmoji-api";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const AppleWalletButton = () => {
   const { data: jubmojis } = useJubmojis();
   const [serial, setSerial] = useState<string | undefined>(undefined);
-  const [clicked, setClicked] = useState<boolean>(false);
 
   useEffect(() => {
     const loadBackup = async () => {
@@ -25,12 +25,16 @@ export const AppleWalletButton = () => {
   }, [jubmojis]);
 
   const onAddToWallet = async () => {
-    setClicked(true);
     if (!jubmojis || !serial) return;
+
+    toast("Generating wallet backup...", {
+      icon: "⏳",
+    });
+
     const succinctSerialization = encodeURIComponent(
       succinctSerializeJubmojiList(jubmojis)
     );
-    saveBackupState({
+    await saveBackupState({
       type: "apple",
       serialNum: serial,
     });
@@ -50,9 +54,7 @@ export const AppleWalletButton = () => {
           width={264}
           height={52}
           sizes="100vw"
-          style={
-            !jubmojis || !serial || clicked ? { filter: "grayscale(100%)" } : {}
-          }
+          style={!jubmojis || !serial ? { filter: "grayscale(100%)" } : {}}
         />
       </button>
     </div>
