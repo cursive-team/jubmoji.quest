@@ -40,11 +40,6 @@ export default async function handler(
   const updatedObject = {
     textModulesData: [
       {
-        id: "score",
-        header: "SCORE",
-        body: "?",
-      },
-      {
         id: "collected",
         header: "COLLECTED",
         body: collectedItems,
@@ -68,8 +63,8 @@ export default async function handler(
     linksModuleData: {
       uris: [
         {
-          uri: APP_CONFIG.RECOVERY_URL(`${collection}`),
-          description: "Retrieve your collection",
+          uri: APP_CONFIG.RECOVERY_URL(collection.toString()),
+          description: "Restore your collection",
           id: "official_site",
         },
       ],

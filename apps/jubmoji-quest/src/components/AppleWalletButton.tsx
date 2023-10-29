@@ -1,8 +1,9 @@
 import { loadBackupState, saveBackupState } from "../lib/localStorage";
 import { useJubmojis } from "@/hooks/useJubmojis";
-import { serializeJubmojiList } from "jubmoji-api";
+import { succinctSerializeJubmojiList } from "jubmoji-api";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const AppleWalletButton = () => {
   const { data: jubmojis } = useJubmojis();
@@ -25,13 +26,19 @@ export const AppleWalletButton = () => {
 
   const onAddToWallet = async () => {
     if (!jubmojis || !serial) return;
-    saveBackupState({
+
+    toast("Generating wallet backup...", {
+      icon: "⏳",
+    });
+
+    const succinctSerialization = encodeURIComponent(
+      succinctSerializeJubmojiList(jubmojis)
+    );
+    await saveBackupState({
       type: "apple",
       serialNum: serial,
     });
-    window.location.href = `/api/generateApplePass?number=${
-      jubmojis.length
-    }&serial=${serial}&collection=${serializeJubmojiList(jubmojis)}`;
+    window.location.href = `/api/generateApplePass?number=${jubmojis.length}&serial=${serial}&collection=${succinctSerialization}`;
   };
 
   return (

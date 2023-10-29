@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { detectIncognito } from "detectincognitojs";
 import {
   Jubmoji,
@@ -131,7 +131,6 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
 
 export default function CollectJubmojiPage() {
   const router = useRouter();
-  const params = useParams();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const { data: jubmojiCollectionCards = [], isLoading } = useFetchCards();
@@ -152,7 +151,7 @@ export default function CollectJubmojiPage() {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    async function getJubmojiFromUrl() {
       const urlParams = new URLSearchParams(location.hash.slice(1));
       const sig = getHaLoArgs(urlParams);
       if (!sig) {
@@ -164,13 +163,17 @@ export default function CollectJubmojiPage() {
         jubmojiCollectionCards,
         sig.pubKeyIndex
       );
+      await addJubmoji(realJubmoji);
       setCollectedJubmoji(realJubmoji);
       if (card) {
         setCollectedCard(card);
       }
-      addJubmoji(realJubmoji); // async function, need to be careful
     }
-  }, [params, router, jubmojiCollectionCards]);
+
+    if (typeof window !== "undefined") {
+      getJubmojiFromUrl();
+    }
+  }, [router, jubmojiCollectionCards]);
 
   const onShowOnboarding = () => {
     setShowOnboarding(true);

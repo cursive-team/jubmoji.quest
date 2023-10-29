@@ -1,0 +1,35 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.example.jubmoji",
+  "teamIdentifier": "BV3BXTVJUF",
+  "serialNumber": "0000001",
+  "organizationName": "jubmoji.quest",
+  "description": "Jubmojis Backup",
+  "logoText": "Jubmoji Backup",
+  "foregroundColor": "rgb(255, 255, 255)",
+  "backgroundColor": "rgb(30, 30, 31)",
+  "labelColor": "rgb(255, 255, 255)",
+  "eventTicket": {
+    "headerFields": [],
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": [
+      {
+        "key": "collect",
+        "label": "Collect jubmojis!",
+        "value": "A jubmoji is a unique, verifiable memento of an in-person experience."
+      },
+      {
+        "key": "quests",
+        "label": "Embark on quests!",
+        "value": "Collect the specified jubmojis in a quest to unlock powers."
+      },
+      {
+        "key": "powers",
+        "label": "Use your powers!",
+        "value": "Make ZK proofs about your jubmojis to verifiably post or unlock tickets and discounts."
+      }
+    ]
+  }
+}

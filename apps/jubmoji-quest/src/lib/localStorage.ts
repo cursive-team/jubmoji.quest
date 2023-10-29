@@ -21,6 +21,29 @@ export const writeJubmojis = async (jubmojis: Jubmoji[]): Promise<void> => {
   window.localStorage["jubmojis"] = serialized;
 };
 
+export const unionJubmojisByPubKey = async (
+  jubmojis1: Jubmoji[],
+  jubmojis2: Jubmoji[]
+): Promise<Jubmoji[]> => {
+  const unionJubmojis = Array.from(new Set([...jubmojis1, ...jubmojis2]));
+
+  // make sure we only keep the lowest nonce for each pubKeyIndex
+  return unionJubmojis.reduce((acc: Jubmoji[], jubmoji: Jubmoji) => {
+    const existingJubmoji = acc.find(
+      (item) => item.pubKeyIndex === jubmoji.pubKeyIndex
+    );
+    if (!existingJubmoji) {
+      return [...acc, jubmoji];
+    } else if (existingJubmoji.msgNonce > jubmoji.msgNonce) {
+      return acc.map((item) =>
+        item.pubKeyIndex === jubmoji.pubKeyIndex ? jubmoji : item
+      );
+    } else {
+      return acc;
+    }
+  }, []);
+};
+
 export const clearJubmojis = async (): Promise<void> => {
   window.localStorage["jubmojis"] = "";
 };
