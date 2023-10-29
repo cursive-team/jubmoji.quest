@@ -71,6 +71,8 @@ export const GoogleWalletButton = () => {
         setUpdated(true);
         return;
       }
+      // If update was unsuccessful, fall back to save. This can happen if user
+      // clicks backup from the app but doesn't actually add it to their wallet
     }
 
     saveBackupState({
