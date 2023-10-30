@@ -29,6 +29,7 @@ enum CollectStatus {
   IN_INCOGNITO = "You're in an incognito tab. Please copy this link into a non-incognito tab in order to save your Jubmojis!",
   ALREADY_COLLECTED = "You've already collected this jubmoji.",
   ALREADY_ON_TEAM = "You're already on a scavenger hunt team.",
+  ZERO_TAP = "Your card has now been initialized! Please tap again to collect its first jubmoji.",
   FIRST_COLLECT = "",
   STANDARD = "",
 }
@@ -119,7 +120,6 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             }]`}
           >
             {Object.entries(PowerTypeIconMapping).map(([key, icon]) => {
-              console.log(key);
               return <span key={key}>{icon}</span>;
             })}
           </div>
@@ -155,15 +155,19 @@ export default function CollectJubmojiPage() {
   useEffect(() => {
     async function getJubmojiFromUrl() {
       const urlParams = new URLSearchParams(location.hash.slice(1));
-      const sig = getHaLoArgs(urlParams);
-      if (!sig) {
+      const nonceSig = getHaLoArgs(urlParams);
+      if (!nonceSig) {
         router.push("/");
         return;
       }
-      const realJubmoji = getJubmojiFromNonceSignature(sig);
+      if (parseInt(nonceSig.sig) === 0) {
+        setCollectStatus(CollectStatus.ZERO_TAP);
+        return;
+      }
+      const realJubmoji = getJubmojiFromNonceSignature(nonceSig);
       const card = getJubmojiCardByPubIndex(
         jubmojiCollectionCards,
-        sig.pubKeyIndex
+        nonceSig.pubKeyIndex
       );
       await addJubmoji(realJubmoji);
       setCollectedJubmoji(realJubmoji);
@@ -172,10 +176,10 @@ export default function CollectJubmojiPage() {
       }
     }
 
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && !isLoading) {
       getJubmojiFromUrl();
     }
-  }, [router, jubmojiCollectionCards]);
+  }, [router, isLoading, jubmojiCollectionCards]);
 
   useEffect(() => {
     if (!jubmojiCollectionCards || !jubmojis || !collectedJubmoji) {
@@ -233,11 +237,18 @@ export default function CollectJubmojiPage() {
   };
 
   const renderMainInfo = (status: CollectStatus) => {
-    if (!collectedCard || !collectedJubmoji) return <></>;
-
     switch (status) {
       case CollectStatus.UNKNOWN:
         return <Card.Base className="h-[260px]" loading />;
+      case CollectStatus.ZERO_TAP:
+        return (
+          <SimpleCard
+            className="text-center"
+            title={"First tap!"}
+            icon={"🔄"}
+            description={CollectStatus.ZERO_TAP}
+          />
+        );
       case CollectStatus.IN_INCOGNITO:
         return (
           <SimpleCard
@@ -267,7 +278,9 @@ export default function CollectJubmojiPage() {
             size={"sm"}
           />
         );
-      default:
+      default: {
+        if (!collectedCard || !collectedJubmoji)
+          return <Card.Base className="h-[260px]" loading />;
         return (
           <CollectionCardArc
             className="text-center"
@@ -280,11 +293,23 @@ export default function CollectJubmojiPage() {
             disabled
           />
         );
+      }
     }
   };
 
   const renderButtons = (status: CollectStatus) => {
     switch (status) {
+      case CollectStatus.ZERO_TAP:
+        return (
+          <Button
+            icon={<Icons.arrowRight className="text-black" />}
+            iconPosition="right"
+            variant="secondary"
+            onClick={() => router.push("/")}
+          >
+            Back to app
+          </Button>
+        );
       case CollectStatus.FIRST_COLLECT:
         return (
           <Button variant="secondary" onClick={onShowOnboarding}>
@@ -308,16 +333,6 @@ export default function CollectJubmojiPage() {
           </div>
         );
       case CollectStatus.ALREADY_COLLECTED:
-        return (
-          <Button
-            icon={<Icons.arrowRight className="text-black" />}
-            iconPosition="right"
-            variant="secondary"
-            onClick={navigateToJubmojis}
-          >
-            Back to app
-          </Button>
-        );
       case CollectStatus.ALREADY_ON_TEAM:
         return (
           <Button

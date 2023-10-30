@@ -150,8 +150,8 @@ const CollectionCardArc = ({
                     <path
                       d="M6 12.5L10 8.5L6 4.5"
                       stroke="#92D7FE"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                 </div>
