@@ -3,7 +3,7 @@ import {
   deserializeJubmojiList,
   serializeJubmojiList,
 } from "jubmoji-api";
-import { BackupState } from "../types";
+import { BackupState, NullifiedSigs } from "../types";
 
 export const loadJubmojis = async (): Promise<Jubmoji[]> => {
   const jubmojis = window.localStorage["jubmojis"];
@@ -73,3 +73,48 @@ export async function loadBackupState(): Promise<BackupState | undefined> {
 export async function saveBackupState(backup: BackupState): Promise<void> {
   window.localStorage["backup"] = JSON.stringify(backup);
 }
+
+export const addNullifiedSigs = async ({
+  quests: questNullifiedSigs,
+  powers: powerNullifiedSigs,
+}: NullifiedSigs): Promise<void> => {
+  const sigs = await loadNullifiedSigs();
+
+  Object.entries(questNullifiedSigs).forEach(([questId, newSigs]) => {
+    if (!sigs.quests[Number(questId)]) {
+      sigs.quests[Number(questId)] = newSigs;
+    } else {
+      sigs.quests[Number(questId)] = Array.from(
+        new Set([...sigs.quests[Number(questId)], ...newSigs])
+      );
+    }
+  });
+
+  Object.entries(powerNullifiedSigs).forEach(([powerId, newSigs]) => {
+    if (!sigs.powers[Number(powerId)]) {
+      sigs.powers[Number(powerId)] = newSigs;
+    } else {
+      sigs.powers[Number(powerId)] = Array.from(
+        new Set([...sigs.powers[Number(powerId)], ...newSigs])
+      );
+    }
+  });
+
+  await writeNullifiedSigs(sigs);
+};
+
+export const writeNullifiedSigs = async (
+  sigs: NullifiedSigs
+): Promise<void> => {
+  window.localStorage["nullifiedSigs"] = JSON.stringify(sigs);
+};
+
+export const loadNullifiedSigs = async (): Promise<NullifiedSigs> => {
+  const sigs = window.localStorage["nullifiedSigs"];
+
+  if (!sigs) {
+    return { quests: {}, powers: {} };
+  }
+
+  return JSON.parse(sigs);
+};
