@@ -19,6 +19,8 @@ const buttonVariants = cva(
         transparent: "bg-transparent",
         dark: "bg-black text-white border border-[#A6A6A6]",
         shark: "bg-shark-970 border border-shark-50 text-white",
+        "blue-outline":
+          "border border-baby-blue-default text-baby-blue-default bg-transparent",
       },
       rounded: {
         true: "rounded-full",

@@ -18,6 +18,25 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
 
   const powerMutation = usePowerMutation();
 
+  const onHandlePower = async () => {
+    await toast.promise(
+      powerMutation.mutateAsync({
+        power,
+        jubmojis,
+      }),
+      {
+        loading: "Proving power...",
+        error: (err: any) =>
+          err?.message ??
+          "There was an error claiming power. Please try again.",
+        success: (data: any) => {
+          setUrl(data?.url);
+          return "Power claimed!";
+        },
+      }
+    );
+  };
+
   return (
     <PowerWrapper>
       {!url ? (
@@ -28,31 +47,14 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
             </span>
             <Icons.bubble className="text-shark-800" />
           </div>
-          <button
-            type="button"
-            onClick={() =>
-              powerMutation
-                .mutateAsync({
-                  power,
-                  jubmojis,
-                })
-                .then((data) => {
-                  if (typeof data === "string") {
-                    setUrl(data);
-                  } else {
-                    toast.error(data.error);
-                  }
-                })
-            }
-          >
-            <Image
-              src="/images/proof-icon.png"
-              width={150}
-              height={150}
-              alt="proof icon"
-              className={cn("", {
+          <button type="button" onClick={onHandlePower}>
+            <div
+              className={cn("w-[150px] h-[150px]  bg-cover", {
                 "animate animate-pulse": powerMutation.isLoading,
               })}
+              style={{
+                backgroundImage: `url(/images/proof-icon.png)`,
+              }}
             />
           </button>
         </div>

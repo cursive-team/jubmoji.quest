@@ -74,7 +74,7 @@ export const usePowerMutation = () => {
         });
       } catch (error) {
         console.log(error);
-        return { error: "Failed to use your power!" };
+        throw new Error("Failed to use your power!");
       }
 
       const response = await fetch(`/api/qr`, {
@@ -89,7 +89,7 @@ export const usePowerMutation = () => {
       });
 
       if (!response.ok) {
-        return { error: "Failed to use your power!" };
+        throw new Error("Failed to use your power!");
       }
 
       const { qrCodeUuid } = await response.json();

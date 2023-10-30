@@ -515,4 +515,38 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  locked: (props: any) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="20"
+      viewBox="0 0 16 20"
+      fill="none"
+      {...props}
+    >
+      <path
+        d="M3.10102 7.5H3V5.5C3 2.73858 5.23858 0.5 8 0.5C10.7614 0.5 13 2.73858 13 5.5V7.5H12.899M8 11.5V13.5M15 12.5C15 16.366 11.866 19.5 8 19.5C4.13401 19.5 1 16.366 1 12.5C1 8.63401 4.13401 5.5 8 5.5C11.866 5.5 15 8.63401 15 12.5Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  externalLink: (props: any) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="17"
+      viewBox="0 0 16 17"
+      fill="none"
+      {...props}
+    >
+      <path
+        d="M6 12.5L10 8.5L6 4.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
 };

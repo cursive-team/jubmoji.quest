@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useFetchQuestById } from "@/hooks/useFetchQuests";
+import {
+  useFetchQuestById,
+  useGetQuestPowerLockedStatus,
+} from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { $Enums } from "@prisma/client";
@@ -19,6 +22,8 @@ import toast from "react-hot-toast";
 import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import { cardPubKeys } from "jubmoji-api";
 import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
+import { useFetchCollectedCards } from "@/hooks/useFetchCards";
+import { cn } from "@/lib/utils";
 
 const PagePlaceholder = () => {
   return (
@@ -38,11 +43,14 @@ export default function QuestDetailPage() {
   const router = useRouter();
   const { id: questId } = router.query;
   const { data: jubmojis } = useJubmojis();
-  const [powerIsLocked, setPowerIsLocked] = useState(true);
+  const { isLoading: isLoadingCollectedCards, data: collectedCards = [] } =
+    useFetchCollectedCards();
 
   const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
     questId as string
   );
+  const { data: { locked: powerIsLocked } = { locked: true } } =
+    useGetQuestPowerLockedStatus(quest?.id);
 
   const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
   const {
@@ -138,9 +146,14 @@ export default function QuestDetailPage() {
 
   const showLeaderboard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
-  const collectionEmojis = quest.collectionCards
-    .map((card) => cardPubKeys[card.index].emoji)
-    .join(" ");
+  const collectionCardIndices = quest.collectionCards.map((card) => card.index);
+
+  const collectedItems =
+    jubmojis?.filter((jubmoji) =>
+      collectionCardIndices.includes(jubmoji.pubKeyIndex)
+    ).length ?? 0;
+
+  const collectionTotalItems = quest.collectionCards.length;
 
   return (
     <div>
@@ -157,17 +170,48 @@ export default function QuestDetailPage() {
         <QuestCard
           title={quest.name}
           description={quest.description}
+          showProgress
           image={quest.imageLink || ""}
           spacing="sm"
+          collected={collectedItems}
+          collectionTotalItems={collectionTotalItems}
         >
-          <div className="flex flex-col gap-2 mt-6">
-            <div className="flex flex-col">
-              <Card.Title className="!text-base text-left">Collect</Card.Title>
-              <div className="flex gap-2"></div>
-            </div>
-            <div className="mr-auto">{collectionEmojis}</div>
+          <div className="flex flex-col gap-1 mt-2">
+            {quest.collectionCards.length > 0 && (
+              <>
+                <div className="flex flex-col">
+                  <Card.Title className="!text-base text-left">
+                    Collect
+                  </Card.Title>
+                  <div className="flex gap-2"></div>
+                </div>
+                <div className="flex flex-wrap gap-1 mr-auto">
+                  {quest.collectionCards.map((card, index) => {
+                    const isCollected = collectedCards.find(
+                      (collectedCard) =>
+                        collectedCard.pubKeyIndex === card.index
+                    )?.pubKeyIndex;
+
+                    return isLoadingCollectedCards ? (
+                      <Placeholder.Base className="w-4 h-4"></Placeholder.Base>
+                    ) : (
+                      <span
+                        key={index}
+                        className={cn(
+                          "!text-[20px]",
+                          !isCollected && "opacity-30"
+                        )}
+                      >
+                        {cardPubKeys[card.index].emoji}
+                      </span>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
             <div className="ml-auto">
-              <span className=" text-shark-400 text-[13px] font-dm-sans">
+              <span className="text-shark-400 text-[13px] font-dm-sans">
                 {`Ends on ${endDateLabel}`}
               </span>
             </div>
@@ -181,7 +225,8 @@ export default function QuestDetailPage() {
                 title={power.name}
                 description={power.description}
                 powerType={power.powerType}
-                disabled={powerIsLocked} // Todo: Logic for enabling powers
+                locked={powerIsLocked}
+                disabled={powerIsLocked}
               />
             </Link>
           );

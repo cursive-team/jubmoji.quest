@@ -11,6 +11,11 @@ import { useFetchPowers } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
+import { useGetQuestPowerLockedStatus } from "@/hooks/useFetchQuests";
+
+type PowerCardDetailProps = {
+  power: JubmojiPower;
+};
 
 export const PowerOptionsMapping: Record<
   "ALL" | "STARRED" | "NEW" | "LOCKED",
@@ -31,6 +36,24 @@ const PlaceholderContent = () => {
       <Placeholder.Card size="xs" />
       <Placeholder.Card size="xs" />
     </div>
+  );
+};
+
+const PowerCardDetail = ({ power }: PowerCardDetailProps) => {
+  const { data: { locked: powerIsLocked } = {} } = useGetQuestPowerLockedStatus(
+    power.quest.id
+  );
+
+  return (
+    <Link href={`/powers/${power.id}`}>
+      <PowerCard
+        title={power.name}
+        description={power.description}
+        powerType={power.powerType}
+        shortDescription={true}
+        locked={powerIsLocked}
+      />
+    </Link>
   );
 };
 
@@ -78,20 +101,9 @@ export default function PowersPage() {
                   <Message>{MESSAGES.NO_RESULTS}</Message>
                 ) : (
                   <>
-                    {powers?.map(
-                      ({ id, name, description, powerType }: JubmojiPower) => {
-                        return (
-                          <Link key={id} href={`/powers/${id}`}>
-                            <PowerCard
-                              title={name}
-                              description={description}
-                              powerType={powerType}
-                              shortDescription={true}
-                            />
-                          </Link>
-                        );
-                      }
-                    )}
+                    {powers?.map((power: JubmojiPower) => (
+                      <PowerCardDetail power={power} key={power.id} />
+                    ))}
                   </>
                 )}
               </>

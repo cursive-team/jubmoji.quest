@@ -23,6 +23,7 @@ import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { SimpleCard } from "@/components/cards/SimpleCard";
+import { HUNT_TEAM_JUBMOJI_PUBKEY_INDICES } from "@/constants";
 
 enum CollectStatus {
   UNKNOWN = "Unknown",
@@ -38,8 +39,8 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
     <Onboarding>
       <Card.Base centred>
-        <Card.Header spacing="sm">
-          <span className="my-auto text-[60px] leading-none">
+        <Card.Header spacing="md">
+          <span className="my-auto text-[40px] leading-none pt-[32px] pb-[22px]">
             {jubmoji.emoji}
           </span>
         </Card.Header>
@@ -47,34 +48,40 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
           <Card.Title centred font="giorgio" size="md">
             Yay, you got a jubmoji!
           </Card.Title>
-          <Card.Description font="giorgio">
-            You have just collected a Jubmoji, a memento that’s unique and
-            verifiable
+          <Card.Description font="dm">
+            {`This is a digital memento of an in-person experience that's unique
+            and verifiable.`}
           </Card.Description>
         </Card.Content>
       </Card.Base>
       <Card.Base centred>
         <Card.Header>
           <div className="flex flex-col gap-4">
-            <span className="text-[40px]">{jubmoji.emoji}</span>
+            <Image
+              src="/images/onboarding-privacy.svg"
+              alt="onboarding browser"
+              width={180}
+              height={120}
+              sizes="100vw"
+            />
           </div>
         </Card.Header>
         <Card.Content className="!gap-4" spacing="sm">
           <Card.Title centred font="giorgio" size="md">
             It lives in your browser
           </Card.Title>
-          <Card.Description centred font="giorgio">
-            Our server never sees your collection as your data lives in a
-            temporary store in your browser.
+          <Card.Description centred font="dm">
+            Our server never sees your collection. Your data lives in temporary
+            browser storage.
           </Card.Description>
         </Card.Content>
       </Card.Base>
       <Card.Base centred>
-        <Card.Header>
+        <Card.Header className="!py-12">
           <Button
-            icon={<Icons.download className="text-black" />}
+            icon={<Icons.download className="text-baby-blue-default" />}
             className="max-w-[150px]"
-            variant="blue"
+            variant="blue-outline"
           >
             Back up!
           </Button>
@@ -83,7 +90,7 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
           <Card.Title centred font="giorgio" size="md">
             Make sure to back up!
           </Card.Title>
-          <Card.Description font="giorgio">
+          <Card.Description font="dm">
             You can use a mobile wallet, password manager, or an E2EE messaging
             app!
           </Card.Description>
@@ -91,24 +98,20 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
       </Card.Base>
       <Card.Base centred>
         <Card.Header>
-          <div className="flex flex-col gap-1">
-            <span className="text-[13px] text-left">Collect:</span>
-            <Image
-              height={20}
-              width={100}
-              className="w-full"
-              src="/images/collection-items.svg"
-              alt="collection items"
-            />
-          </div>
+          <Image
+            height={120}
+            width={190}
+            sizes="100vw"
+            src="/images/onboarding-collect.svg"
+            alt="onboarding collect"
+          />
         </Card.Header>
         <Card.Content className="!gap-4" spacing="sm">
           <Card.Title centred font="giorgio" size="md">
-            Complete quests!
+            Embark on quests
           </Card.Title>
-          <Card.Description font="giorgio">
-            Quests involve collecting some set of jubmojis and unlocking a power
-            at the end.
+          <Card.Description font="dm">
+            Collect specific jubmojis on quests to unlock powers!
           </Card.Description>
         </Card.Content>
       </Card.Base>
@@ -128,9 +131,9 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
           <Card.Title centred font="giorgio" size="md">
             Use your new powers!
           </Card.Title>
-          <Card.Description font="giorgio" centred>
-            Get event tickets, discounts, or post verifiably by making a ZK
-            proof of completing a quest!
+          <Card.Description font="dm" centred>
+            Make zk proofs about your private collection to verifiably post or
+            unlock tickets and discounts
           </Card.Description>
         </Card.Content>
       </Card.Base>
@@ -205,12 +208,11 @@ export default function CollectJubmojiPage() {
         }
       }
 
-      const huntTeamJubmojiPubKeyIndices = [
-        61, 163, 117, 126, 80, 40, 104, 192, 116, 32,
-      ];
-      if (huntTeamJubmojiPubKeyIndices.includes(collectedJubmoji.pubKeyIndex)) {
+      if (
+        HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(collectedJubmoji.pubKeyIndex)
+      ) {
         for (const jubmoji of jubmojis) {
-          if (huntTeamJubmojiPubKeyIndices.includes(jubmoji.pubKeyIndex)) {
+          if (HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(jubmoji.pubKeyIndex)) {
             const realTeamCard = getJubmojiCardByPubIndex(
               jubmojiCollectionCards,
               jubmoji.pubKeyIndex
@@ -283,15 +285,16 @@ export default function CollectJubmojiPage() {
           return <Card.Base className="h-[260px]" loading />;
         return (
           <CollectionCardArc
-            className="text-center"
+            className="text-center w-full !max-w-none"
             label={collectedCard.name}
             icon={collectedCard.emoji}
             owner={collectedCard.owner}
-            edition={collectedJubmoji.msgNonce}
+            edition={collectedJubmoji.msgNonce - 1}
             pubKeyIndex={collectedJubmoji.pubKeyIndex}
             cardBackImage={collectedCard.imagePath}
             size="sm"
             disabled
+            preview
           />
         );
       }

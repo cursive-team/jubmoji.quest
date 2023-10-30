@@ -59,7 +59,7 @@ const QuestCard = ({
             </span>
           </div>
         )}
-        {children}
+        {children && <div className="mt-6">{children}</div>}
       </Card.Content>
     </Card.Base>
   );

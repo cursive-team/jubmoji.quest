@@ -136,7 +136,7 @@ export default function JubmojisPage() {
             <CollectionCardArc
               label={name}
               icon={emoji}
-              edition={msgNonce}
+              edition={msgNonce ? msgNonce - 1 : ""}
               owner={owner}
               pubKeyIndex={selectedPubKeyIndex}
               cardBackImage={imagePath}
