@@ -13,6 +13,15 @@ export default async function handler(
   try {
     const cards: JubmojiCollectionCard[] = await prisma.card.findMany({
       include: {
+        prerequisitesFor: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            startTime: true,
+            endTime: true,
+          },
+        },
         collectsFor: {
           select: {
             id: true,
