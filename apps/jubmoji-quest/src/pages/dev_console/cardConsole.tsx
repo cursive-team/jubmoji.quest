@@ -1,7 +1,7 @@
 import { JubmojiCollectionCard } from "@/types";
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
-export default function CardConsole() {
+export default function CardConsole({ password }: { password: string }) {
   const [index, setIndex] = useState<number>(0);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -32,6 +32,7 @@ export default function CardConsole() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          password,
           index,
           name,
           description,

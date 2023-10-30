@@ -7,8 +7,19 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { name, description, startTime, endTime, powerType, questId } =
-      req.body;
+    const {
+      password,
+      name,
+      description,
+      startTime,
+      endTime,
+      powerType,
+      questId,
+    } = req.body;
+
+    if (password !== process.env.DEV_CONSOLE_PASSWORD) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     if (
       !name ||
