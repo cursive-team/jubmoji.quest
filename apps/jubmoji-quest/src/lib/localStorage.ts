@@ -84,10 +84,9 @@ export const addNullifiedSigs = async ({
     if (!sigs.quests[Number(questId)]) {
       sigs.quests[Number(questId)] = newSigs;
     } else {
-      sigs.quests[Number(questId)] = [
-        ...sigs.quests[Number(questId)],
-        ...newSigs,
-      ];
+      sigs.quests[Number(questId)] = Array.from(
+        new Set([...sigs.quests[Number(questId)], ...newSigs])
+      );
     }
   });
 
@@ -95,10 +94,9 @@ export const addNullifiedSigs = async ({
     if (!sigs.powers[Number(powerId)]) {
       sigs.powers[Number(powerId)] = newSigs;
     } else {
-      sigs.powers[Number(powerId)] = [
-        ...sigs.powers[Number(powerId)],
-        ...newSigs,
-      ];
+      sigs.powers[Number(powerId)] = Array.from(
+        new Set([...sigs.powers[Number(powerId)], ...newSigs])
+      );
     }
   });
 

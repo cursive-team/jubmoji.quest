@@ -77,8 +77,9 @@ export default function QuestDetailPage() {
     const { quests: questNullifiedSigMap } = await loadNullifiedSigs();
     const nullifiedSigs = questNullifiedSigMap[quest.id] || [];
 
-    const unnullifiedJubmojis =
-      jubmojis?.filter((jubmoji) => !nullifiedSigs.includes(jubmoji.sig)) || [];
+    const unnullifiedJubmojis = jubmojis.filter(
+      (jubmoji) => !nullifiedSigs.includes(jubmoji.sig)
+    );
     if (unnullifiedJubmojis.length === 0) {
       return toast.error(
         "All of your Jubmojis have already been submitted to the leaderboard!"
@@ -92,10 +93,11 @@ export default function QuestDetailPage() {
       }),
       {
         loading: "Updating team score...",
-        success: (score: any) => {
+        success: (scoreAdded: any) => {
           const collectionCardIndices = quest.collectionCards.map(
             (card) => card.index
           );
+          // Need to filter Jubmojis since we do not want to nullify team card signatures
           const nullifiedSigs = unnullifiedJubmojis
             .filter((jubmoji) =>
               collectionCardIndices.includes(jubmoji.pubKeyIndex)
@@ -107,10 +109,7 @@ export default function QuestDetailPage() {
             },
             powers: {},
           });
-          return (
-            `Added ${score} points to your team's score!` ||
-            "Team score updated!"
-          );
+          return `Added ${scoreAdded} points to your team's score!`;
         },
         error: (err: any) => err.message,
       }
