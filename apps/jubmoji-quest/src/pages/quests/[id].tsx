@@ -176,29 +176,40 @@ export default function QuestDetailPage() {
           collected={collectedItems}
           collectionTotalItems={collectionTotalItems}
         >
-          <div className="flex flex-col gap-2 mt-6">
-            <div className="flex flex-col">
-              <Card.Title className="!text-base text-left">Collect</Card.Title>
-              <div className="flex gap-2"></div>
-            </div>
-            <div className="flex flex-wrap gap-1 mr-auto">
-              {quest.collectionCards.map((card, index) => {
-                const isCollected = collectedCards.find(
-                  (collectedCard) => collectedCard.pubKeyIndex === card.index
-                )?.pubKeyIndex;
+          <div className="flex flex-col gap-1 mt-2">
+            {quest.collectionCards.length > 0 && (
+              <>
+                <div className="flex flex-col">
+                  <Card.Title className="!text-base text-left">
+                    Collect
+                  </Card.Title>
+                  <div className="flex gap-2"></div>
+                </div>
+                <div className="flex flex-wrap gap-1 mr-auto">
+                  {quest.collectionCards.map((card, index) => {
+                    const isCollected = collectedCards.find(
+                      (collectedCard) =>
+                        collectedCard.pubKeyIndex === card.index
+                    )?.pubKeyIndex;
 
-                return isLoadingCollectedCards ? (
-                  <Placeholder.Base className="w-4 h-4"></Placeholder.Base>
-                ) : (
-                  <span
-                    key={index}
-                    className={cn("!text-[20px]", !isCollected && "opacity-30")}
-                  >
-                    {cardPubKeys[card.index].emoji}
-                  </span>
-                );
-              })}
-            </div>
+                    return isLoadingCollectedCards ? (
+                      <Placeholder.Base className="w-4 h-4"></Placeholder.Base>
+                    ) : (
+                      <span
+                        key={index}
+                        className={cn(
+                          "!text-[20px]",
+                          !isCollected && "opacity-30"
+                        )}
+                      >
+                        {cardPubKeys[card.index].emoji}
+                      </span>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
             <div className="ml-auto">
               <span className="text-shark-400 text-[13px] font-dm-sans">
                 {`Ends on ${endDateLabel}`}

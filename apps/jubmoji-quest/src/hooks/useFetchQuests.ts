@@ -33,6 +33,7 @@ export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
     {
       refetchOnWindowFocus: false,
       enabled: questId !== undefined,
+      retry: questId !== undefined,
     }
   );
 };
