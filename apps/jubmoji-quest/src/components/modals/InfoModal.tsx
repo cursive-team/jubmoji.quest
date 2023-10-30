@@ -11,9 +11,18 @@ const InfoModal = ({ isOpen, setIsOpen, onClose }: ModalProps) => {
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen} onClose={onClose}>
       <div className="flex flex-col gap-12">
-        <span className="text-[36px] font-giorgio text-center">
-          ABOUT <br /> JUBMOJI.QUEST
-        </span>
+        <div className="flex flex-col gap-8">
+          <Image
+            src="/images/logo.svg"
+            width={120}
+            height={120}
+            alt="logo"
+            className="mx-auto mt-14"
+          />
+          <span className="text-[36px] font-giorgio text-center">
+            ABOUT <br /> JUBMOJI.QUEST
+          </span>
+        </div>
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-1 gap-4">
             {FAQS?.map(({ title, description }, index) => {
