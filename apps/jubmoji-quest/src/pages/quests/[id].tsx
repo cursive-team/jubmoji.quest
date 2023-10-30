@@ -68,47 +68,64 @@ export default function QuestDetailPage() {
   const onUpdateTeamLeaderboardScore = async () => {
     if (!quest) return;
 
+    // User has no Jubmojis at all
     if (!jubmojis || jubmojis.length === 0) {
       return toast.error(
         "Please collect some Jubmojis to update your team's score!"
       );
     }
 
+    const teamCardIndices = quest.prerequisiteCards.map((card) => card.index);
+    const collectionCardIndices = quest.collectionCards.map(
+      (card) => card.index
+    );
+
+    // User has no team card Jubmojis
+    const teamJubmojis = jubmojis.filter((jubmoji) =>
+      teamCardIndices.includes(jubmoji.pubKeyIndex)
+    );
+    if (teamJubmojis.length === 0) {
+      return toast.error(
+        "You must collect a team card Jubmoji to participate in the team leaderboard!"
+      );
+    }
+
+    // User has no unnullified collection card Jubmojis
     const { quests: questNullifiedSigMap } = await loadNullifiedSigs();
     const nullifiedSigs = questNullifiedSigMap[quest.id] || [];
-
-    const unnullifiedJubmojis = jubmojis.filter(
-      (jubmoji) => !nullifiedSigs.includes(jubmoji.sig)
+    const unnullifiedCollectionJubmojis = jubmojis.filter(
+      (jubmoji) =>
+        collectionCardIndices.includes(jubmoji.pubKeyIndex) &&
+        !nullifiedSigs.includes(jubmoji.sig)
     );
-    if (unnullifiedJubmojis.length === 0) {
+    if (unnullifiedCollectionJubmojis.length === 0) {
       return toast.error(
         "All of your Jubmojis have already been submitted to the leaderboard!"
       );
     }
 
+    // Proof Jubmojis consists of team card Jubmojis and unnullified collection card Jubmojis
+    const proofJubmojis = [...teamJubmojis, ...unnullifiedCollectionJubmojis];
+
     await toast.promise(
       updateTeamLeaderboardMutation.mutateAsync({
-        jubmojis: unnullifiedJubmojis,
+        jubmojis: proofJubmojis,
         quest,
       }),
       {
         loading: "Updating team score...",
         success: (scoreAdded: any) => {
-          const collectionCardIndices = quest.collectionCards.map(
-            (card) => card.index
+          // Add all used collection card signatures to nullified sigs
+          const nullifiedSigs = unnullifiedCollectionJubmojis.map(
+            (jubmoji) => jubmoji.sig
           );
-          // Need to filter Jubmojis since we do not want to nullify team card signatures
-          const nullifiedSigs = unnullifiedJubmojis
-            .filter((jubmoji) =>
-              collectionCardIndices.includes(jubmoji.pubKeyIndex)
-            )
-            .map((jubmoji) => jubmoji.sig);
           addNullifiedSigs({
             quests: {
               [quest.id]: nullifiedSigs,
             },
             powers: {},
           });
+
           return `Added ${scoreAdded} points to your team's score!`;
         },
         error: (err: any) => err.message,
