@@ -28,7 +28,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="text-center my-auto">
         <Card.Title className="!font-[22px]">
-          Place the NFC card near your phone.
+          Hold the NFC card by your phone for 1-2 seconds.
         </Card.Title>
         <Image
           src={DeviceImageMapping[device]}
