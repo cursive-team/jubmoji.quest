@@ -288,6 +288,7 @@ export default function CollectJubmojiPage() {
             icon={collectedCard.emoji}
             owner={collectedCard.owner}
             edition={collectedJubmoji.msgNonce}
+            pubKeyIndex={collectedJubmoji.pubKeyIndex}
             cardBackImage={collectedCard.imagePath}
             size="sm"
             disabled
