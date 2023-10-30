@@ -145,7 +145,7 @@ export default function CollectJubmojiPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  const { data: jubmojiCollectionCards = [], isLoading } = useFetchCards();
+  const { data: jubmojiCollectionCards = [] } = useFetchCards();
   const { data: jubmojis } = useJubmojis();
 
   const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();
@@ -157,59 +157,54 @@ export default function CollectJubmojiPage() {
 
   useEffect(() => {
     async function getJubmojiFromUrl() {
+      if (
+        typeof window === "undefined" ||
+        !jubmojiCollectionCards ||
+        !jubmojis
+      ) {
+        return;
+      }
+
       const urlParams = new URLSearchParams(location.hash.slice(1));
       const nonceSig = getHaLoArgs(urlParams);
+      // Nonce signature is invalid
       if (!nonceSig) {
         router.push("/");
         return;
       }
-      if (parseInt(nonceSig.sig) === 0) {
-        setCollectStatus(CollectStatus.ZERO_TAP);
-        return;
-      }
-      const realJubmoji = getJubmojiFromNonceSignature(nonceSig);
-      const card = getJubmojiCardByPubIndex(
-        jubmojiCollectionCards,
-        nonceSig.pubKeyIndex
-      );
-      await addJubmoji(realJubmoji);
-      setCollectedJubmoji(realJubmoji);
-      if (card) {
-        setCollectedCard(card);
-      }
-    }
 
-    if (typeof window !== "undefined" && !isLoading) {
-      getJubmojiFromUrl();
-    }
-  }, [router, isLoading, jubmojiCollectionCards]);
+      const jubmojiToCollect = getJubmojiFromNonceSignature(nonceSig);
 
-  useEffect(() => {
-    if (!jubmojiCollectionCards || !jubmojis || !collectedJubmoji) {
-      return;
-    }
-
-    const determineCollectState = async () => {
+      // User is in incognito mode
       const isIncognito = await detectIncognito();
       if (isIncognito.isPrivate) {
         setCollectStatus(CollectStatus.IN_INCOGNITO);
         return;
       }
 
+      // User has no jubmojis at all
       if (jubmojis.length === 0) {
         setCollectStatus(CollectStatus.FIRST_COLLECT);
         return;
       }
 
+      // User has already collected this jubmoji
       for (const jubmoji of jubmojis) {
-        if (jubmoji.pubKeyIndex === collectedJubmoji.pubKeyIndex) {
+        if (jubmoji.pubKeyIndex === jubmojiToCollect.pubKeyIndex) {
           setCollectStatus(CollectStatus.ALREADY_COLLECTED);
           return;
         }
       }
 
+      // First tap of a jubmoji card
+      if (parseInt(nonceSig.sig) === 0) {
+        setCollectStatus(CollectStatus.ZERO_TAP);
+        return;
+      }
+
+      // User is already on a hunt team
       if (
-        HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(collectedJubmoji.pubKeyIndex)
+        HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(jubmojiToCollect.pubKeyIndex)
       ) {
         for (const jubmoji of jubmojis) {
           if (HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(jubmoji.pubKeyIndex)) {
@@ -224,11 +219,21 @@ export default function CollectJubmojiPage() {
         }
       }
 
+      // Valid tap, proceed with collection
       setCollectStatus(CollectStatus.STANDARD);
-    };
+      const card = getJubmojiCardByPubIndex(
+        jubmojiCollectionCards,
+        nonceSig.pubKeyIndex
+      );
+      await addJubmoji(jubmojiToCollect);
+      setCollectedJubmoji(jubmojiToCollect);
+      if (card) {
+        setCollectedCard(card);
+      }
+    }
 
-    determineCollectState();
-  }, [jubmojiCollectionCards, jubmojis, collectedJubmoji]);
+    getJubmojiFromUrl();
+  }, [router, jubmojiCollectionCards, jubmojis]);
 
   const onShowOnboarding = () => {
     setShowOnboarding(true);
