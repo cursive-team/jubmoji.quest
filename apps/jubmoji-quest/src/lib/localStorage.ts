@@ -80,8 +80,6 @@ export const addNullifiedSigs = async ({
 }: NullifiedSigs): Promise<void> => {
   const sigs = await loadNullifiedSigs();
 
-  console.log("adding nullfied sigs", questNullifiedSigs, sigs);
-
   Object.entries(questNullifiedSigs).forEach(([questId, newSigs]) => {
     if (!sigs.quests[Number(questId)]) {
       sigs.quests[Number(questId)] = newSigs;
@@ -92,8 +90,6 @@ export const addNullifiedSigs = async ({
     }
   });
 
-  console.log("sigs a", sigs);
-
   Object.entries(powerNullifiedSigs).forEach(([powerId, newSigs]) => {
     if (!sigs.powers[Number(powerId)]) {
       sigs.powers[Number(powerId)] = newSigs;
@@ -103,8 +99,6 @@ export const addNullifiedSigs = async ({
       );
     }
   });
-
-  console.log("sigs b", sigs);
 
   await writeNullifiedSigs(sigs);
 };

@@ -71,7 +71,7 @@ export default function QuestDetailPage() {
     // User has no Jubmojis at all
     if (!jubmojis || jubmojis.length === 0) {
       return toast.error(
-        "Please collect some Jubmojis to update your team's score!"
+        "Please collect some Jubmojis to participate in this leaderboard!"
       );
     }
 
@@ -86,7 +86,7 @@ export default function QuestDetailPage() {
     );
     if (teamJubmojis.length === 0) {
       return toast.error(
-        "You must collect a team card Jubmoji to participate in the team leaderboard!"
+        "You must collect a team card Jubmoji to participate in this leaderboard!"
       );
     }
 
