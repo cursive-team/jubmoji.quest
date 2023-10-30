@@ -2,6 +2,7 @@ import {
   addJubmoji,
   clearJubmojis,
   loadJubmojis,
+  writeJubmojis,
 } from "../../lib/localStorage";
 import {
   Jubmoji,
@@ -17,6 +18,10 @@ import {
   verifyEcdsaSignature,
 } from "babyjubjub-ecdsa";
 import React, { useEffect, useState } from "react";
+import {
+  HUNT_COLLECTION_JUBMOJI_PUBKEY_INDICES,
+  HUNT_TEAM_JUBMOJI_PUBKEY_INDICES,
+} from "@/constants";
 
 export default function JubmojiConsole() {
   const [jubmojis, setJubmojis] = useState<Jubmoji[]>([]);
@@ -42,8 +47,31 @@ export default function JubmojiConsole() {
     await fetchJubmojis();
   };
 
+  const clearHuntJubmojis = async () => {
+    const confirmed = window.confirm(
+      "Confirm clearing Zuconnect Treasure Hunt Jubmojis"
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    const jubmojis = await loadJubmojis();
+    const newJubmojis = jubmojis.filter(
+      (jubmoji) =>
+        !HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(jubmoji.pubKeyIndex) &&
+        !HUNT_COLLECTION_JUBMOJI_PUBKEY_INDICES.includes(jubmoji.pubKeyIndex)
+    );
+
+    await clearJubmojis();
+    await writeJubmojis(newJubmojis);
+    await fetchJubmojis();
+  };
+
   const clearAllJubmojis = async () => {
-    console.log("Clearing All Jubmojis");
+    const confirmed = window.confirm("Confirm clearing ALL of your Jubmojis");
+    if (!confirmed) {
+      return;
+    }
 
     clearJubmojis();
     await fetchJubmojis();
@@ -126,6 +154,13 @@ export default function JubmojiConsole() {
           💳 2
         </button>
       </div>
+
+      <button
+        onClick={clearHuntJubmojis}
+        className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded shadow text-white mt-6"
+      >
+        Clear Zuconnect Treasure Hunt Jubmojis
+      </button>
 
       <button
         onClick={clearAllJubmojis}
