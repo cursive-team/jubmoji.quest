@@ -25,7 +25,7 @@ import { useJubmojis } from "@/hooks/useJubmojis";
 import { SimpleCard } from "@/components/cards/SimpleCard";
 
 enum CollectStatus {
-  UNKNOWN = "UNKNOWN",
+  UNKNOWN = "Unknown",
   IN_INCOGNITO = "You're in an incognito tab. Please copy this link into a non-incognito tab in order to save your Jubmojis!",
   ALREADY_COLLECTED = "You've already collected this jubmoji.",
   ALREADY_ON_TEAM = "You're already on a scavenger hunt team.",
