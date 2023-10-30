@@ -24,16 +24,15 @@ export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
           collectionCardIndices.includes(jubmoji.pubKeyIndex)
         ).length ?? 0;
 
-      const collectionTotalItems = quest.collectionCards.length;
-
-      const powerIsLocked = collectedItems < collectionTotalItems;
+      const powerIsLocked =
+        collectionCardIndices.length > 0 && collectedItems === 0;
 
       return { locked: powerIsLocked };
     },
     {
       refetchOnWindowFocus: false,
       enabled: questId !== undefined,
-      retry: questId !== undefined,
+      retry: questId !== undefined || quest?.id !== undefined,
     }
   );
 };
@@ -63,6 +62,7 @@ export const useFetchQuestById = (id: string | number) => {
   return useQuery(
     ["quests", id],
     async (): Promise<JubmojiQuest | null> => {
+      if (id == undefined || id == "undefined") return null;
       const response = await fetch(`/api/quests/${id}`);
 
       if (!response.ok) {
@@ -76,6 +76,7 @@ export const useFetchQuestById = (id: string | number) => {
     },
     {
       refetchOnWindowFocus: false,
+      retry: id == undefined || id == "undefined",
     }
   );
 };
