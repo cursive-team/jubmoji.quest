@@ -12,6 +12,7 @@ export default async function handler(
       // You should validate these details before attempting to create a quest in your database.
 
       const {
+        password,
         name,
         description,
         tags,
@@ -22,6 +23,10 @@ export default async function handler(
         prerequisiteCardIndices,
         collectionCardIndices,
       } = req.body;
+
+      if (password !== process.env.DEV_CONSOLE_PASSWORD) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
 
       // Todo: Need validations for data
 

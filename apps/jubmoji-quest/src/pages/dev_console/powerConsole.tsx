@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function PowerConsole() {
+export default function PowerConsole({ password }: { password: string }) {
   const [powers, setPowers] = useState<JubmojiPower[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -40,6 +40,7 @@ export default function PowerConsole() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          password,
           name,
           description,
           startTime,

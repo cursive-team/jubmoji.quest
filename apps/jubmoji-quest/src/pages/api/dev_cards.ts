@@ -6,7 +6,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { index, name, description, owner } = req.body;
+    const { password, index, name, description, owner } = req.body;
+
+    if (password !== process.env.DEV_CONSOLE_PASSWORD) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     try {
       const newCard = await prisma.card.create({
