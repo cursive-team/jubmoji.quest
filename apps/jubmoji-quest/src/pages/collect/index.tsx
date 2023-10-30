@@ -286,12 +286,12 @@ export default function CollectJubmojiPage() {
         return (
           <CollectionCardArc
             className="text-center w-full !max-w-none"
-            label={collectedCard?.name}
-            icon={collectedCard?.emoji}
-            owner={collectedCard?.owner}
-            edition={collectedJubmoji?.msgNonce - 1}
-            pubKeyIndex={collectedJubmoji?.pubKeyIndex}
-            cardBackImage={collectedCard?.imagePath}
+            label={collectedCard.name}
+            icon={collectedCard.emoji}
+            owner={collectedCard.owner}
+            edition={collectedJubmoji.msgNonce - 1}
+            pubKeyIndex={collectedJubmoji.pubKeyIndex}
+            cardBackImage={collectedCard.imagePath}
             size="sm"
             disabled
             preview

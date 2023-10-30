@@ -4,10 +4,10 @@ import { useJubmojis } from "./useJubmojis";
 
 export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
   const { data: jubmojis = [] } = useJubmojis();
-  const { data: quest } = useFetchQuestById(`${questId}`);
+  const { data: quest } = useFetchQuestById(questId);
 
   return useQuery(
-    ["questPowerLockedStatus", questId, jubmojis.length],
+    ["questPowerLockedStatus", quest?.id, jubmojis.length],
     async (): Promise<{ locked: boolean }> => {
       if (!quest) {
         return {
@@ -31,8 +31,8 @@ export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: questId !== undefined,
-      retry: questId !== undefined || quest?.id !== undefined,
+      enabled: quest?.id !== undefined,
+      retry: quest?.id !== undefined,
     }
   );
 };
@@ -58,11 +58,11 @@ export const useFetchQuests = () => {
   );
 };
 
-export const useFetchQuestById = (id: string | number) => {
+export const useFetchQuestById = (id?: string | number) => {
   return useQuery(
     ["quests", id],
     async (): Promise<JubmojiQuest | null> => {
-      if (id == undefined || id == "undefined") return null;
+      if (id == undefined) return null;
       const response = await fetch(`/api/quests/${id}`);
 
       if (!response.ok) {
@@ -76,7 +76,7 @@ export const useFetchQuestById = (id: string | number) => {
     },
     {
       refetchOnWindowFocus: false,
-      retry: id == undefined || id == "undefined",
+      retry: id == undefined,
     }
   );
 };
