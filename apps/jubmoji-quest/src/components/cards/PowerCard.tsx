@@ -12,6 +12,7 @@ export interface PowerCardProps {
   disabled?: boolean;
   shortDescription?: boolean;
   bookmarked?: boolean;
+  locked?: boolean;
 }
 
 export const PowerTypeIconMapping: Record<$Enums.PowerType, any> = {
@@ -29,6 +30,7 @@ const PowerCard = ({
   disabled = false,
   shortDescription = false,
   bookmarked = false,
+  locked = false,
 }: PowerCardProps) => {
   const powerIcon = PowerTypeIconMapping[powerType];
 
@@ -61,7 +63,13 @@ const PowerCard = ({
             type="button"
             className="flex items-start ml-auto w-6 h-6 z-[2] p-1"
           >
-            {bookmarked ? <Icons.starSolid /> : <Icons.star />}
+            {locked ? (
+              <Icons.locked />
+            ) : bookmarked ? (
+              <Icons.starSolid />
+            ) : (
+              <Icons.star />
+            )}
           </button>
         </div>
       </Card.Content>

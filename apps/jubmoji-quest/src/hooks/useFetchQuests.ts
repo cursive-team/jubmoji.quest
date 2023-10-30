@@ -1,5 +1,41 @@
 import { JubmojiQuest } from "@/types";
 import { useQuery } from "react-query";
+import { useJubmojis } from "./useJubmojis";
+
+export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
+  const { data: jubmojis = [] } = useJubmojis();
+  const { data: quest } = useFetchQuestById(`${questId}`);
+
+  return useQuery(
+    ["questPowerLockedStatus", questId, jubmojis.length],
+    async (): Promise<{ locked: boolean }> => {
+      if (!quest) {
+        return {
+          locked: true,
+        };
+      }
+
+      const collectionCardIndices = quest.collectionCards.map(
+        (card) => card.index
+      );
+
+      const collectedItems =
+        jubmojis?.filter((jubmoji) =>
+          collectionCardIndices.includes(jubmoji.pubKeyIndex)
+        ).length ?? 0;
+
+      const collectionTotalItems = quest.collectionCards.length;
+
+      const powerIsLocked = collectedItems < collectionTotalItems;
+
+      return { locked: powerIsLocked };
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: questId !== undefined,
+    }
+  );
+};
 
 export const useFetchQuests = () => {
   return useQuery(

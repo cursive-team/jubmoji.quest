@@ -17,6 +17,7 @@ import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { Message } from "@/components/Message";
 import { cn } from "@/lib/utils";
+import { useGetQuestPowerLockedStatus } from "@/hooks/useFetchQuests";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -76,7 +77,6 @@ const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
 export default function PowerDetailPage() {
   const { data: jubmojis } = useJubmojis();
   const [bookmarked, setBookmarked] = useState(false);
-  const [powerIsLocked, setPowerIsLocked] = useState(true);
 
   const router = useRouter();
   const { id: powerId } = router.query;
@@ -84,6 +84,9 @@ export default function PowerDetailPage() {
   const { isLoading: isLoadingPower, data: power = null } = useFetchPowerById(
     powerId as string
   );
+
+  const { data: { locked: powerIsLocked } = { locked: true } } =
+    useGetQuestPowerLockedStatus(powerId as string);
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) {
@@ -119,7 +122,13 @@ export default function PowerDetailPage() {
             </Card.Title>
           </div>
           <div className="flex items-start ml-auto w-6 h-6">
-            {bookmarked ? <Icons.starSolid /> : <Icons.star />}
+            {powerIsLocked ? (
+              <Icons.locked />
+            ) : bookmarked ? (
+              <Icons.starSolid />
+            ) : (
+              <Icons.star />
+            )}
           </div>
         </div>
 
