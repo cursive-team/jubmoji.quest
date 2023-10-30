@@ -145,8 +145,9 @@ export default function CollectJubmojiPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  const { data: jubmojiCollectionCards = [] } = useFetchCards();
-  const { data: jubmojis } = useJubmojis();
+  const { data: jubmojiCollectionCards = [], isLoading: isLoadingCards } =
+    useFetchCards();
+  const { data: jubmojis, isLoading: isLoadingJubmojis } = useJubmojis();
 
   const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();
   const [collectStatus, setCollectStatus] = useState<CollectStatus>(
@@ -160,7 +161,9 @@ export default function CollectJubmojiPage() {
       if (
         typeof window === "undefined" ||
         !jubmojiCollectionCards ||
-        !jubmojis
+        !jubmojis ||
+        isLoadingCards ||
+        isLoadingJubmojis
       ) {
         return;
       }
@@ -233,7 +236,13 @@ export default function CollectJubmojiPage() {
     }
 
     getJubmojiFromUrl();
-  }, [router, jubmojiCollectionCards, jubmojis]);
+  }, [
+    router,
+    jubmojiCollectionCards,
+    jubmojis,
+    isLoadingCards,
+    isLoadingJubmojis,
+  ]);
 
   const onShowOnboarding = () => {
     setShowOnboarding(true);
