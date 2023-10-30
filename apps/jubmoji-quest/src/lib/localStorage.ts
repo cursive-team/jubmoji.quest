@@ -71,6 +71,8 @@ export async function loadBackupState(): Promise<BackupState | undefined> {
 }
 
 export async function saveBackupState(backup: BackupState): Promise<void> {
+  const backedUpJubmojis = await loadJubmojis();
+  backup.backedUpPubKeyIndices = backedUpJubmojis.map((j) => j.pubKeyIndex);
   window.localStorage["backup"] = JSON.stringify(backup);
 }
 

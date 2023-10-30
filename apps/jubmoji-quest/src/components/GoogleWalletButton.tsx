@@ -79,7 +79,7 @@ export const GoogleWalletButton = () => {
       // clicks backup from the app but doesn't actually add it to their wallet
     }
 
-    saveBackupState({
+    await saveBackupState({
       type: "google",
       serialNum: serial,
     });

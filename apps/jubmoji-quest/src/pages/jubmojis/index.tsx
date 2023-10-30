@@ -52,14 +52,16 @@ export default function JubmojisPage() {
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
 
-  const { isLoading: isLoadingJubmojis, data: jubmojiCollectionCards = [] } =
-    useFetchCards();
+  const {
+    isLoading: isLoadingJubmojiCards,
+    data: jubmojiCollectionCards = [],
+  } = useFetchCards();
 
   useEffect(() => {
-    if (isLoadingJubmojis) return;
+    if (isLoadingJubmojiCards) return;
     // set default pubKeyIndex from query params
     setSelectedPubKeyIndex(Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex);
-  }, [isLoadingJubmojis, jubmojis, pubKeyIndex]);
+  }, [isLoadingJubmojiCards, jubmojis, pubKeyIndex]);
 
   const selectedJubmoji = getJubmojiCardByPubIndex(
     jubmojiCollectionCards,
@@ -96,7 +98,7 @@ export default function JubmojisPage() {
     .filter(Boolean);
 
   const JubmojiContent = () => {
-    if (isLoadingJubmojis)
+    if (isLoadingJubmojiCards)
       return (
         <div className="flex flex-col mx-auto">
           <Placeholder.CardArc className="w-[300px]" />
@@ -136,6 +138,7 @@ export default function JubmojisPage() {
               icon={emoji}
               edition={msgNonce}
               owner={owner}
+              pubKeyIndex={selectedPubKeyIndex}
               cardBackImage={imagePath}
               telegramChatInviteLink={telegramChatInviteLink}
               actions={null}
