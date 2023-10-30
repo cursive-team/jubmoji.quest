@@ -171,7 +171,7 @@ const CollectionCardArc = ({
     }
     return (
       <div className="h-full flex flex-col gap-6 m-4">
-        <div className="">
+        <div className="w-full">
           <span className="font-giorgio text-shark-400 text-[16px] tracking-[0.36px] ">
             Quests
           </span>
@@ -306,7 +306,7 @@ const CollectionCardArc = ({
 
           <div
             className={cn(
-              "absolute top-0 duration-200",
+              "absolute top-0 duration-200 w-full",
               showQuest ? "scale-105 delay-300" : "scale-0 delay-0"
             )}
           >

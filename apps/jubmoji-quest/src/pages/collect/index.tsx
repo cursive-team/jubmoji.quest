@@ -289,7 +289,7 @@ export default function CollectJubmojiPage() {
             label={collectedCard?.name}
             icon={collectedCard?.emoji}
             owner={collectedCard?.owner}
-            edition={collectedJubmoji?.msgNonce}
+            edition={collectedJubmoji?.msgNonce - 1}
             pubKeyIndex={collectedJubmoji?.pubKeyIndex}
             cardBackImage={collectedCard?.imagePath}
             size="sm"
