@@ -5,6 +5,8 @@ export const URLS = {
   PSE_DEV: "https://pse.dev",
 };
 
+export const MIN_SWIPE_DISTANCE = 50;
+
 export const HUNT_TEAM_JUBMOJI_PUBKEY_INDICES = [
   61, 163, 117, 126, 80, 40, 104, 192, 116, 32,
 ];

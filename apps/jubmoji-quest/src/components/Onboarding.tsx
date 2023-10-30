@@ -4,6 +4,7 @@ import { Button } from "./ui/Button";
 import { Icons } from "./Icons";
 import { useRouter } from "next/router";
 import { Transition } from "@headlessui/react";
+import { MIN_SWIPE_DISTANCE } from "@/constants";
 
 interface OnboardingProps {
   children?: React.ReactNode;
@@ -31,14 +32,21 @@ const Onboarding = ({ children }: OnboardingProps) => {
   const onBoardingItems = Children.toArray(children);
 
   const handleSwipe = () => {
-    const direction = endX.current - startX.current < 0 ? "right" : "left";
+    const swipeDistance: number = endX.current - startX.current;
+    const direction = swipeDistance < 0 ? "right" : "left";
 
-    const swipeIndex =
-      direction === "right" ? activeIndex + 1 : activeIndex - 1;
+    // swipe by direction or go to next slide
+    if (swipeDistance > MIN_SWIPE_DISTANCE) {
+      const swipeIndex =
+        direction === "right" ? activeIndex + 1 : activeIndex - 1;
 
-    if (swipeIndex < 0 || swipeIndex > onBoardingItems.length - 1) return; // can't go past the first or last slide
+      if (swipeIndex < 0 || swipeIndex > onBoardingItems.length - 1) return; // can't go past the first or last slide
 
-    setActiveIndex(swipeIndex);
+      setActiveIndex(swipeIndex);
+    } else {
+      if (activeIndex === onBoardingItems.length - 1) return; // can't go past the last slide
+      setActiveIndex(activeIndex + 1);
+    }
   };
 
   return (
