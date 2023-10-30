@@ -145,9 +145,8 @@ export default function CollectJubmojiPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  const { data: jubmojiCollectionCards = [], isLoading: isLoadingCards } =
-    useFetchCards();
-  const { data: jubmojis, isLoading: isLoadingJubmojis } = useJubmojis();
+  const { data: jubmojiCollectionCards = [] } = useFetchCards();
+  const { data: jubmojis } = useJubmojis();
 
   const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();
   const [collectStatus, setCollectStatus] = useState<CollectStatus>(
@@ -160,23 +159,21 @@ export default function CollectJubmojiPage() {
     async function getJubmojiFromUrl() {
       if (
         typeof window === "undefined" ||
-        !jubmojiCollectionCards ||
         !jubmojis ||
-        isLoadingCards ||
-        isLoadingJubmojis
+        !jubmojiCollectionCards
       ) {
         return;
       }
 
       const urlParams = new URLSearchParams(location.hash.slice(1));
       const nonceSig = getHaLoArgs(urlParams);
-      // Nonce signature is invalid
+      // Nonce signature is invalid - redirect to home
       if (!nonceSig) {
         router.push("/");
         return;
       }
 
-      // First tap of a jubmoji card - zero taps are not parsable
+      // First tap of a jubmoji card - zero taps are not parsable, don't collect
       if (parseInt(nonceSig.sig) === 0) {
         setCollectStatus(CollectStatus.ZERO_TAP);
         return;
@@ -184,20 +181,14 @@ export default function CollectJubmojiPage() {
 
       const jubmojiToCollect = getJubmojiFromNonceSignature(nonceSig);
 
-      // User is in incognito mode
+      // User is in incognito mode - don't collect
       const isIncognito = await detectIncognito();
       if (isIncognito.isPrivate) {
         setCollectStatus(CollectStatus.IN_INCOGNITO);
         return;
       }
 
-      // User has no jubmojis at all
-      if (jubmojis.length === 0) {
-        setCollectStatus(CollectStatus.FIRST_COLLECT);
-        return;
-      }
-
-      // User has already collected this jubmoji
+      // User has already collected this jubmoji - don't collect
       for (const jubmoji of jubmojis) {
         if (jubmoji.pubKeyIndex === jubmojiToCollect.pubKeyIndex) {
           setCollectStatus(CollectStatus.ALREADY_COLLECTED);
@@ -205,7 +196,7 @@ export default function CollectJubmojiPage() {
         }
       }
 
-      // User is already on a hunt team
+      // User is already on a hunt team - don't collect
       if (
         HUNT_TEAM_JUBMOJI_PUBKEY_INDICES.includes(jubmojiToCollect.pubKeyIndex)
       ) {
@@ -222,8 +213,13 @@ export default function CollectJubmojiPage() {
         }
       }
 
-      // Valid tap, proceed with collection
-      setCollectStatus(CollectStatus.STANDARD);
+      // Display first collection message if user has not collected a jubmoji yet
+      if (jubmojis.length === 0) {
+        setCollectStatus(CollectStatus.FIRST_COLLECT);
+      } else {
+        setCollectStatus(CollectStatus.STANDARD);
+      }
+
       const card = getJubmojiCardByPubIndex(
         jubmojiCollectionCards,
         nonceSig.pubKeyIndex
@@ -236,13 +232,7 @@ export default function CollectJubmojiPage() {
     }
 
     getJubmojiFromUrl();
-  }, [
-    router,
-    jubmojiCollectionCards,
-    jubmojis,
-    isLoadingCards,
-    isLoadingJubmojis,
-  ]);
+  }, [router, jubmojiCollectionCards, jubmojis]);
 
   const onShowOnboarding = () => {
     setShowOnboarding(true);
