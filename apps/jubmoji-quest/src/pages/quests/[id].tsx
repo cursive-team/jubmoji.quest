@@ -18,6 +18,7 @@ import {
 import toast from "react-hot-toast";
 import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import { cardPubKeys } from "jubmoji-api";
+import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
 
 const PagePlaceholder = () => {
   return (
@@ -45,17 +46,17 @@ export default function QuestDetailPage() {
 
   const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
   const {
-    isLoading: isLoadingLeaderBoard,
+    isLoading: isLoadingLeaderboard,
     data: scoreMapping = {},
-    refetch: refetchLeaderBoard,
+    refetch: refetchLeaderboard,
   } = useGetTeamLeaderboard(questId as string);
 
   useEffect(() => {
     // refetch the leaderboard when the mutation is successful
     if (updateTeamLeaderboardMutation.isSuccess) {
-      refetchLeaderBoard();
+      refetchLeaderboard();
     }
-  }, [refetchLeaderBoard, updateTeamLeaderboardMutation.isSuccess]);
+  }, [refetchLeaderboard, updateTeamLeaderboardMutation.isSuccess]);
 
   const endDateLabel = quest?.endTime
     ? new Intl.DateTimeFormat("en-US", {
@@ -65,13 +66,52 @@ export default function QuestDetailPage() {
     : undefined;
 
   const onUpdateTeamLeaderboardScore = async () => {
+    if (!quest) return;
+
+    if (!jubmojis || jubmojis.length === 0) {
+      return toast.error(
+        "Please collect some Jubmojis to update your team's score!"
+      );
+    }
+
+    const { quests: questNullifiedSigMap } = await loadNullifiedSigs();
+    const nullifiedSigs = questNullifiedSigMap[quest.id] || [];
+
+    const unnullifiedJubmojis =
+      jubmojis?.filter((jubmoji) => !nullifiedSigs.includes(jubmoji.sig)) || [];
+    if (unnullifiedJubmojis.length === 0) {
+      return toast.error(
+        "All of your Jubmojis have already been submitted to the leaderboard!"
+      );
+    }
+
     await toast.promise(
-      updateTeamLeaderboardMutation.mutateAsync({ jubmojis, quest }),
+      updateTeamLeaderboardMutation.mutateAsync({
+        jubmojis: unnullifiedJubmojis,
+        quest,
+      }),
       {
         loading: "Updating team score...",
-        success: (score: any) =>
-          `Added ${score} points to your team's score!` ||
-          "Team score updated!",
+        success: (score: any) => {
+          const collectionCardIndices = quest.collectionCards.map(
+            (card) => card.index
+          );
+          const nullifiedSigs = unnullifiedJubmojis
+            .filter((jubmoji) =>
+              collectionCardIndices.includes(jubmoji.pubKeyIndex)
+            )
+            .map((jubmoji) => jubmoji.sig);
+          addNullifiedSigs({
+            quests: {
+              [quest.id]: nullifiedSigs,
+            },
+            powers: {},
+          });
+          return (
+            `Added ${score} points to your team's score!` ||
+            "Team score updated!"
+          );
+        },
         error: (err: any) => err.message,
       }
     );
@@ -80,7 +120,7 @@ export default function QuestDetailPage() {
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
 
-  const showLeaderBoard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
+  const showLeaderboard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
   const collectionEmojis = quest.collectionCards
     .map((card) => cardPubKeys[card.index].emoji)
@@ -131,11 +171,11 @@ export default function QuestDetailPage() {
           );
         })}
 
-        {showLeaderBoard && (
+        {showLeaderboard && (
           <>
             <TeamLeaderboard
               items={scoreMapping}
-              loading={isLoadingLeaderBoard}
+              loading={isLoadingLeaderboard}
             />
             <Button
               variant="secondary"
