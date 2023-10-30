@@ -8,6 +8,11 @@ export interface BackupState {
   backedUpPubKeyIndices?: number[];
 }
 
+export interface NullifiedSigs {
+  quests: Record<number, string[]>; // questId -> nullified Jubmoji signatures
+  powers: Record<number, string[]>; // powerId -> nullified Jubmoji signatures
+}
+
 export type JubmojiCollectionCard = Card & {
   collectsFor: {
     id: number;

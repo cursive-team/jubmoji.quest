@@ -67,7 +67,8 @@ export default function JubmojisPage() {
     jubmojiCollectionCards,
     selectedPubKeyIndex
   );
-  const { emoji, name, owner, collectsFor, imagePath } = selectedJubmoji ?? {};
+  const { emoji, name, owner, collectsFor, imagePath, telegramChatInviteLink } =
+    selectedJubmoji ?? {};
 
   // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
@@ -139,6 +140,7 @@ export default function JubmojisPage() {
               owner={owner}
               pubKeyIndex={selectedPubKeyIndex}
               cardBackImage={imagePath}
+              telegramChatInviteLink={telegramChatInviteLink}
               actions={null}
               quests={collectsFor}
             />

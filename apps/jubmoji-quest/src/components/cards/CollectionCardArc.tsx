@@ -7,6 +7,7 @@ import Link from "next/link";
 import { classed } from "@tw-classed/react";
 import { Transition } from "@headlessui/react";
 import { useBackupState } from "@/hooks/useBackupState";
+import Image from "next/image";
 
 interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: string;
@@ -83,6 +84,7 @@ const CollectionCardArc = ({
   icon,
   cardBackImage,
   pubKeyIndex,
+  telegramChatInviteLink = undefined,
   quests = [],
   disabled = false,
 }: CollectionCardArcProps) => {
@@ -145,6 +147,15 @@ const CollectionCardArc = ({
     );
   };
 
+  let telegramChatInviteUrl: URL | undefined;
+  if (telegramChatInviteLink) {
+    try {
+      telegramChatInviteUrl = new URL(telegramChatInviteLink);
+    } catch {
+      console.error("Invalid telegram chat invite link");
+    }
+  }
+
   const CollectionQuestContent = () => {
     if (quests.length === 0) {
       return (
@@ -155,35 +166,57 @@ const CollectionCardArc = ({
     }
     return (
       <div className="h-full flex flex-col gap-4 m-4">
-        {quests?.map((quest) => {
-          return (
-            <div key={quest.id} className="flex items-center gap-2">
-              <Icons.logo />
-              <Link
-                className="text-baby-blue-default font-dm-sans text-[13px]"
-                href={`/quests/${quest.id}`}
-              >
-                <div className="flex items-center gap-1 underline">
-                  <span>{quest.name}</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="17"
-                    viewBox="0 0 16 17"
-                    fill="none"
-                  >
-                    <path
-                      d="M6 12.5L10 8.5L6 4.5"
-                      stroke="#92D7FE"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-              </Link>
-            </div>
-          );
-        })}
+        <div className="">
+          <span className="font-giorgio text-shark-400 text-[16px] tracking-[0.36px] ">
+            Quests
+          </span>
+          {quests?.map((quest) => {
+            return (
+              <div key={quest.id} className="flex items-center gap-2">
+                <Icons.logo />
+                <Link
+                  className="text-baby-blue-default font-dm-sans text-[13px]"
+                  href={`/quests/${quest.id}`}
+                >
+                  <div className="flex items-center gap-1 underline">
+                    <span>{quest.name}</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="17"
+                      viewBox="0 0 16 17"
+                      fill="none"
+                    >
+                      <path
+                        d="M6 12.5L10 8.5L6 4.5"
+                        stroke="#92D7FE"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+        {telegramChatInviteUrl && (
+          <Link
+            href={telegramChatInviteUrl}
+            className="flex flex-row bg-baby-blue-default items-center gap-2 rounded-lg p-1"
+          >
+            <Image
+              src="/images/telegram-icon.svg"
+              alt="Collector's chat"
+              width={24}
+              height={24}
+              sizes="100vw"
+            />
+            <span className="text-center text-shark-950 text-bold font-dm-sans text-[13px]">
+              {"Collector's Chat"}
+            </span>
+          </Link>
+        )}
       </div>
     );
   };
@@ -228,7 +261,7 @@ const CollectionCardArc = ({
           }
           rounded
         >
-          Quests
+          More Info
         </Button>
       </QuestButtonWrapper>
 

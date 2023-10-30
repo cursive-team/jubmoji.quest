@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { Icons } from "../Icons";
 import { classed } from "@tw-classed/react";
-import { Button } from "../ui/Button";
-import Link from "next/link";
 import { cn } from "../../lib/utils";
 
 export interface SimpleCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -38,7 +35,6 @@ const SimpleCard = ({
   title,
   description,
   size = "md",
-  ...props
 }: SimpleCardProps) => {
   return (
     <CardContainer size={size}>
