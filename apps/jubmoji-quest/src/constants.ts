@@ -1,5 +1,10 @@
 const GOOGLE_WALLET_ISSUER_ID = "3388000000022248072";
 
+export const URLS = {
+  GITHUB: "https://github.com/jubmoji/jubmoji.quest",
+  PSE_DEV: "https://pse.dev",
+};
+
 export const HUNT_TEAM_JUBMOJI_PUBKEY_INDICES = [
   61, 163, 117, 126, 80, 40, 104, 192, 116, 32,
 ];

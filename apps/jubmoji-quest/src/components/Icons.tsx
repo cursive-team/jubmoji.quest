@@ -532,4 +532,21 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  externalLink: (props: any) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="17"
+      viewBox="0 0 16 17"
+      fill="none"
+      {...props}
+    >
+      <path
+        d="M6 12.5L10 8.5L6 4.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
 };

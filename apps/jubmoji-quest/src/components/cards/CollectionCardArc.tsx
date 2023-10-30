@@ -186,20 +186,7 @@ const CollectionCardArc = ({
                   >
                     <div className="flex items-center gap-1 underline">
                       <span>{quest.name}</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="17"
-                        viewBox="0 0 16 17"
-                        fill="none"
-                      >
-                        <path
-                          d="M6 12.5L10 8.5L6 4.5"
-                          stroke="#92D7FE"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      <Icons.externalLink />
                     </div>
                   </Link>
                 </div>
