@@ -1,4 +1,4 @@
-import { JubmojiCollectionCard } from "@/types";
+import { JubmojiCollectionCard, JubmojiQuestPreview } from "@/types";
 import { Jubmoji, cardPubKeys } from "jubmoji-api";
 import { useQuery } from "react-query";
 import { useJubmojis } from "./useJubmojis";
@@ -13,7 +13,7 @@ export const useFetchCards = () => {
 
       if (!response.ok) {
         console.error("Could not fetch Jubmoji cards.");
-        return []; //
+        return [];
       }
 
       const collectionCards: JubmojiCollectionCard[] = await response.json();
@@ -67,11 +67,14 @@ export const getJubmojiCardByPubIndex = (
     return undefined;
   }
 
+  // The following properties are fixed, and associated with the physical cards
   const { emoji, imageBlobUrl: imagePath } = cardPubKeys[pubKeyIndex];
-  // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
+
+  // The following properties are dynamic, and associated with the current cardholder
   const {
     name,
     owner,
+    prerequisitesFor,
     collectsFor,
     description,
     index,
@@ -83,6 +86,7 @@ export const getJubmojiCardByPubIndex = (
     name,
     owner,
     description,
+    prerequisitesFor,
     collectsFor,
     telegramChatInviteLink: telegramChatInviteLink || undefined,
     imagePath,
@@ -92,11 +96,12 @@ export const getJubmojiCardByPubIndex = (
 };
 
 export interface JubmojiCardProps {
-  emoji?: any;
+  emoji: any;
   name: string;
   owner: string;
   description: string;
-  collectsFor?: any[];
+  prerequisitesFor: JubmojiQuestPreview[];
+  collectsFor: JubmojiQuestPreview[];
   telegramChatInviteLink?: string;
   imagePath: string;
   index: number;

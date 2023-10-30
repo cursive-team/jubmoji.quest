@@ -14,13 +14,16 @@ export interface NullifiedSigs {
 }
 
 export type JubmojiCollectionCard = Card & {
-  collectsFor: {
-    id: number;
-    name: string;
-    description: string;
-    startTime: Date | null;
-    endTime: Date | null;
-  }[];
+  prerequisitesFor: JubmojiQuestPreview[];
+  collectsFor: JubmojiQuestPreview[];
+};
+
+export type JubmojiQuestPreview = {
+  id: number;
+  name: string;
+  description: string;
+  startTime: Date | null;
+  endTime: Date | null;
 };
 
 export type JubmojiQuest = Quest & {
