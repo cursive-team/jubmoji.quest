@@ -142,18 +142,25 @@ export default function JubmojisPage() {
     return (
       <>
         {name && owner && (
-          <div>
-            <CollectionCardArc
-              label={name}
-              icon={emoji}
-              edition={msgNonce ? msgNonce - 1 : ""}
-              owner={owner}
-              pubKeyIndex={selectedPubKeyIndex}
-              cardBackImage={imagePath}
-              telegramChatInviteLink={telegramChatInviteLink}
-              actions={null}
-              quests={jubmojiQuests}
-            />
+          <div
+            className="flex flex-col justify-center"
+            style={{
+              height: "calc(100vh - 300px)",
+            }}
+          >
+            <div className="">
+              <CollectionCardArc
+                label={name}
+                icon={emoji}
+                edition={msgNonce ? msgNonce - 1 : ""}
+                owner={owner}
+                pubKeyIndex={selectedPubKeyIndex}
+                cardBackImage={imagePath}
+                telegramChatInviteLink={telegramChatInviteLink}
+                actions={null}
+                quests={jubmojiQuests}
+              />
+            </div>
           </div>
         )}
       </>
@@ -202,7 +209,7 @@ export default function JubmojisPage() {
       <BackupModal isOpen={backupModalOpen} setIsOpen={setBackupModalOpen} />
       <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div
-        className={cn("flex flex-col gap-3 xs:gap-4", {
+        className={cn("flex flex-col gap-2", {
           invisible: infoModalOpen || backupModalOpen,
         })}
       >
