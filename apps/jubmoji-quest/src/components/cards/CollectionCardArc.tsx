@@ -22,6 +22,7 @@ interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
   canFlip?: boolean;
   size?: "sm" | "md";
   disabled?: boolean;
+  preview?: boolean;
   quests?: {
     id: number;
     name: string;
@@ -40,16 +41,9 @@ const CardDivider = classed.div("h-[0.4px] mx-4 z-[3] bg-shark-50", {
   },
 });
 const QuestButtonWrapper = classed.div(
-  "absolute z-[5] duration-300 top-[-12px] left-1/2 transform -translate-x-1/2",
-  {
-    variants: {
-      small: {
-        true: "translate-y-[230px]",
-        false: "translate-y-[250px]",
-      },
-    },
-  }
+  "absolute z-[7] duration-300 bottom-[-13px] left-1/2 transform -translate-x-1/2"
 );
+
 const CardArcImage = classed.div(
   "w-full transition duration-200 bg-cover bg-center bg-slate-50",
   {
@@ -64,7 +58,7 @@ const CardArcImage = classed.div(
 
 const CardArcWrapper = classed.div(
   Card.Base,
-  "relative duration-300 rounded-b-0 border !border-[0.8px] !border-shark-50 overflow-hidden",
+  "relative duration-300 rounded-b-0 border !border-[0.8px] !border-shark-50",
   {
     variants: {
       rounded: {
@@ -87,6 +81,9 @@ const CollectionCardArc = ({
   telegramChatInviteLink = undefined,
   quests = [],
   disabled = false,
+  preview = false,
+  className,
+  ...props
 }: CollectionCardArcProps) => {
   const [showQuest, setShowQuest] = useState(false);
   const { isLoading: isLoadingBackup, data: backupState } = useBackupState();
@@ -116,25 +113,33 @@ const CollectionCardArc = ({
     return (
       <div className="flex flex-col relative">
         <div className="flex flex-col gap-2 bg-shark-970 z-[2]">
-          <span className="font-dm-sans text-[13px] font-normal line-clamp-2 text-shark-400">
-            {label}
-          </span>
+          {!preview && (
+            <span className="font-dm-sans text-[13px] font-normal line-clamp-2 text-shark-400">
+              {label}
+            </span>
+          )}
           <div className="flex">
-            <div className="flex items-center gap-1 font-dm-sans text-tiny">
-              {backedUp === undefined ? (
-                <></>
-              ) : backedUp ? (
-                <div className="flex items-center gap-1 text-shark-300 ">
-                  <Icons.checked />
-                  <span>Backed up</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 text-yellow ">
-                  <Icons.warning />
-                  <span className="mt-[0.5px] leading-none">Back up!</span>
-                </div>
-              )}
-            </div>
+            {preview ? (
+              <span className="text-white font-dm-sans max-w-[190px] text-base">
+                {label}
+              </span>
+            ) : (
+              <div className="flex items-center gap-1 font-dm-sans text-tiny">
+                {backedUp === undefined ? (
+                  <></>
+                ) : backedUp ? (
+                  <div className="flex items-center gap-1 text-shark-300 ">
+                    <Icons.checked />
+                    <span>Backed up</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-yellow ">
+                    <Icons.warning />
+                    <span className="mt-[0.5px] leading-none">Back up!</span>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="ml-auto">
               <div className="flex items-center gap-2">
                 <span className="text-lg">{icon}</span>
@@ -165,56 +170,64 @@ const CollectionCardArc = ({
       );
     }
     return (
-      <div className="h-full flex flex-col gap-4 m-4">
+      <div className="h-full flex flex-col gap-6 m-4">
         <div className="">
           <span className="font-giorgio text-shark-400 text-[16px] tracking-[0.36px] ">
             Quests
           </span>
-          {quests?.map((quest) => {
-            return (
-              <div key={quest.id} className="flex items-center gap-2">
-                <Icons.logo />
-                <Link
-                  className="text-baby-blue-default font-dm-sans text-[13px]"
-                  href={`/quests/${quest.id}`}
-                >
-                  <div className="flex items-center gap-1 underline">
-                    <span>{quest.name}</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="17"
-                      viewBox="0 0 16 17"
-                      fill="none"
-                    >
-                      <path
-                        d="M6 12.5L10 8.5L6 4.5"
-                        stroke="#92D7FE"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
+          <div className="flex flex-col gap-3">
+            {quests?.map((quest) => {
+              return (
+                <div key={quest.id} className="flex items-center gap-2">
+                  <Icons.logo />
+                  <Link
+                    className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
+                    href={`/quests/${quest.id}`}
+                  >
+                    <div className="flex items-center gap-1 underline">
+                      <span>{quest.name}</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="17"
+                        viewBox="0 0 16 17"
+                        fill="none"
+                      >
+                        <path
+                          d="M6 12.5L10 8.5L6 4.5"
+                          stroke="#92D7FE"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
         </div>
         {telegramChatInviteUrl && (
-          <Link
-            href={telegramChatInviteUrl}
-            className="flex flex-row bg-baby-blue-default items-center gap-2 rounded-lg p-1"
-          >
-            <Image
-              src="/images/telegram-icon.svg"
-              alt="Collector's chat"
-              width={24}
-              height={24}
-              sizes="100vw"
-            />
-            <span className="text-center text-shark-950 text-bold font-dm-sans text-[13px]">
-              {"Collector's Chat"}
-            </span>
+          <Link href={telegramChatInviteUrl}>
+            <div>
+              <Button
+                size="tiny"
+                variant="blue"
+                className="max-w-[150px]"
+                rounded
+              >
+                <div className="flex items-center gap-1">
+                  <Image
+                    src="/images/telegram-icon.svg"
+                    alt="Collector's chat"
+                    width={16}
+                    height={16}
+                    sizes="100vw"
+                  />
+                  <span>{"Collector's Chat"}</span>
+                </div>
+              </Button>
+            </div>
           </Link>
         )}
       </div>
@@ -222,50 +235,57 @@ const CollectionCardArc = ({
   };
 
   return (
-    <div className="relative w-full max-w-[300px] mx-auto">
-      <Transition
-        show={!showQuest}
-        enter="transition-scale duration-500"
-        enterFrom="opacity-0 scale-0"
-        enterTo="opacity-100 scale-300"
-        leave="transition-opacity duration-500"
-        leaveFrom="opacity-100 scale-500"
-        leaveTo="opacity-0 scale-0"
-      >
-        <>
-          <Icons.collectionCardOrbit className="absolute z-[4] top-[105px] right-[-17px] w-[326px]" />
-          <Icons.starSolid
-            style={{
-              transform: "rotate(150deg)",
+    <div
+      className={cn("relative w-full max-w-[300px] mx-auto", className)}
+      {...props}
+    >
+      {quests?.length > 0 && (
+        <QuestButtonWrapper>
+          <Button
+            onClick={() => {
+              disabled ? null : setShowQuest(!showQuest);
             }}
-            className="absolute z-[4] top-[152px] right-[5px]"
-          />
-        </>
-      </Transition>
+            size="tiny"
+            variant="shark"
+            className={cn("!border-[0.8px]", disabled ? " text-white/40" : "")}
+            iconPosition="right"
+            icon={
+              <Icons.arrowUp
+                className={cn("transform duration-200", {
+                  "rotate-180": showQuest,
+                })}
+              />
+            }
+            rounded
+          >
+            More Info
+          </Button>
+        </QuestButtonWrapper>
+      )}
 
-      <QuestButtonWrapper small={extraSmallDevice}>
-        <Button
-          onClick={() => {
-            disabled ? null : setShowQuest(!showQuest);
-          }}
-          size="tiny"
-          variant="shark"
-          className={cn("!border-[0.8px]", disabled ? " text-white/40" : "")}
-          iconPosition="right"
-          icon={
-            <Icons.arrowUp
-              className={cn("transform", {
-                "rotate-180": showQuest,
-              })}
-            />
-          }
-          rounded
+      {!preview && (
+        <Transition
+          show={!showQuest}
+          enter="transition-scale duration-500"
+          enterFrom="opacity-0 scale-0"
+          enterTo="opacity-100 scale-300"
+          leave="transition-opacity duration-500"
+          leaveFrom="opacity-100 scale-500"
+          leaveTo="opacity-0 scale-0"
         >
-          More Info
-        </Button>
-      </QuestButtonWrapper>
+          <>
+            <Icons.collectionCardOrbit className="absolute z-[4] top-[105px] right-[-17px] w-[326px]" />
+            <Icons.starSolid
+              style={{
+                transform: "rotate(150deg)",
+              }}
+              className="absolute z-[4] top-[152px] right-[5px]"
+            />
+          </>
+        </Transition>
+      )}
 
-      <div className="relative px-4">
+      <div className={cn("relative", preview ? "" : "px-4")}>
         <CardDivider
           small={extraSmallDevice}
           className={cn("absolute left-0 right-0")}
@@ -294,7 +314,7 @@ const CollectionCardArc = ({
           </div>
 
           <Card.Content
-            className={cn("relative !border-none !bg-shark-970 !pb-2 top-0", {
+            className={cn("!relative !border-none !bg-shark-970 !pb-2 top-0", {
               "!border-0": true,
             })}
             spacing="sm"
