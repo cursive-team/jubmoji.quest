@@ -30,8 +30,8 @@ enum CollectStatus {
   ALREADY_COLLECTED = "You've already collected this jubmoji.",
   ALREADY_ON_TEAM = "You're already on a scavenger hunt team.",
   ZERO_TAP = "Your card has now been initialized! Please tap again to collect its first jubmoji.",
-  FIRST_COLLECT = "",
-  STANDARD = "",
+  FIRST_COLLECT = "First collect",
+  STANDARD = "Standard",
 }
 
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
@@ -143,7 +143,7 @@ export default function CollectJubmojiPage() {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const { data: jubmojiCollectionCards = [], isLoading } = useFetchCards();
-  const { data: jubmojis = [] } = useJubmojis();
+  const { data: jubmojis } = useJubmojis();
 
   const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();
   const [collectStatus, setCollectStatus] = useState<CollectStatus>(
@@ -318,7 +318,7 @@ export default function CollectJubmojiPage() {
         );
       case CollectStatus.STANDARD:
         return (
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
             <Button
               icon={<Icons.arrowRight className="text-black" />}
               iconPosition="right"
@@ -333,6 +333,16 @@ export default function CollectJubmojiPage() {
           </div>
         );
       case CollectStatus.ALREADY_COLLECTED:
+        return (
+          <Button
+            icon={<Icons.arrowRight className="text-black" />}
+            iconPosition="right"
+            variant="secondary"
+            onClick={navigateToJubmojis}
+          >
+            Back to app
+          </Button>
+        );
       case CollectStatus.ALREADY_ON_TEAM:
         return (
           <Button
