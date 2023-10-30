@@ -9,9 +9,7 @@ import {
 } from "jubmoji-api";
 import { addJubmoji } from "@/lib/localStorage";
 import { Card } from "@/components/cards/Card";
-import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Button } from "@/components/ui/Button";
-import Link from "next/link";
 import { Icons } from "@/components/Icons";
 import { Modal } from "@/components/modals/Modal";
 import { Onboarding } from "@/components/Onboarding";
@@ -23,6 +21,17 @@ import {
 import Image from "next/image";
 import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
 import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
+import { useJubmojis } from "@/hooks/useJubmojis";
+import { SimpleCard } from "@/components/cards/SimpleCard";
+
+enum CollectStatus {
+  UNKNOWN = "UNKNOWN",
+  IN_INCOGNITO = "You're in an incognito tab. Please copy this link into a non-incognito tab in order to save your Jubmojis!",
+  ALREADY_COLLECTED = "You've already collected this jubmoji.",
+  ALREADY_ON_TEAM = "You're already on a scavenger hunt team.",
+  FIRST_COLLECT = "",
+  STANDARD = "",
+}
 
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
@@ -134,21 +143,14 @@ export default function CollectJubmojiPage() {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const { data: jubmojiCollectionCards = [], isLoading } = useFetchCards();
-  // used to check if user collected already something
-  const [isFirstCollect, setIsFirstCollect] = useState(false);
+  const { data: jubmojis = [] } = useJubmojis();
+
   const [collectedJubmoji, setCollectedJubmoji] = useState<Jubmoji>();
+  const [collectStatus, setCollectStatus] = useState<CollectStatus>(
+    CollectStatus.UNKNOWN
+  );
   const [collectedCard, setCollectedCard] = useState<JubmojiCardProps>();
   const [showOnboarding, setShowOnboarding] = useState(false);
-
-  // ensure users do not go to rest of app if they are in incognito
-  const alertIncognito = async () => {
-    const isIncognito = await detectIncognito();
-    if (isIncognito.isPrivate) {
-      alert(
-        "Please copy this link into a non-incognito tab in order to save your Jubmojis!"
-      );
-    }
-  };
 
   useEffect(() => {
     async function getJubmojiFromUrl() {
@@ -175,6 +177,53 @@ export default function CollectJubmojiPage() {
     }
   }, [router, jubmojiCollectionCards]);
 
+  useEffect(() => {
+    if (!jubmojiCollectionCards || !jubmojis || !collectedJubmoji) {
+      return;
+    }
+
+    const determineCollectState = async () => {
+      const isIncognito = await detectIncognito();
+      if (isIncognito.isPrivate) {
+        setCollectStatus(CollectStatus.IN_INCOGNITO);
+        return;
+      }
+
+      if (jubmojis.length === 0) {
+        setCollectStatus(CollectStatus.FIRST_COLLECT);
+        return;
+      }
+
+      for (const jubmoji of jubmojis) {
+        if (jubmoji.pubKeyIndex === collectedJubmoji.pubKeyIndex) {
+          setCollectStatus(CollectStatus.ALREADY_COLLECTED);
+          return;
+        }
+      }
+
+      const huntTeamJubmojiPubKeyIndices = [
+        61, 163, 117, 126, 80, 40, 104, 192, 116, 32,
+      ];
+      if (huntTeamJubmojiPubKeyIndices.includes(collectedJubmoji.pubKeyIndex)) {
+        for (const jubmoji of jubmojis) {
+          if (huntTeamJubmojiPubKeyIndices.includes(jubmoji.pubKeyIndex)) {
+            const realTeamCard = getJubmojiCardByPubIndex(
+              jubmojiCollectionCards,
+              jubmoji.pubKeyIndex
+            );
+            setCollectedCard(realTeamCard);
+            setCollectStatus(CollectStatus.ALREADY_ON_TEAM);
+            return;
+          }
+        }
+      }
+
+      setCollectStatus(CollectStatus.STANDARD);
+    };
+
+    determineCollectState();
+  }, [jubmojiCollectionCards, jubmojis, collectedJubmoji]);
+
   const onShowOnboarding = () => {
     setShowOnboarding(true);
   };
@@ -183,11 +232,117 @@ export default function CollectJubmojiPage() {
     router.push(`/jubmojis?pubKeyIndex=${collectedCard?.pubKeyIndex}`); // redirect to `/jubmojis` when modal is closed
   };
 
+  const renderMainInfo = (status: CollectStatus) => {
+    if (!collectedCard || !collectedJubmoji) return <></>;
+
+    switch (status) {
+      case CollectStatus.UNKNOWN:
+        return <Card.Base className="h-[260px]" loading />;
+      case CollectStatus.IN_INCOGNITO:
+        return (
+          <SimpleCard
+            className="text-center"
+            title={"Incognito detected."}
+            icon={"🕵️‍♀️"}
+            description={CollectStatus.IN_INCOGNITO}
+          />
+        );
+      case CollectStatus.ALREADY_COLLECTED:
+        return (
+          <SimpleCard
+            className="text-center"
+            title={"Already collected."}
+            icon={"🤷"}
+            description={CollectStatus.ALREADY_COLLECTED}
+            size={"sm"}
+          />
+        );
+      case CollectStatus.ALREADY_ON_TEAM:
+        return (
+          <SimpleCard
+            className="text-center"
+            title={"Already on team."}
+            icon={"🤷"}
+            description={CollectStatus.ALREADY_ON_TEAM}
+            size={"sm"}
+          />
+        );
+      default:
+        return (
+          <CollectionCardArc
+            className="text-center"
+            label={collectedCard.name}
+            icon={collectedCard.emoji}
+            owner={collectedCard.owner}
+            edition={collectedJubmoji.msgNonce}
+            cardBackImage={collectedCard.imagePath}
+            size="sm"
+            disabled
+          />
+        );
+    }
+  };
+
+  const renderButtons = (status: CollectStatus) => {
+    switch (status) {
+      case CollectStatus.FIRST_COLLECT:
+        return (
+          <Button variant="secondary" onClick={onShowOnboarding}>
+            What is this??
+          </Button>
+        );
+      case CollectStatus.STANDARD:
+        return (
+          <div className="flex flex-col gap-8">
+            <Button
+              icon={<Icons.arrowRight className="text-black" />}
+              iconPosition="right"
+              variant="secondary"
+              onClick={navigateToJubmojis}
+            >
+              Back to app
+            </Button>
+            <Button variant="transparent" onClick={onShowOnboarding}>
+              What is this??
+            </Button>
+          </div>
+        );
+      case CollectStatus.ALREADY_COLLECTED:
+        return (
+          <Button
+            icon={<Icons.arrowRight className="text-black" />}
+            iconPosition="right"
+            variant="secondary"
+            onClick={navigateToJubmojis}
+          >
+            Back to app
+          </Button>
+        );
+      case CollectStatus.ALREADY_ON_TEAM:
+        return (
+          <Button
+            icon={<Icons.arrowRight className="text-black" />}
+            iconPosition="right"
+            variant="secondary"
+            onClick={navigateToJubmojis}
+          >
+            Back to app
+          </Button>
+        );
+    }
+
+    return <></>;
+  };
+
   return (
     <Modal
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
-      closable={!isFirstCollect}
+      closable={[
+        CollectStatus.ALREADY_COLLECTED,
+        CollectStatus.ALREADY_ON_TEAM,
+        CollectStatus.STANDARD,
+      ].includes(collectStatus)}
       onClose={navigateToJubmojis}
     >
       <div className="my-auto flex flex-col gap-8">
@@ -195,52 +350,8 @@ export default function CollectJubmojiPage() {
           collectedCard && <OnboardSection jubmoji={collectedCard} />
         ) : (
           <>
-            {isLoading ? (
-              <Card.Base className="h-[260px]" loading />
-            ) : (
-              <>
-                {collectedCard && (
-                  <CollectionCardArc
-                    className="text-center"
-                    label={collectedCard.name}
-                    icon={collectedCard.emoji}
-                    owner={collectedCard.owner}
-                    edition={collectedJubmoji?.msgNonce}
-                    cardBackImage={collectedCard.imagePath}
-                    size="sm"
-                    disabled
-                  />
-                )}
-              </>
-            )}
-            {isFirstCollect ? (
-              <Button
-                variant="secondary"
-                disabled={isLoading}
-                onClick={onShowOnboarding}
-              >
-                What is this??
-              </Button>
-            ) : (
-              <div className="flex flex-col gap-8">
-                <Button
-                  icon={<Icons.arrowRight className="text-black" />}
-                  iconPosition="right"
-                  variant="secondary"
-                  disabled={isLoading}
-                  onClick={navigateToJubmojis}
-                >
-                  Back to app
-                </Button>
-                <Button
-                  variant="transparent"
-                  disabled={isLoading}
-                  onClick={onShowOnboarding}
-                >
-                  What is this??
-                </Button>
-              </div>
-            )}
+            {renderMainInfo(collectStatus)}
+            {renderButtons(collectStatus)}
           </>
         )}
       </div>

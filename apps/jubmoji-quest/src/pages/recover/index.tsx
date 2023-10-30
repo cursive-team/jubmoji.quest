@@ -4,7 +4,7 @@ import { detectIncognito } from "detectincognitojs";
 import { succinctDeserializeJubmojiList } from "jubmoji-api";
 import { unionJubmojisByPubKey, writeJubmojis } from "@/lib/localStorage";
 import { Card } from "@/components/cards/Card";
-import { RecoverCard } from "@/components/cards/RecoverCard";
+import { SimpleCard } from "@/components/cards/SimpleCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { Icons } from "@/components/Icons";
@@ -68,7 +68,7 @@ export default function RecoverJubmojiPage() {
         {isLoadingSerialization ? (
           <Card.Base className="h-[260px]" loading />
         ) : (
-          <RecoverCard
+          <SimpleCard
             className="text-center"
             title={"Jubmojis recovered!"}
             icon={"✅"}

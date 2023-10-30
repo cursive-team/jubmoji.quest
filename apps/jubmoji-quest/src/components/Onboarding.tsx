@@ -31,7 +31,13 @@ const Onboarding = ({ children }: OnboardingProps) => {
       <div onClick={handleNext}>{arrayChildren[activeIndex]}</div>
       <div className="flex gap-2">
         {arrayChildren.map((child, index) => (
-          <OnboardingIndicator key={index} active={index <= activeIndex} />
+          <OnboardingIndicator
+            key={index}
+            active={index <= activeIndex}
+            onClick={() => {
+              setActiveIndex(index);
+            }}
+          />
         ))}
       </div>
     </div>
