@@ -173,6 +173,12 @@ export default function CollectJubmojiPage() {
         return;
       }
 
+      // First tap of a jubmoji card - zero taps are not parsable
+      if (parseInt(nonceSig.sig) === 0) {
+        setCollectStatus(CollectStatus.ZERO_TAP);
+        return;
+      }
+
       const jubmojiToCollect = getJubmojiFromNonceSignature(nonceSig);
 
       // User is in incognito mode
@@ -194,12 +200,6 @@ export default function CollectJubmojiPage() {
           setCollectStatus(CollectStatus.ALREADY_COLLECTED);
           return;
         }
-      }
-
-      // First tap of a jubmoji card
-      if (parseInt(nonceSig.sig) === 0) {
-        setCollectStatus(CollectStatus.ZERO_TAP);
-        return;
       }
 
       // User is already on a hunt team
