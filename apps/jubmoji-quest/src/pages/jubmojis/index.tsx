@@ -137,6 +137,7 @@ export default function JubmojisPage() {
               icon={emoji}
               edition={msgNonce}
               owner={owner}
+              pubKeyIndex={selectedPubKeyIndex}
               cardBackImage={imagePath}
               actions={null}
               quests={collectsFor}

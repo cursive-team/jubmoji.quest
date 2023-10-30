@@ -3,8 +3,9 @@ import { Prisma, Card, Quest, Power, $Enums, QRCode } from "@prisma/client";
 export type InputSize = "sm" | "md" | "lg";
 
 export interface BackupState {
-  type: "google" | "apple" | "copypaste" | "none";
-  serialNum: string;
+  type: "google" | "apple" | "copypaste" | "whatsapp" | "none";
+  serialNum?: string;
+  backedUpPubKeyIndices?: number[];
 }
 
 export type JubmojiCollectionCard = Card & {

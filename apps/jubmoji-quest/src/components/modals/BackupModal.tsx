@@ -10,6 +10,7 @@ import { succinctSerializeJubmojiList } from "jubmoji-api";
 import toast from "react-hot-toast";
 import { APP_CONFIG } from "@/constants";
 import Image from "next/image";
+import { saveBackupState } from "@/lib/localStorage";
 
 export default function BackupModal({ children, ...props }: ModalProps) {
   const { data: jubmojis } = useJubmojis();
@@ -21,6 +22,10 @@ export default function BackupModal({ children, ...props }: ModalProps) {
     const copyText =
       "Jubmoji recovery link: " +
       APP_CONFIG.RECOVERY_URL(succinctSerialization);
+
+    await saveBackupState({
+      type: "copypaste",
+    });
 
     // Use Clipboard API where available
     if (navigator.clipboard) {
@@ -58,10 +63,13 @@ export default function BackupModal({ children, ...props }: ModalProps) {
             <AppleWalletButton />
             <button
               disabled={!jubmojis}
-              onClick={() => {
+              onClick={async () => {
                 const succinctSerialization = succinctSerializeJubmojiList(
                   jubmojis!
                 );
+                await saveBackupState({
+                  type: "whatsapp",
+                });
                 const whatsappUrl =
                   "https://wa.me/?text=" +
                   encodeURIComponent(

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icons } from "../Icons";
 import { Button } from "../ui/Button";
 import { Card } from "./Card";
@@ -6,12 +6,14 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { classed } from "@tw-classed/react";
 import { Transition } from "@headlessui/react";
+import { useBackupState } from "@/hooks/useBackupState";
 
 interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: string;
   label: string;
   edition?: number | string;
   owner: string;
+  pubKeyIndex: number;
   telegramChatInviteLink?: string;
   cardBackImage?: string;
   actions?: React.ReactNode;
@@ -80,12 +82,33 @@ const CollectionCardArc = ({
   edition,
   icon,
   cardBackImage,
+  pubKeyIndex,
   quests = [],
   disabled = false,
 }: CollectionCardArcProps) => {
   const [showQuest, setShowQuest] = useState(false);
-  const [backedUp, setBackedUp] = useState(false);
+  const { isLoading: isLoadingBackup, data: backupState } = useBackupState();
+  const [backedUp, setBackedUp] = useState<boolean>();
   const extraSmallDevice = window.innerWidth <= 375;
+
+  useEffect(() => {
+    if (isLoadingBackup) return;
+
+    if (!backupState) {
+      setBackedUp(false);
+      return;
+    }
+
+    if (
+      backupState.backedUpPubKeyIndices &&
+      backupState.backedUpPubKeyIndices.includes(pubKeyIndex)
+    ) {
+      setBackedUp(true);
+      return;
+    }
+
+    setBackedUp(false);
+  }, [isLoadingBackup, backupState, pubKeyIndex]);
 
   const CardDetail = () => {
     return (
@@ -96,15 +119,17 @@ const CollectionCardArc = ({
           </span>
           <div className="flex">
             <div className="flex items-center gap-1 font-dm-sans text-tiny">
-              {backedUp ? (
-                <div className="flex items-center gap-1 text-yellow ">
-                  <Icons.warning />
-                  <span className="mt-[0.5px] leading-none">Back up!</span>
-                </div>
-              ) : (
+              {backedUp === undefined ? (
+                <></>
+              ) : backedUp ? (
                 <div className="flex items-center gap-1 text-shark-300 ">
                   <Icons.checked />
                   <span>Backed up</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 text-yellow ">
+                  <Icons.warning />
+                  <span className="mt-[0.5px] leading-none">Back up!</span>
                 </div>
               )}
             </div>
