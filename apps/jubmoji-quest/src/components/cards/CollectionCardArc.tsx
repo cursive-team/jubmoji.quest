@@ -2,11 +2,31 @@ import { useState } from "react";
 import { Icons } from "../Icons";
 import { Button } from "../ui/Button";
 import { Card } from "./Card";
-import { CollectionCardProps } from "./CollectionCard";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { classed } from "@tw-classed/react";
 import { Transition } from "@headlessui/react";
+
+interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
+  icon: string;
+  label: string;
+  edition?: number | string;
+  owner: string;
+  telegramChatInviteLink?: string;
+  cardBackImage?: string;
+  actions?: React.ReactNode;
+  centred?: boolean;
+  canFlip?: boolean;
+  size?: "sm" | "md";
+  disabled?: boolean;
+  quests?: {
+    id: number;
+    name: string;
+    description: string;
+    startTime: Date | null;
+    endTime: Date | null;
+  }[];
+}
 
 const CardDivider = classed.div("h-[0.4px] mx-4 z-[3] bg-shark-50", {
   variants: {
@@ -62,7 +82,7 @@ const CollectionCardArc = ({
   cardBackImage,
   quests = [],
   disabled = false,
-}: CollectionCardProps) => {
+}: CollectionCardArcProps) => {
   const [showQuest, setShowQuest] = useState(false);
   const [backedUp, setBackedUp] = useState(false);
   const extraSmallDevice = window.innerWidth <= 375;
