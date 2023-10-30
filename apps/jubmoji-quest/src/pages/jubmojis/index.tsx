@@ -59,13 +59,14 @@ export default function JubmojisPage() {
     if (isLoadingJubmojis) return;
     // set default pubKeyIndex from query params
     setSelectedPubKeyIndex(Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex);
-  }, [isLoadingJubmojis]);
+  }, [isLoadingJubmojis, jubmojis, pubKeyIndex]);
 
   const selectedJubmoji = getJubmojiCardByPubIndex(
     jubmojiCollectionCards,
     selectedPubKeyIndex
   );
-  const { emoji, name, owner, collectsFor, imagePath } = selectedJubmoji ?? {};
+  const { emoji, name, owner, collectsFor, imagePath, telegramChatInviteLink } =
+    selectedJubmoji ?? {};
 
   // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
@@ -136,6 +137,7 @@ export default function JubmojisPage() {
               edition={msgNonce}
               owner={owner}
               cardBackImage={imagePath}
+              telegramChatInviteLink={telegramChatInviteLink}
               actions={null}
               quests={collectsFor}
             />

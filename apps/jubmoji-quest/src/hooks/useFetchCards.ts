@@ -69,7 +69,14 @@ export const getJubmojiCardByPubIndex = (
 
   const { emoji, imageBlobUrl: imagePath } = cardPubKeys[pubKeyIndex];
   // Name, owner, and collectsFor are set by the current cardholder and fetched from the backend
-  const { name, owner, collectsFor, description, index } = cards[pubKeyIndex];
+  const {
+    name,
+    owner,
+    collectsFor,
+    description,
+    index,
+    telegramChatInviteLink,
+  } = cards[pubKeyIndex];
 
   return {
     emoji,
@@ -77,6 +84,7 @@ export const getJubmojiCardByPubIndex = (
     owner,
     description,
     collectsFor,
+    telegramChatInviteLink: telegramChatInviteLink || undefined,
     imagePath,
     index,
     pubKeyIndex,
@@ -89,6 +97,7 @@ export interface JubmojiCardProps {
   owner: string;
   description: string;
   collectsFor?: any[];
+  telegramChatInviteLink?: string;
   imagePath: string;
   index: number;
   pubKeyIndex: number;

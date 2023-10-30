@@ -11,6 +11,7 @@ export interface CollectionCardProps
   label: string;
   edition?: number | string;
   owner: string;
+  telegramChatInviteLink?: string;
   cardBackImage?: string;
   actions?: React.ReactNode;
   centred?: boolean;
@@ -81,6 +82,7 @@ const CollectionCard = ({
   icon,
   edition,
   owner,
+  telegramChatInviteLink = undefined,
   cardBackImage,
   actions,
   quests = [],
