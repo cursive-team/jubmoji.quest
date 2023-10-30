@@ -5704,6 +5704,7 @@ __metadata:
     google-auth-library: ^9.1.0
     jose: ^4.15.2
     jubmoji-api: "workspace:^"
+    mobile-detect: ^1.4.5
     next: 13.5.4
     passkit-generator: ^3.1.11
     postcss: ^8
@@ -6170,6 +6171,13 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: a96865108c6c3b1b8e1d5e9f11843de1e077e57737602de1b82030815f311be11f96f09cce59bd5b903d0b29834733e5313f9301e3ed6d6f6fba2eae0df4298f
+  languageName: node
+  linkType: hard
+
+"mobile-detect@npm:^1.4.5":
+  version: 1.4.5
+  resolution: "mobile-detect@npm:1.4.5"
+  checksum: 317d170f3bc27c3e36c3f4ab7809c33d20e81914147cdc74a8551f0ecad2c5ec067bd59dd1a240caf66c1df7fd793021a36677c3a6ed8bdf027d4715dc3f0973
   languageName: node
   linkType: hard
 

@@ -26,6 +26,7 @@
     "google-auth-library": "^9.1.0",
     "jose": "^4.15.2",
     "jubmoji-api": "workspace:^",
+    "mobile-detect": "^1.4.5",
     "next": "13.5.4",
     "passkit-generator": "^3.1.11",
     "prisma": "^5.4.2",
