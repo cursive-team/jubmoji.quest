@@ -19,7 +19,7 @@ export default function BackupModal({ children, ...props }: ModalProps) {
 
     const succinctSerialization = succinctSerializeJubmojiList(jubmojis);
     const copyText =
-      "jubmoji.quest recovery link: " +
+      "Jubmoji recovery link: " +
       APP_CONFIG.RECOVERY_URL(succinctSerialization);
 
     // Use Clipboard API where available
@@ -65,7 +65,7 @@ export default function BackupModal({ children, ...props }: ModalProps) {
                 const whatsappUrl =
                   "https://wa.me/?text=" +
                   encodeURIComponent(
-                    "jubmoji.quest recovery link: " +
+                    "Jubmoji recovery link: " +
                       APP_CONFIG.RECOVERY_URL(succinctSerialization)
                   );
                 window.location.href = whatsappUrl;
