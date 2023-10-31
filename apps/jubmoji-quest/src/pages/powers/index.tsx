@@ -86,12 +86,12 @@ export default function PowersPage() {
       </div>
       <div className="flex flex-col gap-2 mt-4">
         <div className="grid grid-cols-1 gap-6">
-          <Filters
+          {/* <Filters
             defaultValue="all"
             object={PowerOptionsMapping}
             onChange={setSelectedOption}
             disabled={isLoadingPowers}
-          />
+          /> */}
           <div className="flex flex-col gap-4">
             {isLoadingPowers ? (
               <PlaceholderContent />

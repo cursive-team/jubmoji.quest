@@ -63,13 +63,14 @@ const PowerCard = ({
             type="button"
             className="flex items-start ml-auto w-6 h-6 z-[2] p-1"
           >
-            {locked ? (
+            {/* {locked ? (
               <Icons.locked />
             ) : bookmarked ? (
               <Icons.starSolid />
             ) : (
               <Icons.star />
-            )}
+            )} */}
+            {locked && <Icons.locked />}
           </button>
         </div>
       </Card.Content>

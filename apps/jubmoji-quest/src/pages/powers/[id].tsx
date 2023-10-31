@@ -122,13 +122,14 @@ export default function PowerDetailPage() {
             </Card.Title>
           </div>
           <div className="flex items-start ml-auto w-6 h-6">
-            {powerIsLocked ? (
+            {/* {powerIsLocked ? (
               <Icons.locked />
             ) : bookmarked ? (
               <Icons.starSolid />
             ) : (
               <Icons.star />
-            )}
+            )} */}
+            {powerIsLocked && <Icons.locked />}
           </div>
         </div>
 
