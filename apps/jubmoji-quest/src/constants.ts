@@ -3,6 +3,7 @@ const GOOGLE_WALLET_ISSUER_ID = "3388000000022248072";
 export const URLS = {
   GITHUB: "https://github.com/jubmoji/jubmoji.quest",
   PSE_DEV: "https://pse.dev",
+  TELEGRAM: "https://t.me/+jjgYe8M0B0pkYTMx",
 };
 
 export const MIN_SWIPE_DISTANCE = 50;

@@ -23,7 +23,7 @@ const InfoModal = ({ isOpen, setIsOpen, onClose }: ModalProps) => {
             ABOUT <br /> JUBMOJI.QUEST
           </span>
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-2">
           <div className="grid grid-cols-1 gap-4">
             {FAQS?.map(({ title, description }, index) => {
               const titlePrefix = index + 1 < 10 ? `0${index + 1}` : index + 1;
@@ -55,9 +55,22 @@ const InfoModal = ({ isOpen, setIsOpen, onClose }: ModalProps) => {
             <Link
               className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
               href={URLS.GITHUB}
+              target="_blank"
             >
               <div className="flex items-center gap-1 underline">
                 <span>Github</span>
+                <Icons.externalLink />
+              </div>
+            </Link>
+          </div>
+          <div className=" flex flex-col gap-5 items-center">
+            <Link
+              className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
+              href={URLS.TELEGRAM}
+              target="_blank"
+            >
+              <div className="flex items-center gap-1 underline">
+                <span>Telegram</span>
                 <Icons.externalLink />
               </div>
             </Link>
