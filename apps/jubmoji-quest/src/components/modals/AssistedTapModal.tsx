@@ -27,8 +27,6 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
   useEffect(() => {
     md.current = new MobileDetect(window?.navigator?.userAgent);
   }, []);
-  const [statusText, setStatusText] = useState<string>();
-
   const device: Device = md?.current?.is("iPhone") ? "ios" : "android";
 
   const onReadyToTap = async () => {
@@ -78,7 +76,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="text-center my-auto">
-        <Card.Title className="!font-[22px]">
+        <Card.Title className="!font-[22px] mt-16">
           Hold the NFC card by your phone for 1-2 seconds.
         </Card.Title>
         <Image
@@ -89,7 +87,6 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
           className="mx-auto py-12"
         />
         <div className="flex flex-col gap-8">
-          {statusText && <span className=" font-dm-sans ">{statusText}</span>}
           <Button variant="secondary" onClick={onReadyToTap}>
             Ready to tap
           </Button>
