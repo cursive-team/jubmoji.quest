@@ -35,7 +35,7 @@ const PowerCard = ({
   const powerIcon = PowerTypeIconMapping[powerType];
 
   return (
-    <Card.Base>
+    <Card.Base disabled={disabled}>
       <Card.Content className="relative" spacing="sm">
         <div className="flex gap-2 self-stretch">
           <div className="flex gap-3">

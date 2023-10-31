@@ -424,7 +424,15 @@ export default function QuestDetailPage() {
         </QuestCard>
 
         {quest.powers.map((power) => {
-          return (
+          return powerIsLocked === undefined || powerIsLocked ? (
+            <PowerCard
+              title={power.name}
+              description={power.description}
+              powerType={power.powerType}
+              locked={powerIsLocked}
+              disabled={powerIsLocked}
+            />
+          ) : (
             <Link key={power.id} href={`/powers/${power.id}`}>
               <PowerCard
                 title={power.name}
