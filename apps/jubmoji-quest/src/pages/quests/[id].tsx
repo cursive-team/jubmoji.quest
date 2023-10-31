@@ -147,6 +147,8 @@ export default function QuestDetailPage() {
       );
       const pathToCircuits = getClientPathToCircuits();
 
+      let startProofTime = performance.now();
+
       // Team proof
       const teamJubmoji = teamJubmojis[0];
       const { sig, msgHash, pubKey, R, T, U } =
@@ -193,6 +195,9 @@ export default function QuestDetailPage() {
         setNumProofsCompleted((prev) => prev! + 1);
       }
 
+      let endProofTime = performance.now();
+      let proofGenerationTime = endProofTime - startProofTime;
+
       // Serialize proof
       const serializedProof = JSON.stringify({
         teamPubKeyIndex: teamJubmoji.pubKeyIndex,
@@ -212,6 +217,7 @@ export default function QuestDetailPage() {
         body: JSON.stringify({
           questId: quest.id,
           serializedProof,
+          proofGenerationTime,
         }),
       });
 
