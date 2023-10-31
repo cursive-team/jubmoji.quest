@@ -127,12 +127,12 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
-            <Filters
+            {/* <Filters
               defaultValue="all"
               object={QuestTagMapping}
               onChange={setSelectedOption}
               disabled={isLoadingQuests}
-            />
+            /> */}
             <div className="flex flex-col gap-4">
               {isLoadingQuests ? (
                 <>

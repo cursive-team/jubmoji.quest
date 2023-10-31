@@ -39,9 +39,9 @@ const QuestCard = ({
       <Card.Content spacing={spacing}>
         <div className="flex justify-between items-start self-stretch">
           <Card.Title>{title}</Card.Title>
-          <div className="flex items-start gap-2 w-6 h-6">
+          {/* <div className="flex items-start gap-2 w-6 h-6">
             {bookmarked ? <Icons.starSolid /> : <Icons.star />}
-          </div>
+          </div> */}
         </div>
         <Card.Description>{description}</Card.Description>
         {showProgress && (
