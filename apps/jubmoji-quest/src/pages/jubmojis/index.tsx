@@ -142,12 +142,7 @@ export default function JubmojisPage() {
     return (
       <>
         {name && owner && (
-          <div
-            className="flex flex-col justify-center"
-            style={{
-              height: "calc(100vh - 300px)",
-            }}
-          >
+          <div className="flex flex-col justify-center h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
             <div className="">
               <CollectionCardArc
                 label={name}
