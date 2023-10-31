@@ -52,7 +52,7 @@ export const useUpdateTeamLeaderboardMutation = () => {
       }
 
       const currentTime = new Date();
-      if (quest.endTime && currentTime > quest.endTime) {
+      if (quest.endTime && currentTime > new Date(quest.endTime)) {
         throw new Error("Quest has ended!");
       }
 
