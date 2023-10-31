@@ -22,12 +22,12 @@ const nextConfig = {
       },
       {
         source: "/zuhunt",
-        destination: "https://www.jubmoji.quest/quests/4",
+        destination: "https://www.jubmoji.quest/quests/8",
         permanent: true,
       },
       {
         source: "/zuhunt-test",
-        destination: "https://www.jubmoji.quest/quests/3",
+        destination: "https://www.jubmoji.quest/quests/7",
         permanent: true,
       },
     ];
