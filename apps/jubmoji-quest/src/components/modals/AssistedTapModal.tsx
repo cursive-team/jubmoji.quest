@@ -77,7 +77,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="text-center my-auto">
         <Card.Title className="!font-[22px] mt-16">
-          Hold the card on your phone as pictured, then start below.
+          Hold the card on your phone as pictured, then press start below.
         </Card.Title>
         <Image
           src={DeviceImageMapping[device]}
