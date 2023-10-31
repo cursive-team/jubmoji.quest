@@ -48,7 +48,12 @@ export const useUpdateTeamLeaderboardMutation = () => {
       }
 
       if (!quest) {
-        throw new Error("No active quest");
+        throw new Error("No active quest!");
+      }
+
+      const currentTime = new Date();
+      if (quest.endTime && currentTime > quest.endTime) {
+        throw new Error("Quest has ended!");
       }
 
       const teamLeaderboardProof = await createJubmojiQuestProof({
