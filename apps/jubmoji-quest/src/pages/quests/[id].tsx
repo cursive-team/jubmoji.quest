@@ -401,7 +401,13 @@ export default function QuestDetailPage() {
                           !isCollected && "opacity-30"
                         )}
                       >
-                        {cardPubKeys[card.index].emoji}
+                        {quest.proofType ===
+                          $Enums.ProofType.TEAM_LEADERBOARD &&
+                        !jubmojis?.find(
+                          (jubmoji) => jubmoji.pubKeyIndex === card.index
+                        )
+                          ? "❓" // Hide collection emojis that have not been collected for team leaderboard quests
+                          : cardPubKeys[card.index].emoji}
                       </span>
                     );
                   })}
