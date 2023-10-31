@@ -78,6 +78,12 @@ export default async function handler(
         return res.status(500).json({ message: "Invalid proof type" });
       }
 
+      const currentTime = new Date();
+      console.log("timing", currentTime, quest.startTime, quest.endTime);
+      if (quest.endTime && currentTime > quest.endTime) {
+        return res.status(500).json({ message: "Quest has ended" });
+      }
+
       const { verified, consumedSigNullifiers } = await verifyJubmojiQuestProof(
         {
           config: {
