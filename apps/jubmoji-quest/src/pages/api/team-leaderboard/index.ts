@@ -44,7 +44,7 @@ export default async function handler(
     // scoreAdded equal to the number of points added to the team's score
   } else if (req.method === "POST") {
     try {
-      const { questId, serializedProof } = req.body;
+      const { questId, serializedProof, proofGenerationTime } = req.body;
 
       const quest: JubmojiQuest | null = await prisma.quest.findUnique({
         where: { id: Number(questId) },
@@ -83,6 +83,7 @@ export default async function handler(
         return res.status(500).json({ message: "Quest has ended" });
       }
 
+      let startProofTime = performance.now();
       const { verified, consumedSigNullifiers } = await verifyJubmojiQuestProof(
         {
           config: {
@@ -93,6 +94,8 @@ export default async function handler(
           pathToCircuits: getServerPathToCircuits(),
         }
       );
+      let endProofTime = performance.now();
+      let proofTime = endProofTime - startProofTime;
       if (!verified) {
         return res.status(500).json({ message: "Proof not verified" });
       }
@@ -137,6 +140,41 @@ export default async function handler(
           questId: Number(questId),
         })),
       });
+
+      // Log client side proof timing
+      try {
+        await prisma.teamLeaderboardProofLog.create({
+          data: {
+            isVerificationLog: false,
+            includesTeamProof: true,
+            membershipProofCount:
+              teamLeaderboardProof.serializedCollectionMembershipProofs.length,
+            proofTime: proofGenerationTime,
+            questId: Number(questId),
+            teamPubKeyIndex: teamLeaderboardProof.teamPubKeyIndex,
+          },
+        });
+      } catch (e) {
+        console.log("Error logging client proof timimg: ", e);
+      }
+
+      // Log server side proof verification
+      try {
+        await prisma.teamLeaderboardProofLog.create({
+          data: {
+            isVerificationLog: true,
+            includesTeamProof: true,
+            membershipProofCount:
+              teamLeaderboardProof.serializedCollectionMembershipProofs.length,
+            verifiedMembershipProofCount: newlyConsumedSigNullifiers.length,
+            proofTime: proofTime,
+            questId: Number(questId),
+            teamPubKeyIndex: teamLeaderboardProof.teamPubKeyIndex,
+          },
+        });
+      } catch (e) {
+        console.log("Error logging server proof timimg: ", e);
+      }
 
       return res.status(200).json({ scoreAdded });
     } catch (error) {

@@ -51,6 +51,7 @@ export const useUpdateTeamLeaderboardMutation = () => {
         throw new Error("No active quest!");
       }
 
+      let startProofTime = performance.now();
       const teamLeaderboardProof = await createJubmojiQuestProof({
         config: {
           ...quest,
@@ -59,6 +60,8 @@ export const useUpdateTeamLeaderboardMutation = () => {
         jubmojis,
         pathToCircuits: getClientPathToCircuits(),
       });
+      let endProofTime = performance.now();
+      let proofGenerationTime = endProofTime - startProofTime;
 
       const response = await fetch(`/api/team-leaderboard`, {
         method: "POST",
@@ -68,6 +71,7 @@ export const useUpdateTeamLeaderboardMutation = () => {
         body: JSON.stringify({
           questId: quest.id,
           serializedProof: teamLeaderboardProof,
+          proofGenerationTime,
         }),
       });
 

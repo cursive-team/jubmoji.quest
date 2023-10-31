@@ -95,6 +95,18 @@ model TeamLeaderboardNullifiers {
   quest     Quest  @relation(fields: [questId], references: [id])
 }
 
+model TeamLeaderboardProofLog {
+  id                           Int    @id @default(autoincrement())
+  isVerificationLog            Boolean // is this verifying rather than proving?
+  includesTeamProof            Boolean // does proofTime include a team proof?
+  membershipProofCount         Int  // number of membership proofs in the proofTime
+  verifiedMembershipProofCount Int? // number of membership proofs verified
+  proofTime                    Int  // time of proving or verification in milliseconds
+  questId                      Int  
+  teamPubKeyIndex              Int 
+  createdAt                    DateTime @default(now())
+}
+
 enum CardTag {
   OFFICIAL
   ROLES
