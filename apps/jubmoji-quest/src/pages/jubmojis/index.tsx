@@ -110,9 +110,16 @@ export default function JubmojisPage() {
   const JubmojiContent = () => {
     if (isLoadingJubmojiCards)
       return (
-        <div className="flex flex-col mx-auto">
-          <Placeholder.CardArc className="w-[300px]" />
-          <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
+        <div className="flex flex-col">
+          <div className="flex flex-col mx-auto justify-center h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
+            <Placeholder.CardArc className="w-[300px]" />
+            <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
+          </div>
+          <JubmojiNavWrapper className="z-1">
+            <JubmojiNavItem className="bg-slate-200 animate-pulse" />
+            <JubmojiNavItem className="bg-slate-200 animate-pulse" />
+            <JubmojiNavItem className="bg-slate-200 animate-pulse" />
+          </JubmojiNavWrapper>
         </div>
       );
 
@@ -142,12 +149,7 @@ export default function JubmojisPage() {
     return (
       <>
         {name && owner && (
-          <div
-            className="flex flex-col justify-center"
-            style={{
-              height: "calc(100vh - 300px)",
-            }}
-          >
+          <div className="flex flex-col justify-center h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
             <div className="">
               <CollectionCardArc
                 label={name}
@@ -261,7 +263,7 @@ export default function JubmojisPage() {
 
         {isSearchMode ? <JubmojiSearchItems /> : <JubmojiContent />}
 
-        {!isSearchMode && (
+        {!isSearchMode && !isLoadingJubmojiCards && (
           <div className="mt-auto">
             <JubmojiNavWrapper>
               {collectedJubmojis?.map((jubmoji, index) => {

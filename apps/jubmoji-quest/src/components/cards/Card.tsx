@@ -76,6 +76,9 @@ const CardTitle = classed.span(
       disabled: {
         true: "disabled-element",
       },
+      ellipsis: {
+        true: "ellipsis line-clamp-1",
+      },
     },
     defaultVariants: {
       font: "giorgio",
@@ -98,10 +101,13 @@ const CardDescription = classed.span(
         true: "mx-auto",
       },
       truncate: {
-        true: "line-clamp-1",
+        true: "!line-clamp-1",
       },
       disabled: {
         true: "disabled-element",
+      },
+      ellipsis: {
+        true: "!line-clamp-3",
       },
     },
     defaultVariants: {

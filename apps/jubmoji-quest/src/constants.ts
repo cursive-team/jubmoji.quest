@@ -33,6 +33,7 @@ export const GOOGLE_PASS_CREDENTIALS = {
 };
 
 export const APP_CONFIG = {
+  APP_PAGE_TITLE: "jubmoji.quest",
   APP_NAME: "Jubmojis",
   APP_SLUG: "Jubmojis Backup",
   WEBSITE_URI: "http://jubmoji.quest",

@@ -79,6 +79,7 @@ export default function Home() {
                       collected={collected}
                       collectionTotalItems={collectionTotalItems}
                       showProgress
+                      ellipsis
                     />
                   </Link>
                 );

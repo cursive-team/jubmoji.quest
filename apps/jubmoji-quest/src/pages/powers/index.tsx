@@ -49,9 +49,10 @@ const PowerCardDetail = ({ power }: PowerCardDetailProps) => {
       title={power.name}
       description={power.description}
       powerType={power.powerType}
-      shortDescription={true}
       locked={powerIsLocked}
       disabled={powerIsLocked}
+      shortDescription
+      ellipsis
     />
   ) : (
     <Link href={`/powers/${power.id}`}>
@@ -59,9 +60,10 @@ const PowerCardDetail = ({ power }: PowerCardDetailProps) => {
         title={power.name}
         description={power.description}
         powerType={power.powerType}
-        shortDescription={true}
         locked={powerIsLocked}
         disabled={powerIsLocked}
+        shortDescription
+        ellipsis
       />
     </Link>
   );

@@ -24,6 +24,7 @@ import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { SimpleCard } from "@/components/cards/SimpleCard";
 import { HUNT_TEAM_JUBMOJI_PUBKEY_INDICES } from "@/constants";
+import { AppContext } from "next/app";
 
 enum CollectStatus {
   UNKNOWN = "Unknown",
@@ -389,6 +390,10 @@ export default function CollectJubmojiPage() {
     </Modal>
   );
 }
+
+CollectJubmojiPage.getInitialProps = () => {
+  return { showFooter: false };
+};
 
 function getHaLoArgs(params: URLSearchParams): NonceSignature | undefined {
   const pkN = params.get("pkN");
