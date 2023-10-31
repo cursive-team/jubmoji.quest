@@ -44,7 +44,15 @@ const PowerCardDetail = ({ power }: PowerCardDetailProps) => {
     power.quest.id
   );
 
-  return (
+  return powerIsLocked === undefined || powerIsLocked ? (
+    <PowerCard
+      title={power.name}
+      description={power.description}
+      powerType={power.powerType}
+      shortDescription={true}
+      locked={powerIsLocked}
+    />
+  ) : (
     <Link href={`/powers/${power.id}`}>
       <PowerCard
         title={power.name}
@@ -58,7 +66,7 @@ const PowerCardDetail = ({ power }: PowerCardDetailProps) => {
 };
 
 export default function PowersPage() {
-  const [selectedOption, setSelectedOption] = useState("all");
+  // const [selectedOption, setSelectedOption] = useState("all");
   const [infoModalOpen, setIsModalOpen] = useState(false);
 
   const { isLoading: isLoadingPowers, data: powers = [] } = useFetchPowers();

@@ -157,16 +157,25 @@ export default function CollectJubmojiPage() {
 
   useEffect(() => {
     async function getJubmojiFromUrl() {
-      if (typeof window === "undefined" || !jubmojis || !isLoading) {
+      if (typeof window === "undefined" || !jubmojis || isLoading) {
         return;
       }
 
       const urlParams = new URLSearchParams(location.hash.slice(1));
       const nonceSig = getHaLoArgs(urlParams);
+
       // Nonce signature is invalid - redirect to home
       if (!nonceSig) {
         router.push("/");
         return;
+      }
+
+      const card = getJubmojiCardByPubIndex(
+        jubmojiCollectionCards,
+        nonceSig.pubKeyIndex
+      );
+      if (card) {
+        setCollectedCard(card);
       }
 
       // First tap of a jubmoji card - zero taps are not parsable, don't collect
@@ -216,15 +225,8 @@ export default function CollectJubmojiPage() {
         setCollectStatus(CollectStatus.STANDARD);
       }
 
-      const card = getJubmojiCardByPubIndex(
-        jubmojiCollectionCards,
-        nonceSig.pubKeyIndex
-      );
       await addJubmoji(jubmojiToCollect);
       setCollectedJubmoji(jubmojiToCollect);
-      if (card) {
-        setCollectedCard(card);
-      }
     }
 
     getJubmojiFromUrl();

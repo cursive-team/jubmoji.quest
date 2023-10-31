@@ -14,6 +14,7 @@ import {
   publicKeyFromString,
   recoverPubKeyIndexFromSignature,
 } from "babyjubjub-ecdsa";
+import { toast } from "react-hot-toast";
 
 type Device = "android" | "ios";
 const DeviceImageMapping: Record<Device, string> = {
@@ -41,25 +42,15 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
       // --- request NFC command execution ---
       res = await execHaloCmdWeb(command, {
         statusCallback: (cause: any) => {
-          if (cause === "init") {
-            setStatusText(
-              "Please hold the tag to the back of your smartphone as pictured..."
-            );
-          } else if (cause === "retry") {
-            setStatusText(
-              "Something went wrong, please try to tap the tag again..."
-            );
-          } else if (cause === "scanned") {
-            setStatusText(
-              "Tag scanned successfully, post-processing the result..."
-            );
+          if (cause === "retry") {
+            toast.error("Tapping failed, please try again.");
           } else {
-            setStatusText(cause);
+            console.log("Tapping status", cause);
           }
         },
       });
 
-      setStatusText("Tapped card! Processing result...");
+      toast.success("Successful tap! Redirecting...");
 
       const msgHash = recoverCounterMessageHash(
         parseInt(res.counter),
@@ -80,7 +71,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
       window.location.href = `/collect#?pkN=${pkN}&rnd=${res.digest}&rndsig=${res.signature}`;
     } catch (error) {
       console.error(error);
-      setStatusText(`Scanning failed, please try again. Error: ${error}`);
+      toast.error("Tapping failed, please try again.");
     }
   };
 
