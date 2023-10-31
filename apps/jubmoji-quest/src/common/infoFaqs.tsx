@@ -1,4 +1,5 @@
 // This file contains the faqs for info page
+import { URLS } from "@/constants";
 import { ReactNode } from "react";
 
 type InfoProps = {
@@ -44,8 +45,14 @@ export const FAQS: InfoProps[] = [
       <div>
         {"Give us a shout in "}
         <u>
-          <a href={"https://t.me/+jjgYe8M0B0pkYTMx"} target="_blank">
+          <a href={URLS.TELEGRAM} target="_blank">
             Telegram
+          </a>
+        </u>
+        {" or check out our "}
+        <u>
+          <a href={URLS.GITHUB} target="_blank">
+            Github
           </a>
         </u>
         {"!"}

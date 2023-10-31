@@ -51,30 +51,6 @@ const InfoModal = ({ isOpen, setIsOpen, onClose }: ModalProps) => {
               </span>
             </Link>
           </div>
-          <div className=" flex flex-col gap-5 items-center">
-            <Link
-              className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
-              href={URLS.GITHUB}
-              target="_blank"
-            >
-              <div className="flex items-center gap-1 underline">
-                <span>Github</span>
-                <Icons.externalLink />
-              </div>
-            </Link>
-          </div>
-          <div className=" flex flex-col gap-5 items-center">
-            <Link
-              className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
-              href={URLS.TELEGRAM}
-              target="_blank"
-            >
-              <div className="flex items-center gap-1 underline">
-                <span>Telegram</span>
-                <Icons.externalLink />
-              </div>
-            </Link>
-          </div>
         </div>
       </div>
     </Modal>
