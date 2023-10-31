@@ -77,7 +77,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="text-center my-auto">
         <Card.Title className="!font-[22px] mt-16">
-          Hold the NFC card by your phone for 1-2 seconds.
+          Hold the card on your phone as pictured, then start the tap.
         </Card.Title>
         <Image
           src={DeviceImageMapping[device]}
@@ -88,13 +88,16 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
         />
         <div className="flex flex-col gap-8">
           <Button variant="secondary" onClick={onReadyToTap}>
-            Ready to tap
+            Start assisted tap
           </Button>
           <span className=" font-dm-sans ">
-            {`If you still can't tap, check out`} <br />
-            <Link className="underline" href="/">
-              the troubleshooting guide.
-            </Link>
+            {`If you still can't tap, check out our `}
+            <u>
+              <a href="https://pse-team.notion.site/Card-tapping-instructions-ac5cae2f72e34155ba67d8a251b2857c">
+                troubleshooting guide
+              </a>
+            </u>
+            {"."}
           </span>
         </div>
       </div>

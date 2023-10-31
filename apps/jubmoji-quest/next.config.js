@@ -30,6 +30,12 @@ const nextConfig = {
         destination: "https://www.jubmoji.quest/quests/3",
         permanent: true,
       },
+      {
+        source: "/hunt-volunteer",
+        destination:
+          "https://pse-team.notion.site/Volunteer-Info-for-Spooky-ZK-Treasure-Hunt-Oct-31st-932ec296c5874af7be260520cfb6bf13",
+        permanent: true,
+      },
     ];
   },
 };

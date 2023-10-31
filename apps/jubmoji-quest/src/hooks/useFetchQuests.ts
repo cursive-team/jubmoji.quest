@@ -29,8 +29,9 @@ export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
       const proofParams = quest.proofParams as Prisma.JsonObject;
 
       if (quest.proofType === $Enums.ProofType.N_UNIQUE_IN_COLLECTION) {
+        console.log(quest.name, collectedItems, proofParams.N as number);
         return {
-          locked: collectionCardIndices.length === (proofParams.N as number),
+          locked: collectedItems !== (proofParams.N as number),
         };
       }
 
