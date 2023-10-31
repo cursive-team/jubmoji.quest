@@ -149,7 +149,7 @@ export default function JubmojisPage() {
     return (
       <>
         {name && owner && (
-          <div className="flex flex-col justify-center h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
+          <div className="flex flex-col justify-center mt-[50px] xs:mt-0 h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
             <div className="">
               <CollectionCardArc
                 label={name}
@@ -211,7 +211,7 @@ export default function JubmojisPage() {
       <BackupModal isOpen={backupModalOpen} setIsOpen={setBackupModalOpen} />
       <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div
-        className={cn("flex flex-col gap-2", {
+        className={cn("flex flex-col gap-1 xs:gap-2", {
           invisible: infoModalOpen || backupModalOpen,
         })}
       >

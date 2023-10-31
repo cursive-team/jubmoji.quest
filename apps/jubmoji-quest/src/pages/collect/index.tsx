@@ -167,6 +167,7 @@ export default function CollectJubmojiPage() {
 
       // Nonce signature is invalid - redirect to home
       if (!nonceSig) {
+        alert("Invalid nonce signature");
         router.push("/");
         return;
       }
