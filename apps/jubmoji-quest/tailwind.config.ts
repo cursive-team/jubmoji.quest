@@ -46,7 +46,7 @@ const config: Config = {
         tiny: ["11px", "120%"],
       },
       screens: {
-        xs: "380px",
+        xs: "400px",
       },
       fontFamily: {
         "hind-siliguri": ["'Hind Siliguri'", "sans-serif"],
