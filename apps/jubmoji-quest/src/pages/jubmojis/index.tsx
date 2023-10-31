@@ -149,7 +149,7 @@ export default function JubmojisPage() {
     return (
       <>
         {name && owner && (
-          <div className="flex flex-col justify-center mt-[30px] xs:mt-0 h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
+          <div className="flex flex-col justify-center mt-[50px] xs:mt-0 h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
             <div className="">
               <CollectionCardArc
                 label={name}
