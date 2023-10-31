@@ -48,7 +48,7 @@ export const useUpdateTeamLeaderboardMutation = () => {
       }
 
       if (!quest) {
-        throw new Error("No active quest");
+        throw new Error("No active quest!");
       }
 
       const teamLeaderboardProof = await createJubmojiQuestProof({

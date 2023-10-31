@@ -83,6 +83,12 @@ export default function QuestDetailPage() {
       );
     }
 
+    // Quest has ended
+    const currentTime = new Date();
+    if (quest.endTime && currentTime > new Date(quest.endTime)) {
+      return toast.error("Quest has ended!");
+    }
+
     const teamCardIndices = quest.prerequisiteCards.map((card) => card.index);
     const collectionCardIndices = quest.collectionCards.map(
       (card) => card.index
