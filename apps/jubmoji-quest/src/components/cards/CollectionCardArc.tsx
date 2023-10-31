@@ -35,7 +35,7 @@ interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
 const CardDivider = classed.div("h-[0.4px] mx-4 z-[3] bg-shark-50", {
   variants: {
     small: {
-      true: "top-[230px]",
+      true: "top-[210px]",
       false: "top-[250px]",
     },
   },
@@ -284,7 +284,7 @@ const CollectionCardArc = ({
               showQuest
                 ? "scale-0 opacity-0 rounded-t-full"
                 : "scale-105 opacity-100",
-              extraSmallDevice ? "h-[230px]" : "h-[250px]"
+              extraSmallDevice ? "h-[210px]" : "h-[250px]"
             )}
             style={{
               backgroundImage: `url(${cardBackImage})`,
