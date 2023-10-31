@@ -39,6 +39,18 @@ export default function Home() {
   const filteredItems =
     selectedOption === "all" ? quests : filterItems(quests, selectedOption);
 
+  const officialQuests: JubmojiQuest[] = [];
+  const otherQuests: JubmojiQuest[] = [];
+  filteredItems?.forEach((quest) => {
+    if (quest.name.includes("OFFICIAL")) {
+      officialQuests.push(quest);
+    } else {
+      otherQuests.push(quest);
+    }
+  });
+
+  const allQuests = [...officialQuests, ...otherQuests];
+
   const hasItemsForActiveOption = filteredItems?.length > 0;
 
   const QuestContent = () => {
@@ -48,7 +60,7 @@ export default function Home() {
           <Message>{MESSAGES.NO_RESULTS}</Message>
         ) : (
           <>
-            {filteredItems?.map(
+            {allQuests?.map(
               ({
                 id,
                 name,
