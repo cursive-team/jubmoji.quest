@@ -13,9 +13,9 @@ const AppHeaderTitle = classed.span(
 
 const AppHeader = ({ title, actions }: AppHeaderProps) => {
   return (
-    <div className="py-4">
-      <div className="flex items-center justify-between py-3">
-        <div className="flex items-center gap-2 w-full">
+    <div className="py-1 xs:py-4">
+      <div className="flex items-center justify-between py-1 xs:py-3">
+        <div className="flex items-center  gap-1 xs:gap-2 w-full">
           {typeof title === "string" ? (
             <AppHeaderTitle>{title}</AppHeaderTitle>
           ) : (
