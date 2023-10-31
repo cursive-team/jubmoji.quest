@@ -1,4 +1,5 @@
 // This file contains the faqs for info page
+import { URLS } from "@/constants";
 import { ReactNode } from "react";
 
 type InfoProps = {
@@ -9,7 +10,7 @@ type InfoProps = {
 export const FAQS: InfoProps[] = [
   {
     title: "What is jubmoji.quest?",
-    description: `Jubmoji.quest is place to keep personal, provable digital mementos from people you meet and places you visit IRL. Each time you tap a card, you collect a Jubmoji, a unique cryptographic signature that you can store privately and share as you wish!`,
+    description: `Jubmoji.quest is a place to keep personal, provable digital mementos from people you meet and places you visit IRL. Each time you tap a card, you collect a Jubmoji, a unique cryptographic signature that you can store privately and share as you wish!`,
   },
   {
     title: "What are quests?",
@@ -30,12 +31,32 @@ export const FAQS: InfoProps[] = [
   },
   {
     title: "Need help tapping?",
-    description: `Click the “Assisted tap” button on the main page, which will make it easier to collect Jubmojis from the cards. Hold it for 1-2s against the top of your phone if it's an iPhone, and the center of your phone if it's an Android.` 
+    description: `Click the “Assisted tap” button on the main page, which will make it easier to collect Jubmojis from the cards. Hold it for 1-2s against the top of your phone if it's an iPhone, and the center of your phone if it's an Android.`,
   },
   {
     title: `What is the “Jub” in Jubmoji?`,
     description: `"Jub" comes from the term "Baby Jubjub Curve," the elliptic curve used for the card's signatures. It was found in 2019 by Barry WhiteHat, Marta Bellés, and Jordi Baylina.
     
     We use the Baby Jubjub Curve alongside zero-knowledge proofs (ZKPs) to provide a secure and private way to manage your Jubmojis. ZKPs let you prove something without revealing all information. Simply put, the Baby Jubjub Curve provides a special lock for your memories, letting you safely share and verify your jubmojis without giving up your full data and privacy 🗝️🔒!`,
+  },
+  {
+    title: "Bugs? Comments? Questions? Want to contribute?",
+    description: (
+      <div>
+        {"Give us a shout in "}
+        <u>
+          <a href={URLS.ZUCONNECT_TELEGRAM} target="_blank">
+            Telegram
+          </a>
+        </u>
+        {" or check out our "}
+        <u>
+          <a href={URLS.GITHUB} target="_blank">
+            Github
+          </a>
+        </u>
+        {"!"}
+      </div>
+    ),
   },
 ];
