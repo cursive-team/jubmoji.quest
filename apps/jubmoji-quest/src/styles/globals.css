@@ -52,3 +52,10 @@ input[type="search"] {
 .disabled-element {
   @apply opacity-30 pointer-events-none;
 }
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  white-space: nowrap;
+}

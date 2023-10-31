@@ -440,6 +440,8 @@ export default function QuestDetailPage() {
                 powerType={power.powerType}
                 locked={powerIsLocked}
                 disabled={powerIsLocked}
+                shortDescription
+                ellipsis
               />
             </Link>
           );

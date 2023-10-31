@@ -13,6 +13,7 @@ export interface PowerCardProps {
   shortDescription?: boolean;
   bookmarked?: boolean;
   locked?: boolean;
+  ellipsis?: boolean;
 }
 
 export const PowerTypeIconMapping: Record<$Enums.PowerType, any> = {
@@ -31,6 +32,7 @@ const PowerCard = ({
   shortDescription = false,
   bookmarked = false,
   locked = false,
+  ellipsis = false,
 }: PowerCardProps) => {
   const powerIcon = PowerTypeIconMapping[powerType];
 
@@ -38,7 +40,7 @@ const PowerCard = ({
     <Card.Base disabled={disabled}>
       <Card.Content className="relative" spacing="sm">
         <div className="flex gap-2 self-stretch">
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <div
               className={cn(
                 "flex items-start gap-2 h-12",
@@ -48,7 +50,15 @@ const PowerCard = ({
               {powerIcon}
             </div>
             <div className="flex flex-col">
-              <Card.Title disabled={disabled}>{title}</Card.Title>
+              <Card.Title
+                disabled={disabled}
+                ellipsis={ellipsis}
+                style={{
+                  width: "calc(100vw - 200px)",
+                }}
+              >
+                {title}
+              </Card.Title>
               {description && (
                 <Card.Description
                   disabled={disabled}
