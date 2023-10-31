@@ -1,6 +1,8 @@
 import { JubmojiQuest } from "@/types";
 import { useQuery } from "react-query";
 import { useJubmojis } from "./useJubmojis";
+import { $Enums, Prisma } from "@prisma/client";
+import { jubmojiPowerToQuestProofConfig } from "@/lib/proving";
 
 export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
   const { data: jubmojis = [] } = useJubmojis();
@@ -24,10 +26,17 @@ export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
           collectionCardIndices.includes(jubmoji.pubKeyIndex)
         ).length ?? 0;
 
-      const powerIsLocked =
-        collectionCardIndices.length > 0 && collectedItems === 0;
+      const proofParams = quest.proofParams as Prisma.JsonObject;
 
-      return { locked: powerIsLocked };
+      if (quest.proofType === $Enums.ProofType.N_UNIQUE_IN_COLLECTION) {
+        return {
+          locked: collectionCardIndices.length === (proofParams.N as number),
+        };
+      }
+
+      return {
+        locked: collectionCardIndices.length > 0 && collectedItems === 0,
+      };
     },
     {
       refetchOnWindowFocus: false,
