@@ -14,6 +14,7 @@ import {
   publicKeyFromString,
   recoverPubKeyIndexFromSignature,
 } from "babyjubjub-ecdsa";
+import { toast } from "react-hot-toast";
 
 type Device = "android" | "ios";
 const DeviceImageMapping: Record<Device, string> = {
@@ -26,8 +27,6 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
   useEffect(() => {
     md.current = new MobileDetect(window?.navigator?.userAgent);
   }, []);
-  const [statusText, setStatusText] = useState<string>();
-
   const device: Device = md?.current?.is("iPhone") ? "ios" : "android";
 
   const onReadyToTap = async () => {
@@ -41,25 +40,15 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
       // --- request NFC command execution ---
       res = await execHaloCmdWeb(command, {
         statusCallback: (cause: any) => {
-          if (cause === "init") {
-            setStatusText(
-              "Please hold the tag to the back of your smartphone as pictured..."
-            );
-          } else if (cause === "retry") {
-            setStatusText(
-              "Something went wrong, please try to tap the tag again..."
-            );
-          } else if (cause === "scanned") {
-            setStatusText(
-              "Tag scanned successfully, post-processing the result..."
-            );
+          if (cause === "retry") {
+            toast.error("Tapping failed, please try again.");
           } else {
-            setStatusText(cause);
+            console.log("Tapping status", cause);
           }
         },
       });
 
-      setStatusText("Tapped card! Processing result...");
+      toast.success("Successful tap! Redirecting...");
 
       const msgHash = recoverCounterMessageHash(
         parseInt(res.counter),
@@ -80,15 +69,15 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
       window.location.href = `/collect#?pkN=${pkN}&rnd=${res.digest}&rndsig=${res.signature}`;
     } catch (error) {
       console.error(error);
-      setStatusText(`Scanning failed, please try again. Error: ${error}`);
+      toast.error("Tapping failed, please try again.");
     }
   };
 
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="text-center my-auto">
-        <Card.Title className="!font-[22px]">
-          Hold the NFC card by your phone for 1-2 seconds.
+        <Card.Title className="!font-[22px] mt-16">
+          Hold the card on your phone as pictured, then press start below.
         </Card.Title>
         <Image
           src={DeviceImageMapping[device]}
@@ -98,15 +87,17 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
           className="mx-auto py-12"
         />
         <div className="flex flex-col gap-8">
-          {statusText && <span className=" font-dm-sans ">{statusText}</span>}
           <Button variant="secondary" onClick={onReadyToTap}>
-            Ready to tap
+            Start assisted tap
           </Button>
           <span className=" font-dm-sans ">
-            {`If you still can't tap, check out`} <br />
-            <Link className="underline" href="/">
-              the troubleshooting guide.
-            </Link>
+            {`If you still can't tap, check out our `}
+            <u>
+              <a href="https://pse-team.notion.site/Card-tapping-instructions-ac5cae2f72e34155ba67d8a251b2857c">
+                troubleshooting guide
+              </a>
+            </u>
+            {"."}
           </span>
         </div>
       </div>
