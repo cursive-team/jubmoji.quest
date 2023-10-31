@@ -77,14 +77,14 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
         </Card.Content>
       </Card.Base>
       <Card.Base centred>
-        <Card.Header className="!py-12">
-          <Button
-            icon={<Icons.download className="text-baby-blue-default" />}
-            className="max-w-[150px]"
-            variant="blue-outline"
-          >
-            Back up!
-          </Button>
+        <Card.Header>
+          <Image
+            height={120}
+            width={190}
+            sizes="100vw"
+            src="/images/onboarding-backup.svg"
+            alt="onboarding backup"
+          />
         </Card.Header>
         <Card.Content className="!gap-4" spacing="sm">
           <Card.Title centred font="giorgio" size="md">
@@ -102,8 +102,8 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             height={120}
             width={190}
             sizes="100vw"
-            src="/images/onboarding-collect.svg"
-            alt="onboarding collect"
+            src="/images/onboarding-quests.svg"
+            alt="onboarding quests"
           />
         </Card.Header>
         <Card.Content className="!gap-4" spacing="sm">
