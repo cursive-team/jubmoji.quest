@@ -59,7 +59,7 @@ export default function JubmojisPage() {
     const navWrapper =
       document.getElementById("nav-wrapper")?.clientHeight ?? 0;
 
-    const SPACING = 50; // spacing between header and footer
+    const SPACING = 70; // spacing between header and footer
 
     const cardSize =
       window?.innerHeight - footer - header - navWrapper - SPACING;
