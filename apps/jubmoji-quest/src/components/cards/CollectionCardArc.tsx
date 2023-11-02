@@ -23,6 +23,7 @@ interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md";
   disabled?: boolean;
   preview?: boolean;
+  height?: number;
   quests?: {
     id: number;
     name: string;
@@ -32,14 +33,7 @@ interface CollectionCardArcProps extends React.HTMLAttributes<HTMLDivElement> {
   }[];
 }
 
-const CardDivider = classed.div("h-[0.4px] mx-4 z-[3] bg-shark-50", {
-  variants: {
-    small: {
-      true: "top-[210px]",
-      false: "top-[250px]",
-    },
-  },
-});
+const CardDivider = classed.div("h-[0.4px] mx-4 z-[3] bg-shark-50");
 const QuestButtonWrapper = classed.div(
   "absolute z-[7] duration-300 bottom-[-13px] left-1/2 transform -translate-x-1/2"
 );
@@ -82,6 +76,7 @@ const CollectionCardArc = ({
   quests = [],
   disabled = false,
   preview = false,
+  height = 250,
   className,
   ...props
 }: CollectionCardArcProps) => {
@@ -175,7 +170,12 @@ const CollectionCardArc = ({
           <span className="font-giorgio text-shark-400 text-[16px] tracking-[0.36px] ">
             Quests
           </span>
-          <div className="flex flex-col gap-3">
+          <div
+            style={{
+              height: `${CARD_HEIGHT - 40}px`,
+            }}
+            className="flex flex-col gap-3 overflow-scroll pb-10"
+          >
             {quests?.map((quest) => {
               return (
                 <div key={quest.id} className="flex items-center gap-2">
@@ -220,6 +220,9 @@ const CollectionCardArc = ({
       </div>
     );
   };
+
+  const MAX_CARD_HEIGHT = 280;
+  const CARD_HEIGHT = height - 160 > 280 ? MAX_CARD_HEIGHT : height - 160;
 
   return (
     <div
@@ -274,7 +277,9 @@ const CollectionCardArc = ({
 
       <div className={cn("relative", preview ? "" : "px-4")}>
         <CardDivider
-          small={extraSmallDevice}
+          style={{
+            top: `${CARD_HEIGHT}px`,
+          }}
           className={cn("absolute left-0 right-0")}
         />
         <CardArcWrapper rounded={!showQuest}>
@@ -288,6 +293,7 @@ const CollectionCardArc = ({
             )}
             style={{
               backgroundImage: `url(${cardBackImage})`,
+              height: `${CARD_HEIGHT}px`,
             }}
           />
 

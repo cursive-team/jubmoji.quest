@@ -51,11 +51,34 @@ export default function JubmojisPage() {
   const [backupModalOpen, setBackupModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
+  const [cardSize, setCardSize] = useState<number>(0);
+
+  const calculateCardSize = () => {
+    const footer = document.getElementById("footer")?.clientHeight ?? 0;
+    const header = document.getElementById("header")?.clientHeight ?? 0;
+    const navWrapper =
+      document.getElementById("nav-wrapper")?.clientHeight ?? 0;
+
+    const SPACING = 50; // spacing between header and footer
+
+    const cardSize =
+      window?.innerHeight - footer - header - navWrapper - SPACING;
+
+    setCardSize(cardSize); // set card size container size
+  };
 
   const {
     isLoading: isLoadingJubmojiCards,
     data: jubmojiCollectionCards = [],
   } = useFetchCards();
+
+  useEffect(() => {
+    calculateCardSize();
+  }, [isLoadingJubmojiCards, jubmojis, pubKeyIndex]);
+
+  useEffect(() => {
+    window.addEventListener("resize", calculateCardSize); // add resize listener
+  }, []);
 
   useEffect(() => {
     if (isLoadingJubmojiCards) return;
@@ -125,22 +148,29 @@ export default function JubmojisPage() {
 
     if (!selectedJubmoji) {
       return (
-        <div className="flex flex-col mx-auto gap-2 mt-5">
-          <div className="mx-auto">
-            <Icons.starSolid />
-          </div>
-          <div className="mx-auto flex flex-col gap-5">
-            <Image
-              height={220}
-              width={300}
-              src="/images/no-jubmojis.png"
-              alt="no result"
-            />
-            <Link href="/">
-              <Button rounded size="sm" className="max-w-[100px] mx-auto">
-                {"Let's go"}
-              </Button>
-            </Link>
+        <div
+          className="flex flex-col mx-auto gap-2 mt-5"
+          style={{
+            height: `${cardSize}px`,
+          }}
+        >
+          <div className="my-auto">
+            <div className="mx-auto">
+              <Icons.starSolid />
+            </div>
+            <div className="mx-auto flex flex-col gap-5">
+              <Image
+                height={220}
+                width={300}
+                src="/images/no-jubmojis.png"
+                alt="no result"
+              />
+              <Link href="/">
+                <Button rounded size="sm" className="max-w-[100px] mx-auto">
+                  {"Let's go"}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       );
@@ -149,20 +179,24 @@ export default function JubmojisPage() {
     return (
       <>
         {name && owner && (
-          <div className="flex flex-col justify-center mt-[50px] xs:mt-0 h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
-            <div className="">
-              <CollectionCardArc
-                label={name}
-                icon={emoji}
-                edition={msgNonce ? msgNonce - 1 : ""}
-                owner={owner}
-                pubKeyIndex={selectedPubKeyIndex}
-                cardBackImage={imagePath}
-                telegramChatInviteLink={telegramChatInviteLink}
-                actions={null}
-                quests={jubmojiQuests}
-              />
-            </div>
+          <div
+            className="flex flex-col justify-center xs:mt-0"
+            style={{
+              height: `${cardSize}px`,
+            }}
+          >
+            <CollectionCardArc
+              height={cardSize}
+              label={name}
+              icon={emoji}
+              edition={msgNonce ? msgNonce - 1 : ""}
+              owner={owner}
+              pubKeyIndex={selectedPubKeyIndex}
+              cardBackImage={imagePath}
+              telegramChatInviteLink={telegramChatInviteLink}
+              actions={null}
+              quests={jubmojiQuests}
+            />
           </div>
         )}
       </>
@@ -206,6 +240,9 @@ export default function JubmojisPage() {
     setIsSearchMode(true);
   };
 
+  const showNav =
+    collectedJubmojis.length > 0 && !isSearchMode && !isLoadingJubmojiCards;
+
   return (
     <>
       <BackupModal isOpen={backupModalOpen} setIsOpen={setBackupModalOpen} />
@@ -225,46 +262,47 @@ export default function JubmojisPage() {
               <Icons.info />
             </button>
           }
-        />
-        <div
-          className={cn(
-            "grid justify-between gap-2",
-            isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr_110px]"
-          )}
         >
-          <Input
-            type="search"
-            placeholder="Search your private collection"
-            value={search}
-            onChange={onSearch}
-            onFocus={() => setIsSearchMode(true)}
-            disabled={!selectedJubmoji}
-          />
-          {isSearchMode ? (
-            <button
-              onClick={() => setIsSearchMode(false)}
-              className="font-dm-sans text-[13px]"
-            >
-              Cancel
-            </button>
-          ) : (
-            <Button
-              icon={<Icons.download className="text-black" />}
-              size="tiny"
-              variant="blue"
-              onClick={() => setBackupModalOpen(true)}
-              className="!font-semibold"
+          <div
+            className={cn(
+              "grid justify-between gap-2",
+              isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr_110px]"
+            )}
+          >
+            <Input
+              type="search"
+              placeholder="Search your private collection"
+              value={search}
+              onChange={onSearch}
+              onFocus={() => setIsSearchMode(true)}
               disabled={!selectedJubmoji}
-            >
-              Back up!
-            </Button>
-          )}
-        </div>
+            />
+            {isSearchMode ? (
+              <button
+                onClick={() => setIsSearchMode(false)}
+                className="font-dm-sans text-[13px]"
+              >
+                Cancel
+              </button>
+            ) : (
+              <Button
+                icon={<Icons.download className="text-black" />}
+                size="tiny"
+                variant="blue"
+                onClick={() => setBackupModalOpen(true)}
+                className="!font-semibold"
+                disabled={!selectedJubmoji}
+              >
+                Back up!
+              </Button>
+            )}
+          </div>
+        </AppHeader>
 
         {isSearchMode ? <JubmojiSearchItems /> : <JubmojiContent />}
 
-        {!isSearchMode && !isLoadingJubmojiCards && (
-          <div className="mt-auto">
+        {showNav && (
+          <div id="nav-wrapper" className="mt-auto">
             <JubmojiNavWrapper>
               {collectedJubmojis?.map((jubmoji, index) => {
                 const isActive = jubmoji?.pubKeyIndex === selectedPubKeyIndex;
