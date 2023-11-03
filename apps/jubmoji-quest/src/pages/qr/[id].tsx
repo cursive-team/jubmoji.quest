@@ -43,7 +43,7 @@ const QRCodePage = () => {
       console.log(message);
       toast.error("Failed to confirm power - proof not verified.");
     } else {
-      toast.error("Successfully confirmed power!");
+      toast.success("Successfully confirmed power!");
     }
   };
 
