@@ -58,9 +58,9 @@ export const useFetchPowerById = (id: string | number) => {
  * Execute power
  * @returns
  */
-export const usePowerMutation = () => {
+export const useQRCodePowerMutation = () => {
   return useMutation({
-    mutationKey: "usePower",
+    mutationKey: "useQRCodePower",
     mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
       const config = jubmojiPowerToQuestProofConfig(power);
       let serializedProof;
@@ -93,7 +93,7 @@ export const usePowerMutation = () => {
       }
 
       const { qrCodeUuid } = await response.json();
-      return `${window.location.origin}/qr/${qrCodeUuid}`;
+      return qrCodeUuid;
     },
   });
 };

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PowerWrapper } from "../PowerWrapper";
 import Image from "next/image";
 import { Icons } from "../Icons";
-import { usePowerMutation } from "@/hooks/useFetchPowers";
+import { useQRCodePowerMutation } from "@/hooks/useFetchPowers";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { classed } from "@tw-classed/react";
@@ -16,7 +16,7 @@ const QRCodeWrapper = classed.div(
 const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
   const [url, setUrl] = useState<string>();
 
-  const powerMutation = usePowerMutation();
+  const powerMutation = useQRCodePowerMutation();
 
   const onHandlePower = async () => {
     await toast.promise(
@@ -29,8 +29,8 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
         error: (err: any) =>
           err?.message ??
           "There was an error claiming power. Please try again.",
-        success: (data: any) => {
-          setUrl(data?.url);
+        success: (qrCodeUuid: any) => {
+          setUrl(`${window.location.origin}/qr/${qrCodeUuid}`);
           return "Power claimed!";
         },
       }
