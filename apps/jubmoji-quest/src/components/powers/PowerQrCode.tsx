@@ -43,7 +43,7 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
         <div className="flex items-center gap-4 justify-between">
           <div className="relative">
             <span className="absolute top-[6px] left-[12px] text-[13px] font-normal font-dm-sans text-shark-300">
-              Tap and hold to prove
+              Tap to prove
             </span>
             <Icons.bubble className="text-shark-800" />
           </div>
