@@ -62,7 +62,7 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
             <span className=" font-dm-sans text-base font-medium text-shark-50">
-              Title
+              {power.name}
             </span>
             <span className="flex flex-col gap-1 text-[13px] font-dm-sans text-shark-300 font-semibold">
               <span className="block">
@@ -76,12 +76,12 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
                 }).format(new Date())}
               </span>
             </span>
-            <span className="text-[13px] font-dm-sans text-shark-300 font-semibold">
+            {/* <span className="text-[13px] font-dm-sans text-shark-300 font-semibold">
               Owner
             </span>
             <span className="text-tiny font-dm-sans text-shark-300">
               Location
-            </span>
+            </span> */}
           </div>
           <QRCodeWrapper>
             <QRCode

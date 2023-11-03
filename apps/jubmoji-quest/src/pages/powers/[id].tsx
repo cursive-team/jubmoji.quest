@@ -86,13 +86,13 @@ export default function PowerDetailPage() {
   );
 
   const { data: { locked: powerIsLocked } = { locked: true } } =
-    useGetQuestPowerLockedStatus(powerId as string);
+    useGetQuestPowerLockedStatus(power?.questId);
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) {
     return (
       <Message centred className="mt-4">
-        No power detail available.
+        No power details available.
       </Message>
     );
   }
@@ -145,10 +145,10 @@ export default function PowerDetailPage() {
               </Link>
             }
           />
-          <PowerDetailLabel
+          {/* <PowerDetailLabel
             label="Proof"
             value={<PowerLabel>{power.name}</PowerLabel>}
-          />
+          /> */}
         </div>
         <div className="py-4 px-2">
           <PowerLabel>{power.description}</PowerLabel>
