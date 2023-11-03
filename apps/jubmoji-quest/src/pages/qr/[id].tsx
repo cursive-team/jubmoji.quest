@@ -4,6 +4,7 @@ import { JubmojiQRCodeData } from "@/types";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
 import { Button } from "@/components/ui/Button";
+import toast from "react-hot-toast";
 
 const QRCodePage = () => {
   const router = useRouter();
@@ -33,16 +34,17 @@ const QRCodePage = () => {
     });
 
     if (!response.ok) {
-      alert("Failed to confirm power!");
+      toast.error("Failed to confirm power.");
       return;
     }
 
     const { verified, message } = await response.json();
     if (!verified) {
-      console.log("Failed to verify power: ", message);
+      console.log(message);
+      toast.error("Failed to confirm power - proof not verified.");
+    } else {
+      toast.success("Successfully confirmed power!");
     }
-
-    alert("Confirming power: " + verified.toString());
   };
 
   if (!qrData) {
