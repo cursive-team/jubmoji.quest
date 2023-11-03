@@ -174,49 +174,54 @@ const CollectionCardArc = ({
             style={{
               height: `${CARD_HEIGHT - 40}px`,
             }}
-            className="flex flex-col gap-3 overflow-scroll pb-10"
+            className="flex flex-col gap-3 overflow-scroll pb-5"
           >
-            {quests?.map((quest) => {
-              return (
-                <div key={quest.id} className="flex items-center gap-2">
-                  <Icons.logo />
-                  <Link
-                    className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
-                    href={`/quests/${quest.id}`}
+            <div className="flex flex-col gap-3">
+              {quests?.map((quest) => {
+                return (
+                  <div
+                    key={quest.id}
+                    className="grid grid-cols-[16px_1fr] items-center gap-2"
                   >
-                    <div className="flex items-center gap-1 underline">
-                      <span>{quest.name}</span>
-                      <Icons.externalLink />
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+                    <Icons.logo />
+                    <Link
+                      className="text-shark-50 hover:text-baby-blue-default font-dm-sans text-[13px]"
+                      href={`/quests/${quest.id}`}
+                    >
+                      <div className="flex items-center gap-1 underline">
+                        <span>{quest.name}</span>
+                        <Icons.externalLink />
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+              {telegramChatInviteUrl && (
+                <Link href={telegramChatInviteUrl}>
+                  <div>
+                    <Button
+                      size="tiny"
+                      variant="blue"
+                      className="max-w-[150px]"
+                      rounded
+                    >
+                      <div className="flex items-center gap-1">
+                        <Image
+                          src="/images/telegram-icon.svg"
+                          alt="Collector's chat"
+                          width={16}
+                          height={16}
+                          sizes="100vw"
+                        />
+                        <span>{"Collector's Chat"}</span>
+                      </div>
+                    </Button>
+                  </div>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
-        {telegramChatInviteUrl && (
-          <Link href={telegramChatInviteUrl}>
-            <div>
-              <Button
-                size="tiny"
-                variant="blue"
-                className="max-w-[150px]"
-                rounded
-              >
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/telegram-icon.svg"
-                    alt="Collector's chat"
-                    width={16}
-                    height={16}
-                    sizes="100vw"
-                  />
-                  <span>{"Collector's Chat"}</span>
-                </div>
-              </Button>
-            </div>
-          </Link>
-        )}
       </div>
     );
   };
