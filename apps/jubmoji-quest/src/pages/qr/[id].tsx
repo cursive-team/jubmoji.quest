@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { JubmojiQRCodeData } from "@/types";
 import { PowerCard } from "@/components/cards/PowerCard";
 import { QuestCard } from "@/components/cards/QuestCard";
+import { Button } from "@/components/ui/Button";
 
 const QRCodePage = () => {
   const router = useRouter();
@@ -66,19 +67,22 @@ const QRCodePage = () => {
           image={qrData.power.quest.imageLink || ""}
         />
       </div>
-      <div className="bg-slate-500">
-        <p>
+      <div className="flex flex-col items-center gap-2 p-2">
+        <p className="text-center">
           Click the button below to confirm use of this power. Once you confirm,
           the user will no longer be able to use this proof for the same power
           again. Note: if this power has already been used, confirmation will
           fail.
         </p>
-        <button
-          className="bg-black text-white align-center rounded-md"
+        <Button
+          size="tiny"
+          variant="blue"
+          className="max-w-[150px]"
+          rounded
           onClick={confirmPower}
         >
           Confirm Power
-        </button>
+        </Button>
       </div>
     </div>
   );
