@@ -3,7 +3,7 @@ import { Icons } from "@/components/Icons";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/Placeholder";
@@ -52,6 +52,9 @@ export default function JubmojisPage() {
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
+
+  const startX = useRef(0);
+  const startY = useRef(0);
 
   const calculateCardSize = () => {
     const footer = document.getElementById("footer")?.clientHeight ?? 0;
@@ -240,6 +243,27 @@ export default function JubmojisPage() {
     setIsSearchMode(true);
   };
 
+  const handleNavSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
+    const MIN_SWIPE_DISTANCE = 20; // min distance to swipe
+    const clientX = event.touches[0].clientX;
+
+    const distance = clientX - startX.current;
+    const index = Math.min(
+      Math.round(distance / MIN_SWIPE_DISTANCE),
+      collectedJubmojis.length
+    );
+    const swipeIndex = index < 0 ? 0 : index;
+
+    if (swipeIndex < 0 || swipeIndex == collectedJubmojis.length) return;
+
+    const selectedSwipeJubmojiPubKey =
+      collectedJubmojis?.[swipeIndex]?.pubKeyIndex;
+
+    if (selectedSwipeJubmojiPubKey) {
+      setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
+    }
+  };
+
   const showNav =
     collectedJubmojis.length > 0 && !isSearchMode && !isLoadingJubmojiCards;
 
@@ -303,7 +327,17 @@ export default function JubmojisPage() {
 
         {showNav && (
           <div id="nav-wrapper" className="mt-auto">
-            <JubmojiNavWrapper>
+            <JubmojiNavWrapper
+              onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
+                startX.current = event.touches[0].clientX;
+                startY.current = event.touches[0].clientY;
+              }}
+              onTouchEnd={() => {
+                startX.current = 0;
+                startY.current = 0;
+              }}
+              onTouchMove={handleNavSwipe}
+            >
               {collectedJubmojis?.map((jubmoji, index) => {
                 const isActive = jubmoji?.pubKeyIndex === selectedPubKeyIndex;
 
