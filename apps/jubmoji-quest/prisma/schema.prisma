@@ -129,4 +129,5 @@ enum PowerType {
   QR_CODE
   TELEGRAM
   TWITTER
+  REDIRECT
 }

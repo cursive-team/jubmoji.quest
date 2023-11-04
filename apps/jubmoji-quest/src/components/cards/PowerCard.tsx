@@ -22,6 +22,7 @@ export const PowerTypeIconMapping: Record<$Enums.PowerType, any> = {
   QR_CODE: <PowerIcons.group />, // Todo: QR code icon
   TWITTER: <PowerIcons.twitter />,
   TELEGRAM: <PowerIcons.telegram />,
+  REDIRECT: <PowerIcons.access />,
 };
 
 const PowerCard = ({

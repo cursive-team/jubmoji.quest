@@ -14,6 +14,7 @@ export default async function handler(
       startTime,
       endTime,
       powerType,
+      redirectUrl,
       questId,
     } = req.body;
 
@@ -36,6 +37,8 @@ export default async function handler(
 
     const sigNullifierRandomness = getRandomNullifierRandomness();
 
+    const powerParams = powerType === "REDIRECT" ? { redirectUrl } : {};
+
     try {
       const newPower = await prisma.power.create({
         data: {
@@ -45,7 +48,7 @@ export default async function handler(
           endTime,
           sigNullifierRandomness,
           powerType,
-          powerParams: {},
+          powerParams,
           questId,
         },
       });

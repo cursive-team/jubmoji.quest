@@ -18,6 +18,7 @@ import { Jubmoji } from "jubmoji-api";
 import { Message } from "@/components/Message";
 import { cn } from "@/lib/utils";
 import { useGetQuestPowerLockedStatus } from "@/hooks/useFetchQuests";
+import { RedirectPower } from "@/components/powers/RedirectPower";
 
 interface PowerDetailLabelProps {
   label: string;
@@ -72,6 +73,7 @@ const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
   QR_CODE: PowerQrCode,
   TELEGRAM: TelegramPower,
   TWITTER: TwitterPower,
+  REDIRECT: RedirectPower,
 };
 
 export default function PowerDetailPage() {

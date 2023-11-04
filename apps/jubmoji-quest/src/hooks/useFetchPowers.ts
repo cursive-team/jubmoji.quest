@@ -54,10 +54,6 @@ export const useFetchPowerById = (id: string | number) => {
   );
 };
 
-/**
- * Execute power
- * @returns
- */
 export const useQRCodePowerMutation = () => {
   return useMutation({
     mutationKey: "useQRCodePower",
@@ -94,6 +90,30 @@ export const useQRCodePowerMutation = () => {
 
       const { qrCodeUuid } = await response.json();
       return qrCodeUuid;
+    },
+  });
+};
+
+export const useRedirectPowerMutation = () => {
+  return useMutation({
+    mutationKey: "useRedirectPower",
+    mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
+      const config = jubmojiPowerToQuestProofConfig(power);
+      let serializedProof;
+      try {
+        serializedProof = await createJubmojiQuestProof({
+          config,
+          jubmojis,
+          overrideSigNullifierRandomness:
+            power.sigNullifierRandomness || undefined,
+          pathToCircuits: getClientPathToCircuits(),
+        });
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to use your power!");
+      }
+
+      return serializedProof;
     },
   });
 };

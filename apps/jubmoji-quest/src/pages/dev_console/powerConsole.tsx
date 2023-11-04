@@ -10,6 +10,7 @@ export default function PowerConsole({ password }: { password: string }) {
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [powerType, setPowerType] = useState("QR_CODE");
+  const [redirectUrl, setRedirectUrl] = useState<string>("");
   const [questId, setQuestId] = useState<number>();
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function PowerConsole({ password }: { password: string }) {
           startTime,
           endTime,
           powerType,
+          redirectUrl,
           questId,
         }),
       });
@@ -136,8 +138,17 @@ export default function PowerConsole({ password }: { password: string }) {
                   <option value="QR_CODE">QR Code</option>
                   <option value="TELEGRAM">Telegram</option>
                   <option value="TWITTER">Twitter</option>
+                  <option value="REDIRECT">Redirect</option>
                 </select>
               </div>
+              {powerType === "REDIRECT" && (
+                <input
+                  type="text"
+                  placeholder="Enter Redirect URL"
+                  value={redirectUrl || ""}
+                  onChange={(e) => setRedirectUrl(e.target.value)}
+                />
+              )}
               <div>
                 <input
                   type="number"
