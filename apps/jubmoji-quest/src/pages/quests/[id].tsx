@@ -20,23 +20,10 @@ import {
 } from "@/hooks/useTeamLeaderboard";
 import toast from "react-hot-toast";
 import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
-import {
-  ProvingState,
-  cardPubKeys,
-  getCardPubKeyFromIndex,
-  getMembershipProofArgsFromJubmoji,
-  getMerkleProofFromCache,
-  getRandomNullifierRandomness,
-} from "jubmoji-api";
+import { ProvingState, cardPubKeys } from "jubmoji-api";
 import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
 import { useFetchCollectedCards } from "@/hooks/useFetchCards";
 import { cn } from "@/lib/utils";
-import {
-  hexToBigInt,
-  proveMembership,
-  serializeMembershipProof,
-} from "babyjubjub-ecdsa";
-import { getClientPathToCircuits } from "@/lib/config";
 
 const PagePlaceholder = () => {
   return (
