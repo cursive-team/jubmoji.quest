@@ -12,7 +12,7 @@ import {
 } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
-import { Prisma, $Enums } from "@prisma/client";
+import { $Enums } from "@prisma/client";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import {
   useGetTeamLeaderboard,
@@ -21,6 +21,7 @@ import {
 import toast from "react-hot-toast";
 import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import {
+  ProvingState,
   cardPubKeys,
   getCardPubKeyFromIndex,
   getMembershipProofArgsFromJubmoji,
@@ -68,8 +69,11 @@ export default function QuestDetailPage() {
     data: scoreMapping = {},
     refetch: refetchLeaderboard,
   } = useGetTeamLeaderboard(questId as string);
-  const [numProofsCompleted, setNumProofsCompleted] = useState<number>();
-  const [numProofsTotal, setNumProofsTotal] = useState<number>();
+  const [provingState, setProvingState] = useState<ProvingState>();
+
+  const onUpdateProvingState = (provingState: ProvingState) => {
+    setProvingState(provingState);
+  };
 
   useEffect(() => {
     // refetch the leaderboard when the mutation is successful
@@ -84,169 +88,6 @@ export default function QuestDetailPage() {
         timeStyle: "medium",
       }).format(new Date(quest.endTime))
     : undefined;
-
-  const onSequentialUpdateTeamLeaderboardScore = async () => {
-    if (!quest) return;
-
-    // User has no Jubmojis at all
-    if (!jubmojis || jubmojis.length === 0) {
-      return toast.error(
-        "Please collect some Jubmojis to participate in this leaderboard!"
-      );
-    }
-
-    // Quest has ended
-    const currentTime = new Date();
-    if (quest.endTime && currentTime > new Date(quest.endTime)) {
-      return toast.error("Quest has ended!");
-    }
-
-    const teamCardIndices = quest.prerequisiteCards.map((card) => card.index);
-    const collectionCardIndices = quest.collectionCards.map(
-      (card) => card.index
-    );
-    const collectionPubKeys = collectionCardIndices.map((index) =>
-      getCardPubKeyFromIndex(index)
-    );
-
-    // User has no team card Jubmojis
-    const teamJubmojis = jubmojis.filter((jubmoji) =>
-      teamCardIndices.includes(jubmoji.pubKeyIndex)
-    );
-    if (teamJubmojis.length === 0) {
-      return toast.error(
-        "You must collect a team card Jubmoji to participate in this leaderboard!"
-      );
-    }
-
-    // User has no unnullified collection card Jubmojis
-    const { quests: questNullifiedSigMap } = await loadNullifiedSigs();
-    const nullifiedSigs = questNullifiedSigMap[quest.id] || [];
-    const unnullifiedCollectionJubmojis = jubmojis.filter(
-      (jubmoji) =>
-        collectionCardIndices.includes(jubmoji.pubKeyIndex) &&
-        !nullifiedSigs.includes(jubmoji.sig)
-    );
-    if (unnullifiedCollectionJubmojis.length === 0) {
-      return toast.error(
-        "All of your Jubmojis have already been submitted to the leaderboard!"
-      );
-    }
-
-    // Start proving
-    setNumProofsCompleted(0);
-    setNumProofsTotal(unnullifiedCollectionJubmojis.length + 1); // This includes the team proof
-
-    // Prove each individual team and collection jubmoji sequentially
-    try {
-      const proofParams = quest.proofParams as Prisma.JsonObject;
-      const sigNullifierRandomness =
-        proofParams.sigNullifierRandomness as string;
-      const pubKeyNullifierRandomness = hexToBigInt(
-        getRandomNullifierRandomness()
-      );
-      const pathToCircuits = getClientPathToCircuits();
-
-      let startProofTime = performance.now();
-
-      // Team proof
-      const teamJubmoji = teamJubmojis[0];
-      const { sig, msgHash, pubKey, R, T, U } =
-        getMembershipProofArgsFromJubmoji(teamJubmoji);
-      const teamMerkleProof = await getMerkleProofFromCache([pubKey], 0);
-      const teamMembershipProof = await proveMembership({
-        sig,
-        msgHash,
-        publicInputs: {
-          R,
-          T,
-          U,
-        },
-        merkleProof: teamMerkleProof,
-        sigNullifierRandomness: hexToBigInt(sigNullifierRandomness),
-        pubKeyNullifierRandomness,
-        pathToCircuits,
-      });
-      setNumProofsCompleted((prev) => prev! + 1);
-
-      // Collection proofs
-      let collectionMembershipProofs = [];
-      for (const jubmoji of unnullifiedCollectionJubmojis) {
-        const { sig, msgHash, pubKey, R, T, U } =
-          getMembershipProofArgsFromJubmoji(jubmoji);
-        const collectionMerkleProof = await getMerkleProofFromCache(
-          collectionPubKeys,
-          collectionPubKeys.indexOf(pubKey)
-        );
-        const collectionMembershipProof = await proveMembership({
-          sig,
-          msgHash,
-          publicInputs: {
-            R,
-            T,
-            U,
-          },
-          merkleProof: collectionMerkleProof,
-          sigNullifierRandomness: hexToBigInt(sigNullifierRandomness),
-          pubKeyNullifierRandomness,
-          pathToCircuits,
-        });
-        collectionMembershipProofs.push(collectionMembershipProof);
-        setNumProofsCompleted((prev) => prev! + 1);
-      }
-
-      let endProofTime = performance.now();
-      let proofGenerationTime = endProofTime - startProofTime;
-
-      // Serialize proof
-      const serializedProof = JSON.stringify({
-        teamPubKeyIndex: teamJubmoji.pubKeyIndex,
-        serializedTeamMembershipProof:
-          serializeMembershipProof(teamMembershipProof),
-        serializedCollectionMembershipProofs: collectionMembershipProofs.map(
-          serializeMembershipProof
-        ),
-      });
-
-      // Send proof to server for submission
-      const response = await fetch(`/api/team-leaderboard`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          questId: quest.id,
-          serializedProof,
-          proofGenerationTime,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update team leaderboard score!");
-      }
-      const { scoreAdded } = await response.json();
-
-      const nullifiedSigs = unnullifiedCollectionJubmojis.map(
-        (jubmoji) => jubmoji.sig
-      );
-      addNullifiedSigs({
-        quests: {
-          [quest.id]: nullifiedSigs,
-        },
-        powers: {},
-      });
-
-      setNumProofsCompleted(undefined);
-      setNumProofsTotal(undefined);
-      toast.success(`Added ${scoreAdded} points to your team's score!`);
-      refetchLeaderboard();
-    } catch (e) {
-      console.error(e);
-      setNumProofsCompleted(undefined);
-      setNumProofsTotal(undefined);
-      toast.error("Failed to update team leaderboard score.");
-    }
-  };
 
   const onUpdateTeamLeaderboardScore = async () => {
     if (!quest) return;
@@ -300,6 +141,7 @@ export default function QuestDetailPage() {
       updateTeamLeaderboardMutation.mutateAsync({
         jubmojis: proofJubmojis,
         quest,
+        onUpdateProvingState,
       }),
       {
         loading: "Updating team score...",
@@ -314,10 +156,14 @@ export default function QuestDetailPage() {
             },
             powers: {},
           });
+          setProvingState(undefined);
 
           return `Added ${scoreAdded} points to your team's score!`;
         },
-        error: (err: any) => err.message,
+        error: (err: any) => {
+          setProvingState(undefined);
+          return err.message;
+        },
       }
     );
   };
@@ -336,26 +182,25 @@ export default function QuestDetailPage() {
 
   const collectionTotalItems = quest.collectionCards.length;
 
-  const showProofProgress =
-    numProofsCompleted !== undefined && numProofsTotal !== undefined;
-  const proofPercentageProgress = showProofProgress
-    ? (numProofsCompleted / (numProofsTotal || 1)) * 100
+  const proofPercentageProgress = provingState
+    ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
+      100
     : 0;
   let proofProgressDisplayText = "";
-  if (numProofsTotal !== undefined) {
-    switch (numProofsCompleted) {
-      case undefined:
-        break;
+  if (provingState) {
+    switch (provingState.numProofsCompleted) {
       case 0:
         proofProgressDisplayText =
           "Proving ownership of a team card Jubmoji...";
         break;
-      case numProofsTotal:
+      case provingState.numProofsTotal:
         proofProgressDisplayText = "Submitting proof to leaderboard...";
         break;
       default:
-        proofProgressDisplayText = `Proving ownership of Jubmoji ${numProofsCompleted} of ${
-          numProofsTotal! - 1 // -1 because the team proof is already counted
+        proofProgressDisplayText = `Proving ownership of Jubmoji ${
+          provingState.numProofsCompleted
+        } of ${
+          provingState.numProofsTotal - 1 // -1 because the team proof is already counted
         }...`;
     }
   }
@@ -459,7 +304,7 @@ export default function QuestDetailPage() {
               items={scoreMapping}
               loading={isLoadingLeaderboard}
             />
-            {showProofProgress && (
+            {provingState && (
               <div className="flex justify-center items-center gap-2 self-stretch">
                 <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
                   {proofProgressDisplayText}
@@ -476,9 +321,9 @@ export default function QuestDetailPage() {
             )}
             <Button
               variant="secondary"
-              onClick={onSequentialUpdateTeamLeaderboardScore}
-              disabled={showProofProgress}
-              loading={showProofProgress}
+              onClick={onUpdateTeamLeaderboardScore}
+              disabled={provingState !== undefined}
+              loading={provingState !== undefined}
             >
               Update team score
             </Button>

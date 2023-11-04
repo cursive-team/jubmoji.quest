@@ -1,13 +1,13 @@
 import QRCode from "react-qr-code";
 import { useState } from "react";
 import { PowerWrapper } from "../PowerWrapper";
-import Image from "next/image";
 import { Icons } from "../Icons";
 import { useQRCodePowerMutation } from "@/hooks/useFetchPowers";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { classed } from "@tw-classed/react";
 import { PowerContentProps } from "@/pages/powers/[id]";
+import { ProvingState } from "jubmoji-api";
 
 const QRCodeWrapper = classed.div(
   "bg-white rounded-[8px] w-full max-w-[156px]"
@@ -15,14 +15,19 @@ const QRCodeWrapper = classed.div(
 
 const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
   const [url, setUrl] = useState<string>();
-
+  const [provingState, setProvingState] = useState<ProvingState>();
   const powerMutation = useQRCodePowerMutation();
+
+  const onUpdateProvingState = (newProvingState: ProvingState) => {
+    setProvingState(newProvingState);
+  };
 
   const onHandlePower = async () => {
     await toast.promise(
       powerMutation.mutateAsync({
         power,
         jubmojis,
+        onUpdateProvingState,
       }),
       {
         loading: "Proving power...",
@@ -37,6 +42,12 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
     );
   };
 
+  const proofPercentageProgress = provingState
+    ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
+      100
+    : 0;
+  const proofProgressDisplayText = `Proving ownership of Jubmoji ${provingState?.numProofsCompleted} of ${provingState?.numProofsTotal}`;
+
   return (
     <PowerWrapper>
       {!url ? (
@@ -45,18 +56,34 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
             <span className="absolute top-[6px] left-[12px] text-[13px] font-normal font-dm-sans text-shark-300">
               Tap to prove
             </span>
-            <Icons.bubble className="text-shark-800" />
+            <Icons.bubble className="text-shark-800" width={100} />
           </div>
-          <button type="button" onClick={onHandlePower}>
-            <div
-              className={cn("w-[150px] h-[150px]  bg-cover", {
-                "animate animate-pulse": powerMutation.isLoading,
-              })}
-              style={{
-                backgroundImage: `url(/images/proof-icon.png)`,
-              }}
-            />
-          </button>
+          {provingState ? (
+            <div className="flex justify-center items-center gap-2 self-stretch">
+              <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
+                {proofProgressDisplayText}
+              </span>
+              <div className="flex items-center self-stretch border border-shark-400 w-full">
+                <div
+                  className={`h-full bg-shark-400`}
+                  style={{
+                    width: `${proofPercentageProgress}%`,
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <button type="button" onClick={onHandlePower}>
+              <div
+                className={cn("w-[150px] h-[150px]  bg-cover", {
+                  "animate animate-pulse": powerMutation.isLoading,
+                })}
+                style={{
+                  backgroundImage: `url(/images/proof-icon.png)`,
+                }}
+              />
+            </button>
+          )}
         </div>
       ) : (
         <div className="flex items-center justify-between">

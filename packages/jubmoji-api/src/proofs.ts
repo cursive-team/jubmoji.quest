@@ -42,6 +42,7 @@ import {
   TeamLeaderboardClassArgs,
   TeamLeaderboardProofArgs,
   TeamLeaderboardProof,
+  ProvingState,
 } from "./types";
 import { Signature } from "@noble/secp256k1";
 import { cardPubKeys } from "./data";
@@ -50,15 +51,18 @@ export class JubmojiInCollection {
   collectionPubKeys: string[];
   sigNullifierRandomness: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 
   constructor({
     collectionPubKeys,
     sigNullifierRandomness,
     pathToCircuits,
+    onUpdateProvingState,
   }: JubmojiInCollectionClassArgs) {
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
     this.pathToCircuits = pathToCircuits;
+    this.onUpdateProvingState = onUpdateProvingState;
   }
 
   async prove({
@@ -75,6 +79,10 @@ export class JubmojiInCollection {
       getRandomNullifierRandomness()
     );
 
+    this.onUpdateProvingState?.({
+      numProofsTotal: 1,
+      numProofsCompleted: 0,
+    });
     const membershipProof = await proveMembership({
       sig,
       msgHash,
@@ -87,6 +95,10 @@ export class JubmojiInCollection {
       sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
+    });
+    this.onUpdateProvingState?.({
+      numProofsTotal: 1,
+      numProofsCompleted: 1,
     });
 
     return {
@@ -115,15 +127,18 @@ export class JubmojiInCollectionWithNonce {
   collectionPubKeys: string[];
   sigNullifierRandomness: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 
   constructor({
     collectionPubKeys,
     sigNullifierRandomness,
     pathToCircuits,
+    onUpdateProvingState,
   }: JubmojiInCollectionWithNonceClassArgs) {
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
     this.pathToCircuits = pathToCircuits;
+    this.onUpdateProvingState = onUpdateProvingState;
   }
 
   async prove({
@@ -140,6 +155,10 @@ export class JubmojiInCollectionWithNonce {
       getRandomNullifierRandomness()
     );
 
+    this.onUpdateProvingState?.({
+      numProofsTotal: 1,
+      numProofsCompleted: 0,
+    });
     const membershipProof = await proveMembership({
       sig,
       msgHash,
@@ -152,6 +171,10 @@ export class JubmojiInCollectionWithNonce {
       sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
+    });
+    this.onUpdateProvingState?.({
+      numProofsTotal: 1,
+      numProofsCompleted: 1,
     });
 
     return {
@@ -194,17 +217,20 @@ export class NUniqueJubmojisInCollection {
   sigNullifierRandomness: string;
   N: number;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 
   constructor({
     collectionPubKeys,
     sigNullifierRandomness,
     N,
     pathToCircuits,
+    onUpdateProvingState,
   }: NUniqueJubmojiInCollectionClassArgs) {
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
     this.N = N;
     this.pathToCircuits = pathToCircuits;
+    this.onUpdateProvingState = onUpdateProvingState;
   }
 
   async prove({
@@ -214,33 +240,40 @@ export class NUniqueJubmojisInCollection {
       getRandomNullifierRandomness()
     );
 
-    const sigs = [];
-    const msgHashes = [];
-    const publicInputs = [];
-    const indices = [];
-    for (const jubmoji of jubmojis) {
+    const numProofsTotal = jubmojis.length;
+    this.onUpdateProvingState?.({
+      numProofsTotal,
+      numProofsCompleted: 0,
+    });
+    const membershipProofs = [];
+    for (let i = 0; i < jubmojis.length; i++) {
+      const jubmoji = jubmojis[i];
       const { sig, msgHash, pubKey, R, T, U } =
         getMembershipProofArgsFromJubmoji(jubmoji);
-      sigs.push(sig);
-      msgHashes.push(msgHash);
-      publicInputs.push({ R, T, U });
-      indices.push(this.collectionPubKeys.indexOf(pubKey));
+      const merkleProof = await getMerkleProofFromCache(
+        this.collectionPubKeys,
+        this.collectionPubKeys.indexOf(pubKey)
+      );
+      const membershipProof = await proveMembership({
+        sig,
+        msgHash,
+        publicInputs: {
+          R,
+          T,
+          U,
+        },
+        merkleProof,
+        sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+        pubKeyNullifierRandomness,
+        pathToCircuits: this.pathToCircuits,
+      });
+
+      membershipProofs.push(membershipProof);
+      this.onUpdateProvingState?.({
+        numProofsTotal,
+        numProofsCompleted: i + 1,
+      });
     }
-
-    const merkleProofs = await getMerkleProofListFromCache(
-      this.collectionPubKeys,
-      indices
-    );
-
-    const membershipProofs = await batchProveMembership({
-      sigs,
-      msgHashes,
-      publicInputs,
-      merkleProofs,
-      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
-      pubKeyNullifierRandomness,
-      pathToCircuits: this.pathToCircuits,
-    });
 
     return {
       serializedMembershipProofs: membershipProofs.map(
@@ -348,17 +381,20 @@ export class TeamLeaderboard
   collectionPubKeys: string[];
   sigNullifierRandomness: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 
   constructor({
     teamPubKeys,
     collectionPubKeys,
     sigNullifierRandomness,
     pathToCircuits,
+    onUpdateProvingState,
   }: TeamLeaderboardClassArgs) {
     this.teamPubKeys = teamPubKeys;
     this.collectionPubKeys = collectionPubKeys;
     this.sigNullifierRandomness = sigNullifierRandomness;
     this.pathToCircuits = pathToCircuits;
+    this.onUpdateProvingState = onUpdateProvingState;
   }
 
   async prove({
@@ -369,11 +405,15 @@ export class TeamLeaderboard
       getRandomNullifierRandomness()
     );
 
+    const numProofsTotal = collectionJubmojis.length + 1;
+    this.onUpdateProvingState?.({
+      numProofsTotal,
+      numProofsCompleted: 0,
+    });
     const { sig, msgHash, pubKey, R, T, U } =
       getMembershipProofArgsFromJubmoji(teamJubmoji);
     // We need to reveal which team we are on for the leaderboard
     const teamMerkleProof = await getMerkleProofFromCache([pubKey], 0);
-
     const teamMembershipProof = await proveMembership({
       sig,
       msgHash,
@@ -387,34 +427,39 @@ export class TeamLeaderboard
       pubKeyNullifierRandomness,
       pathToCircuits: this.pathToCircuits,
     });
+    this.onUpdateProvingState?.({
+      numProofsTotal,
+      numProofsCompleted: 1,
+    });
 
-    const sigs = [];
-    const msgHashes = [];
-    const publicInputs = [];
-    const indices = [];
-    for (const jubmoji of collectionJubmojis) {
+    const collectionMembershipProofs = [];
+    for (let i = 0; i < collectionJubmojis.length; i++) {
+      const jubmoji = collectionJubmojis[i];
       const { sig, msgHash, pubKey, R, T, U } =
         getMembershipProofArgsFromJubmoji(jubmoji);
-      sigs.push(sig);
-      msgHashes.push(msgHash);
-      publicInputs.push({ R, T, U });
-      indices.push(this.collectionPubKeys.indexOf(pubKey));
+      const collectionMerkleProof = await getMerkleProofFromCache(
+        this.collectionPubKeys,
+        this.collectionPubKeys.indexOf(pubKey)
+      );
+      const collectionMembershipProof = await proveMembership({
+        sig,
+        msgHash,
+        publicInputs: {
+          R,
+          T,
+          U,
+        },
+        merkleProof: collectionMerkleProof,
+        sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+        pubKeyNullifierRandomness,
+        pathToCircuits: this.pathToCircuits,
+      });
+      collectionMembershipProofs.push(collectionMembershipProof);
+      this.onUpdateProvingState?.({
+        numProofsTotal,
+        numProofsCompleted: i + 2, // Include this proof and the team proof
+      });
     }
-
-    const collectionMerkleProofs = await getMerkleProofListFromCache(
-      this.collectionPubKeys,
-      indices
-    );
-
-    const collectionMembershipProofs = await batchProveMembership({
-      sigs,
-      msgHashes,
-      publicInputs,
-      merkleProofs: collectionMerkleProofs,
-      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
-      pubKeyNullifierRandomness,
-      pathToCircuits: this.pathToCircuits,
-    });
 
     return {
       teamPubKeyIndex: teamJubmoji.pubKeyIndex,

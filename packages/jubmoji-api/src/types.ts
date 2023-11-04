@@ -27,6 +27,12 @@ export type NfcCardSignMessageResult = {
   pubKey: string;
 };
 
+// Tracks the current progress of proof generation
+export type ProvingState = {
+  numProofsTotal: number;
+  numProofsCompleted: number;
+};
+
 // Defines a class used to create and verify proofs
 export interface ProofClass<A, P> {
   prove(proofArgs: A): Promise<P>;
@@ -54,6 +60,7 @@ export interface JubmojiInCollectionClassArgs {
   collectionPubKeys: string[];
   sigNullifierRandomness: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export interface JubmojiInCollectionProofArgs {
@@ -69,6 +76,7 @@ export interface JubmojiInCollectionWithNonceClassArgs {
   collectionPubKeys: string[];
   sigNullifierRandomness: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export interface JubmojiInCollectionWithNonceProofArgs {
@@ -87,6 +95,7 @@ export interface NUniqueJubmojiInCollectionClassArgs {
   sigNullifierRandomness: string;
   N: number;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export interface NUniqueJubmojiInCollectionProofArgs {
@@ -119,6 +128,7 @@ export interface TeamLeaderboardClassArgs {
   collectionPubKeys: string[];
   sigNullifierRandomness: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export interface TeamLeaderboardProofArgs {

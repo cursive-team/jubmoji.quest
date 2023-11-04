@@ -2,12 +2,13 @@ import { getClientPathToCircuits } from "@/lib/config";
 import { createJubmojiQuestProof } from "@/lib/proving";
 import { JubmojiQuest } from "@/types";
 import { Prisma } from "@prisma/client";
-import { Jubmoji } from "jubmoji-api";
+import { Jubmoji, ProvingState } from "jubmoji-api";
 import { useMutation, useQuery } from "react-query";
 
 type UpdateTeamLeaderboardMutationProps = {
   jubmojis?: Jubmoji[];
   quest?: JubmojiQuest | null;
+  onUpdateProvingState: (provingState: ProvingState) => void;
 };
 
 // Returns the team leaderboard for a given quest
@@ -42,6 +43,7 @@ export const useUpdateTeamLeaderboardMutation = () => {
     mutationFn: async ({
       jubmojis,
       quest,
+      onUpdateProvingState,
     }: UpdateTeamLeaderboardMutationProps) => {
       if (!jubmojis) {
         throw new Error("You must have jubmojis to participate in this quest!");
@@ -51,7 +53,7 @@ export const useUpdateTeamLeaderboardMutation = () => {
         throw new Error("No active quest!");
       }
 
-      let startProofTime = performance.now();
+      const startProofTime = performance.now();
       const teamLeaderboardProof = await createJubmojiQuestProof({
         config: {
           ...quest,
@@ -59,9 +61,10 @@ export const useUpdateTeamLeaderboardMutation = () => {
         },
         jubmojis,
         pathToCircuits: getClientPathToCircuits(),
+        onUpdateProvingState,
       });
-      let endProofTime = performance.now();
-      let proofGenerationTime = endProofTime - startProofTime;
+      const endProofTime = performance.now();
+      const proofGenerationTime = endProofTime - startProofTime;
 
       const response = await fetch(`/api/team-leaderboard`, {
         method: "POST",
