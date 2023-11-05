@@ -699,8 +699,8 @@ export const cardPubKeys: CardPubKey[] = [
   },
   {
     category: "dev tools",
-    emoji: "🐏",
-    cardName: "ram",
+    emoji: "💾",
+    cardName: "floppydisk",
     unicode: "U+1F40F",
     pubKeySlot1:
       "04e3a716c49c52068ab5c9e6c9f33575c5eae6817dbb69eee5590660dbb13309665f81067972cec0dda4ebcaa33c6833a32ad54452631106670289a305f485ae52",
