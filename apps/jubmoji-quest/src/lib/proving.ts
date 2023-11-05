@@ -7,6 +7,7 @@ import {
   JubmojiInCollectionWithNonce,
   NUniqueJubmojisInCollection,
   ProofClass,
+  ProvingState,
   TeamLeaderboard,
   createProofInstance,
   getCardPubKeyFromIndex,
@@ -29,6 +30,7 @@ export interface CreateJubmojiQuestProofInstanceArgs {
   config: JubmojiQuestProofConfig;
   overrideSigNullifierRandomness?: string; // If we want to use a sigNullifierRandomness different from the quest's
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export interface CreateJubmojiQuestProofArgs {
@@ -36,6 +38,7 @@ export interface CreateJubmojiQuestProofArgs {
   jubmojis: Jubmoji[];
   overrideSigNullifierRandomness?: string;
   pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export interface VerifyJubmojiQuestProofArgs {
@@ -51,6 +54,7 @@ export const createJubmojiQuestProofInstance = ({
   config,
   overrideSigNullifierRandomness,
   pathToCircuits,
+  onUpdateProvingState,
 }: CreateJubmojiQuestProofInstanceArgs): ProofClass<any, any> => {
   const proofParams = config.proofParams as Prisma.JsonObject;
   const prerequisiteCardIndices = config.prerequisiteCards.map(
@@ -75,12 +79,14 @@ export const createJubmojiQuestProofInstance = ({
         collectionPubKeys,
         sigNullifierRandomness,
         pathToCircuits,
+        onUpdateProvingState,
       });
     case $Enums.ProofType.IN_COLLECTION_NONCE:
       return createProofInstance(JubmojiInCollectionWithNonce, {
         collectionPubKeys,
         sigNullifierRandomness,
         pathToCircuits,
+        onUpdateProvingState,
       });
     case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
       const N = proofParams.N as number;
@@ -89,6 +95,7 @@ export const createJubmojiQuestProofInstance = ({
         N,
         sigNullifierRandomness,
         pathToCircuits,
+        onUpdateProvingState,
       });
     case $Enums.ProofType.TEAM_LEADERBOARD:
       return createProofInstance(TeamLeaderboard, {
@@ -96,6 +103,7 @@ export const createJubmojiQuestProofInstance = ({
         collectionPubKeys,
         sigNullifierRandomness,
         pathToCircuits,
+        onUpdateProvingState,
       });
     default:
       throw new Error("Invalid proof type.");
@@ -109,11 +117,13 @@ export const createJubmojiQuestProof = async ({
   jubmojis,
   overrideSigNullifierRandomness,
   pathToCircuits,
+  onUpdateProvingState,
 }: CreateJubmojiQuestProofArgs): Promise<string> => {
   const proofClass = createJubmojiQuestProofInstance({
     config,
     overrideSigNullifierRandomness,
     pathToCircuits,
+    onUpdateProvingState,
   });
   const prerequisitePubKeys = config.prerequisiteCards.map((card) =>
     getCardPubKeyFromIndex(card.index)

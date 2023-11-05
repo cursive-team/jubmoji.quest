@@ -4,12 +4,13 @@ import {
   jubmojiPowerToQuestProofConfig,
 } from "@/lib/proving";
 import { JubmojiPower } from "@/types";
-import { Jubmoji } from "jubmoji-api";
+import { Jubmoji, ProvingState } from "jubmoji-api";
 import { useMutation, useQuery } from "react-query";
 
 interface PowerMutationProps {
   power: JubmojiPower;
   jubmojis: Jubmoji[];
+  onUpdateProvingState?: (provingState: ProvingState) => void;
 }
 
 export const useFetchPowers = () => {
@@ -57,7 +58,11 @@ export const useFetchPowerById = (id: string | number) => {
 export const useQRCodePowerMutation = () => {
   return useMutation({
     mutationKey: "useQRCodePower",
-    mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
+    mutationFn: async ({
+      power,
+      jubmojis,
+      onUpdateProvingState,
+    }: PowerMutationProps) => {
       const config = jubmojiPowerToQuestProofConfig(power);
       let serializedProof;
       try {
@@ -67,6 +72,7 @@ export const useQRCodePowerMutation = () => {
           overrideSigNullifierRandomness:
             power.sigNullifierRandomness || undefined,
           pathToCircuits: getClientPathToCircuits(),
+          onUpdateProvingState,
         });
       } catch (error) {
         console.log(error);
@@ -97,7 +103,11 @@ export const useQRCodePowerMutation = () => {
 export const useRedirectPowerMutation = () => {
   return useMutation({
     mutationKey: "useRedirectPower",
-    mutationFn: async ({ power, jubmojis }: PowerMutationProps) => {
+    mutationFn: async ({
+      power,
+      jubmojis,
+      onUpdateProvingState,
+    }: PowerMutationProps) => {
       const config = jubmojiPowerToQuestProofConfig(power);
       let serializedProof;
       try {
@@ -107,6 +117,7 @@ export const useRedirectPowerMutation = () => {
           overrideSigNullifierRandomness:
             power.sigNullifierRandomness || undefined,
           pathToCircuits: getClientPathToCircuits(),
+          onUpdateProvingState,
         });
       } catch (error) {
         console.log(error);

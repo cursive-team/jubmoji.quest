@@ -144,8 +144,8 @@ export default function PowerConsole({ password }: { password: string }) {
               {powerType === "REDIRECT" && (
                 <input
                   type="text"
-                  placeholder="Enter Redirect URL"
-                  value={redirectUrl || ""}
+                  placeholder="Enter Redirect URL (must include https://)"
+                  value={redirectUrl || "https://"}
                   onChange={(e) => setRedirectUrl(e.target.value)}
                 />
               )}
