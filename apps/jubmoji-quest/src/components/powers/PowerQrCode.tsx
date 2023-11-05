@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { classed } from "@tw-classed/react";
 import { PowerContentProps } from "@/pages/powers/[id]";
 import { ProvingState } from "jubmoji-api";
+import ProofProgressBar from "../ui/ProofProgressBar";
 
 const QRCodeWrapper = classed.div(
   "bg-white rounded-[8px] w-full max-w-[156px]"
@@ -31,18 +32,23 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
       }),
       {
         loading: "Proving power...",
-        error: (err: any) =>
-          err?.message ??
-          "There was an error claiming power. Please try again.",
+        error: (err: any) => {
+          setProvingState(undefined);
+          return (
+            err?.message ??
+            "There was an error claiming power. Please try again."
+          );
+        },
         success: (qrCodeUuid: any) => {
           setUrl(`${window.location.origin}/qr/${qrCodeUuid}`);
+          setProvingState(undefined);
           return "Power claimed!";
         },
       }
     );
   };
 
-  const proofPercentageProgress = provingState
+  const proofProgressPercentage = provingState
     ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
       100
     : 0;
@@ -59,19 +65,10 @@ const PowerQrCode = ({ power, jubmojis }: PowerContentProps) => {
             <Icons.bubble className="text-shark-800" width={100} />
           </div>
           {provingState ? (
-            <div className="flex justify-center items-center gap-2 self-stretch">
-              <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
-                {proofProgressDisplayText}
-              </span>
-              <div className="flex items-center self-stretch border border-shark-400 w-full">
-                <div
-                  className={`h-full bg-shark-400`}
-                  style={{
-                    width: `${proofPercentageProgress}%`,
-                  }}
-                />
-              </div>
-            </div>
+            <ProofProgressBar
+              displayText={proofProgressDisplayText}
+              progressPercentage={proofProgressPercentage}
+            />
           ) : (
             <button type="button" onClick={onHandlePower}>
               <div

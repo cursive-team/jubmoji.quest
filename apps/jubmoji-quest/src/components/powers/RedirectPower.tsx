@@ -6,6 +6,7 @@ import { Button } from "../ui/Button";
 import { Prisma } from "@prisma/client";
 import { useState } from "react";
 import { ProvingState } from "jubmoji-api";
+import ProofProgressBar from "../ui/ProofProgressBar";
 
 const RedirectPower = ({ power, jubmojis }: PowerContentProps) => {
   const [provingState, setProvingState] = useState<ProvingState>();
@@ -29,6 +30,7 @@ const RedirectPower = ({ power, jubmojis }: PowerContentProps) => {
         onUpdateProvingState,
       });
 
+      // redirectUrl must start with https:// for this to work
       const url = new URL(redirectUrl!);
       url.searchParams.append("proof", encodeURIComponent(serializedProof));
 
@@ -43,7 +45,7 @@ const RedirectPower = ({ power, jubmojis }: PowerContentProps) => {
     return null;
   }
 
-  const proofPercentageProgress = provingState
+  const proofProgressPercentage = provingState
     ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
       100
     : 0;
@@ -53,19 +55,10 @@ const RedirectPower = ({ power, jubmojis }: PowerContentProps) => {
     <PowerWrapper>
       <div className="flex flex-col items-center gap-4">
         {provingState && (
-          <div className="flex justify-center items-center gap-2 self-stretch">
-            <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
-              {proofProgressDisplayText}
-            </span>
-            <div className="flex items-center self-stretch border border-shark-400 w-full">
-              <div
-                className={`h-full bg-shark-400`}
-                style={{
-                  width: `${proofPercentageProgress}%`,
-                }}
-              />
-            </div>
-          </div>
+          <ProofProgressBar
+            displayText={proofProgressDisplayText}
+            progressPercentage={proofProgressPercentage}
+          />
         )}
         <span>Using this power will redirect you to: {redirectUrl}</span>
         <Button variant="secondary" onClick={onRedirect}>

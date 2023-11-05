@@ -24,6 +24,7 @@ import { ProvingState, cardPubKeys } from "jubmoji-api";
 import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
 import { useFetchCollectedCards } from "@/hooks/useFetchCards";
 import { cn } from "@/lib/utils";
+import ProofProgressBar from "@/components/ui/ProofProgressBar";
 
 const PagePlaceholder = () => {
   return (
@@ -169,7 +170,7 @@ export default function QuestDetailPage() {
 
   const collectionTotalItems = quest.collectionCards.length;
 
-  const proofPercentageProgress = provingState
+  const proofProgressPercentage = provingState
     ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
       100
     : 0;
@@ -292,19 +293,10 @@ export default function QuestDetailPage() {
               loading={isLoadingLeaderboard}
             />
             {provingState && (
-              <div className="flex justify-center items-center gap-2 self-stretch">
-                <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
-                  {proofProgressDisplayText}
-                </span>
-                <div className="flex items-center self-stretch border border-shark-400 w-full">
-                  <div
-                    className={`h-full bg-shark-400`}
-                    style={{
-                      width: `${proofPercentageProgress}%`,
-                    }}
-                  />
-                </div>
-              </div>
+              <ProofProgressBar
+                displayText={proofProgressDisplayText}
+                progressPercentage={proofProgressPercentage}
+              />
             )}
             <Button
               variant="secondary"
