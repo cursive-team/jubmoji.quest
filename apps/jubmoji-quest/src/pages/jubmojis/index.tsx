@@ -274,8 +274,8 @@ export default function JubmojisPage() {
     setIsSearchMode(true);
   };
 
+  /* prevent swipe on nav
   const handleNavSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
-    return; // prevent swipe on nav
     const MIN_SWIPE_DISTANCE = 20; // min distance to swipe
     const clientX = event.touches[0].clientX;
 
@@ -294,7 +294,7 @@ export default function JubmojisPage() {
     if (selectedSwipeJubmojiPubKey) {
       setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
     }
-  };
+  }; */
 
   const showNav =
     collectedJubmojis.length > 0 && !isSearchMode && !isLoadingJubmojiCards;
@@ -360,17 +360,16 @@ export default function JubmojisPage() {
         {showNav && (
           <div id="nav-wrapper" className="mt-auto">
             <JubmojiNavWrapper
+            /* prevent swipe on nav
               onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
-                return; // prevent swipe on nav
                 startX.current = event.touches[0].clientX;
                 startY.current = event.touches[0].clientY;
               }}
               onTouchEnd={() => {
-                return; // prevent swipe on nav
                 startX.current = 0;
                 startY.current = 0;
               }}
-              onTouchMove={handleNavSwipe}
+              onTouchMove={handleNavSwipe} */
             >
               {collectedJubmojis?.map((jubmoji, index) => {
                 const isActive = jubmoji?.pubKeyIndex === selectedPubKeyIndex;
