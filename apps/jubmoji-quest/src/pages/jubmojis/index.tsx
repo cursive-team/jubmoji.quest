@@ -3,7 +3,7 @@ import { Icons } from "@/components/Icons";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, use, useEffect, useRef, useState } from "react";
 import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/Placeholder";
@@ -11,14 +11,14 @@ import BackupModal from "@/components/modals/BackupModal";
 import { cn } from "@/lib/utils";
 import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
-import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
+import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
 import Link from "next/link";
 
 const JubmojiNavItem = classed.div(
-  "flex items-center justify-center p-2 rounded cursor-pointer",
+  "flex items-center justify-center p-2 rounded cursor-pointer duration-300",
   {
     variants: {
       size: {
@@ -112,9 +112,11 @@ export default function JubmojisPage() {
     return jubmoji.pubKeyIndex === selectedPubKeyIndex;
   })?.msgNonce;
 
-  const collectedJubmojis = collectedPubKeys.map((pubKeyIndex) => {
-    return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
-  });
+  const collectedJubmojis = collectedPubKeys
+    .map((pubKeyIndex) => {
+      return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
+    })
+    .filter(Boolean);
 
   // get all jubmojis that match the search
   const filteredJubmojis = collectedJubmojis
@@ -136,10 +138,19 @@ export default function JubmojisPage() {
   const JubmojiContent = () => {
     if (isLoadingJubmojiCards)
       return (
-        <div className="flex flex-col">
-          <div className="flex flex-col mx-auto justify-center h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
-            <Placeholder.CardArc className="w-[300px]" />
-            <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
+        <div
+          style={{
+            height: `${cardSize}px`,
+          }}
+          className="flex flex-col grow h-full"
+        >
+          <div className="flex flex-col mx-auto justify-center w-full my-auto grow h-full">
+            <Placeholder.Card
+              style={{
+                height: `${cardSize - 80}px`,
+              }}
+              className="!rounded-[20px] w-full"
+            />
           </div>
           <JubmojiNavWrapper className="z-1">
             <JubmojiNavItem className="bg-slate-200 animate-pulse" />
@@ -188,7 +199,7 @@ export default function JubmojisPage() {
               height: `${cardSize}px`,
             }}
           >
-            <CollectionCardArc
+            <CollectionCard
               height={cardSize}
               label={name}
               icon={emoji}
@@ -199,6 +210,26 @@ export default function JubmojisPage() {
               telegramChatInviteLink={telegramChatInviteLink}
               actions={null}
               quests={jubmojiQuests}
+              onSwipe={(direction: string) => {
+                const currentActiveIndex = collectedJubmojis.findIndex(
+                  (jubmoji) => jubmoji?.pubKeyIndex === selectedPubKeyIndex
+                );
+
+                const nextIndex =
+                  direction === "right"
+                    ? currentActiveIndex + 1
+                    : currentActiveIndex - 1;
+
+                if (nextIndex < 0 || nextIndex > collectedJubmojis.length - 1)
+                  return; // can't go past the first or last slide
+
+                const selectedSwipeJubmojiPubKey =
+                  collectedJubmojis?.[nextIndex]?.pubKeyIndex;
+
+                if (!selectedSwipeJubmojiPubKey) return;
+
+                setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
+              }}
             />
           </div>
         )}
@@ -272,7 +303,7 @@ export default function JubmojisPage() {
       <BackupModal isOpen={backupModalOpen} setIsOpen={setBackupModalOpen} />
       <InfoModal isOpen={infoModalOpen} setIsOpen={setIsModalOpen} />
       <div
-        className={cn("flex flex-col gap-1 xs:gap-2", {
+        className={cn("flex flex-col", {
           invisible: infoModalOpen || backupModalOpen,
         })}
       >
