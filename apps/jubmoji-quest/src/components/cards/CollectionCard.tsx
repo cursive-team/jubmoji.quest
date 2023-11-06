@@ -121,13 +121,13 @@ const CollectionCard = ({
       <div className="flex flex-col relative">
         <div className="flex flex-col gap-2 bg-shark-970 z-[2]">
           {!preview && (
-            <span className="font-dm-sans text-[13px] font-normal line-clamp-2 text-shark-400">
+            <span className="font-dm-sans text-[13px] font-normal line-clamp-2 text-shark-50">
               {label}
             </span>
           )}
           <div className="flex">
             {preview ? (
-              <span className="text-white font-dm-sans max-w-[190px] text-base">
+              <span className="text-shark-50 font-dm-sans max-w-[190px] text-base">
                 {label}
               </span>
             ) : (
