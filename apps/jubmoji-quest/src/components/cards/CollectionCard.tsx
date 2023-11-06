@@ -101,6 +101,7 @@ const CollectionCard = ({
   }, [isLoadingBackup, backupState, pubKeyIndex]);
 
   const handleCardSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (showQuest) return; // prevent swipe if quest is showing
     if (typeof onSwipe !== "function") return;
     endX.current = event.changedTouches[0].clientX;
     endY.current = event.changedTouches[0].clientY;
@@ -189,10 +190,10 @@ const CollectionCard = ({
             className="flex flex-col gap-3 overflow-scroll pb-5"
           >
             <div className="flex flex-col gap-3">
-              {quests?.map((quest) => {
+              {quests?.map((quest, index) => {
                 return (
                   <div
-                    key={quest.id}
+                    key={`${quest.id}-${index}`}
                     className="grid grid-cols-[16px_1fr] items-center gap-2"
                   >
                     <Icons.logo />

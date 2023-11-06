@@ -16,6 +16,7 @@ import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
 import Link from "next/link";
+import { Transition } from "@headlessui/react";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer duration-300",
@@ -191,49 +192,85 @@ export default function JubmojisPage() {
     }
 
     return (
-      <>
-        {name && owner && (
-          <div
-            className="flex flex-col justify-center xs:mt-0"
-            style={{
-              height: `${cardSize}px`,
-            }}
-          >
-            <CollectionCard
-              height={cardSize}
-              label={name}
-              icon={emoji}
-              edition={msgNonce ? msgNonce - 1 : ""}
-              owner={owner}
-              pubKeyIndex={selectedPubKeyIndex}
-              cardBackImage={imagePath}
-              telegramChatInviteLink={telegramChatInviteLink}
-              actions={null}
-              quests={jubmojiQuests}
-              onSwipe={(direction: string) => {
-                const currentActiveIndex = collectedJubmojis.findIndex(
-                  (jubmoji) => jubmoji?.pubKeyIndex === selectedPubKeyIndex
-                );
+      <div
+        className="flex flex-col justify-center xs:mt-0"
+        style={{
+          height: `${cardSize}px`,
+        }}
+      >
+        {collectedJubmojis.map((jubmoji, index) => {
+          if (!jubmoji) return null;
 
-                const nextIndex =
-                  direction === "right"
-                    ? currentActiveIndex + 1
-                    : currentActiveIndex - 1;
+          const showCard = selectedJubmoji.pubKeyIndex === jubmoji?.pubKeyIndex;
 
-                if (nextIndex < 0 || nextIndex > collectedJubmojis.length - 1)
-                  return; // can't go past the first or last slide
+          const {
+            name,
+            owner,
+            emoji,
+            telegramChatInviteLink,
+            imagePath,
+            prerequisitesFor,
+            collectsFor,
+            pubKeyIndex,
+          } = jubmoji ?? {};
 
-                const selectedSwipeJubmojiPubKey =
-                  collectedJubmojis?.[nextIndex]?.pubKeyIndex;
+          // get all quests that the selected jubmoji is a prerequisite or collection card for
+          const questList = [
+            ...(prerequisitesFor || []),
+            ...(collectsFor || []),
+          ];
 
-                if (!selectedSwipeJubmojiPubKey) return;
+          return (
+            <Transition
+              key={index}
+              show
+              appear={true}
+              className={cn({
+                "invisible h-0": !showCard,
+              })}
+              enter="transition ease-linear delay-100 duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition duration-150"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <CollectionCard
+                height={cardSize}
+                label={name}
+                icon={emoji}
+                edition={msgNonce ? msgNonce - 1 : ""}
+                owner={owner!}
+                pubKeyIndex={pubKeyIndex}
+                cardBackImage={imagePath}
+                telegramChatInviteLink={telegramChatInviteLink}
+                actions={null}
+                quests={questList}
+                onSwipe={(direction: string) => {
+                  const currentActiveIndex = collectedJubmojis.findIndex(
+                    (jubmoji) => jubmoji?.pubKeyIndex === selectedPubKeyIndex
+                  );
 
-                setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
-              }}
-            />
-          </div>
-        )}
-      </>
+                  const nextIndex =
+                    direction === "right"
+                      ? currentActiveIndex + 1
+                      : currentActiveIndex - 1;
+
+                  if (nextIndex < 0 || nextIndex > collectedJubmojis.length - 1)
+                    return; // can't go past the first or last slide
+
+                  const selectedSwipeJubmojiPubKey =
+                    collectedJubmojis?.[nextIndex]?.pubKeyIndex;
+
+                  if (!selectedSwipeJubmojiPubKey) return;
+
+                  setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
+                }}
+              />
+            </Transition>
+          );
+        })}
+      </div>
     );
   };
 
