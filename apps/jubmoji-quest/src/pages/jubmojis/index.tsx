@@ -275,6 +275,7 @@ export default function JubmojisPage() {
   };
 
   const handleNavSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
+    return; // prevent swipe on nav
     const MIN_SWIPE_DISTANCE = 20; // min distance to swipe
     const clientX = event.touches[0].clientX;
 
@@ -360,10 +361,12 @@ export default function JubmojisPage() {
           <div id="nav-wrapper" className="mt-auto">
             <JubmojiNavWrapper
               onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
+                return; // prevent swipe on nav
                 startX.current = event.touches[0].clientX;
                 startY.current = event.touches[0].clientY;
               }}
               onTouchEnd={() => {
+                return; // prevent swipe on nav
                 startX.current = 0;
                 startY.current = 0;
               }}
