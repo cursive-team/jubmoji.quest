@@ -94,15 +94,6 @@ export default function JubmojisPage() {
     jubmojiCollectionCards,
     selectedPubKeyIndex
   );
-  const {
-    emoji,
-    name,
-    owner,
-    prerequisitesFor,
-    collectsFor,
-    imagePath,
-    telegramChatInviteLink,
-  } = selectedJubmoji ?? {};
 
   // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
@@ -132,9 +123,6 @@ export default function JubmojisPage() {
       );
     })
     .filter(Boolean);
-
-  // get all quests that the selected jubmoji is a prerequisite or collection card for
-  const jubmojiQuests = [...(prerequisitesFor || []), ...(collectsFor || [])];
 
   const JubmojiContent = () => {
     if (isLoadingJubmojiCards)
@@ -193,7 +181,7 @@ export default function JubmojisPage() {
 
     return (
       <div
-        className="flex flex-col justify-center xs:mt-0"
+        className="flex flex-col justify-center xs:mt-0 overflow-hidden"
         style={{
           height: `${cardSize}px`,
         }}
