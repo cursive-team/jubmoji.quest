@@ -231,7 +231,7 @@ export default function JubmojisPage() {
               enter="transition ease-linear delay-100 duration-300"
               enterFrom="opacity-0"
               enterTo="opacity-100"
-              leave="transition duration-150"
+              leave="transition duration-200"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
