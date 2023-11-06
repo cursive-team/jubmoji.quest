@@ -34,7 +34,7 @@ const RedirectPower = ({ power, jubmojis }: PowerContentProps) => {
       const url = new URL(redirectUrl!);
       url.searchParams.append("proof", encodeURIComponent(serializedProof));
 
-      window.open(url.href, "_blank");
+      window.location.href = url.href;
     } catch (e) {
       console.error(e);
       toast.error("Failed to use power");
