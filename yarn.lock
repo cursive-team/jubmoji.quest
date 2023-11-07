@@ -5704,6 +5704,7 @@ __metadata:
     google-auth-library: ^9.1.0
     jose: ^4.15.2
     jubmoji-api: "workspace:^"
+    keen-slider: ^6.8.6
     mobile-detect: ^1.4.5
     next: 13.5.4
     passkit-generator: ^3.1.11
@@ -5746,6 +5747,13 @@ __metadata:
     jwa: ^2.0.0
     safe-buffer: ^5.0.1
   checksum: d68d07aa6d1b8cb35c363a9bd2b48f15064d342a5d9dc18a250dbbce8dc06bd7e4792516c50baa16b8d14f61167c19e851fd7f66b59ecc68b7f6a013759765f7
+  languageName: node
+  linkType: hard
+
+"keen-slider@npm:^6.8.6":
+  version: 6.8.6
+  resolution: "keen-slider@npm:6.8.6"
+  checksum: f87e65d72e3b2e73cbd52b1908c1458b253ec5a2a2d3e1e34bd1a831172d18568649188cf3e4ad679c7988568929195ae91d4b7a1c0bd3d6da592a453be3723a
   languageName: node
   linkType: hard
 

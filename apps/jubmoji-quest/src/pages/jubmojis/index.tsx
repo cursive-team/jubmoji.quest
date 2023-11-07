@@ -16,7 +16,8 @@ import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
 import Link from "next/link";
-import { Transition } from "@headlessui/react";
+import "keen-slider/keen-slider.min.css";
+import { useKeenSlider } from "keen-slider/react";
 
 const JubmojiNavItem = classed.div(
   "flex items-center justify-center p-2 rounded cursor-pointer duration-300",
@@ -39,7 +40,7 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  "fixed-bottom grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
+  "relative justify-center fixed-bottom grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
 );
 
 export default function JubmojisPage() {
@@ -53,6 +54,19 @@ export default function JubmojisPage() {
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
+  const [sliderRef, instanceRef] = useKeenSlider({
+    slides: {
+      spacing: 10,
+      perView: 1,
+    },
+    slideChanged(e) {
+      const index = e.track?.details?.rel;
+      const activePubKeyIndex = collectedJubmojis[index]?.pubKeyIndex;
+      if (!activePubKeyIndex) return;
+
+      setSelectedPubKeyIndex(activePubKeyIndex);
+    },
+  });
 
   const startX = useRef(0);
   const startY = useRef(0);
@@ -87,7 +101,8 @@ export default function JubmojisPage() {
   useEffect(() => {
     if (isLoadingJubmojiCards) return;
     // set default pubKeyIndex from query params
-    setSelectedPubKeyIndex(Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex);
+    const index = Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex;
+    setSelectedPubKeyIndex(index);
   }, [isLoadingJubmojiCards, jubmojis, pubKeyIndex]);
 
   const selectedJubmoji = getJubmojiCardByPubIndex(
@@ -99,10 +114,6 @@ export default function JubmojisPage() {
   const collectedPubKeys = Object.entries(jubmojis).map(
     ([_index, { pubKeyIndex }]) => pubKeyIndex
   );
-
-  const msgNonce = jubmojis.find((jubmoji: Jubmoji) => {
-    return jubmoji.pubKeyIndex === selectedPubKeyIndex;
-  })?.msgNonce;
 
   const collectedJubmojis = collectedPubKeys
     .map((pubKeyIndex) => {
@@ -181,83 +192,56 @@ export default function JubmojisPage() {
 
     return (
       <div
-        className="flex flex-col justify-center xs:mt-0 overflow-hidden"
         style={{
-          height: `${cardSize}px`,
+          height: `${cardSize + 20}px`,
         }}
       >
-        {collectedJubmojis.map((jubmoji, index) => {
-          if (!jubmoji) return null;
+        <div ref={sliderRef} className="keen-slider">
+          {collectedJubmojis.map((jubmoji, index) => {
+            if (!jubmoji) return null;
 
-          const showCard = selectedJubmoji.pubKeyIndex === jubmoji?.pubKeyIndex;
+            const {
+              name,
+              owner,
+              emoji,
+              telegramChatInviteLink,
+              imagePath,
+              prerequisitesFor,
+              collectsFor,
+            } = jubmoji ?? {};
 
-          const {
-            name,
-            owner,
-            emoji,
-            telegramChatInviteLink,
-            imagePath,
-            prerequisitesFor,
-            collectsFor,
-            pubKeyIndex,
-          } = jubmoji ?? {};
+            const msgNonce = jubmojis.find((jubmoji: Jubmoji) => {
+              return jubmoji.pubKeyIndex === selectedPubKeyIndex;
+            })?.msgNonce;
 
-          // get all quests that the selected jubmoji is a prerequisite or collection card for
-          const questList = [
-            ...(prerequisitesFor || []),
-            ...(collectsFor || []),
-          ];
+            // get all quests that the selected jubmoji is a prerequisite or collection card for
+            const questList = [
+              ...(prerequisitesFor || []),
+              ...(collectsFor || []),
+            ];
 
-          return (
-            <Transition
-              key={index}
-              show
-              appear={true}
-              className={cn({
-                "invisible h-0": !showCard,
-              })}
-              enter="transition ease-linear delay-100 duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
+            return (
               <CollectionCard
-                height={cardSize}
+                key={index}
+                data-pubkey-index={jubmoji?.pubKeyIndex}
+                height={cardSize + 20}
                 label={name}
                 icon={emoji}
                 edition={msgNonce ? msgNonce - 1 : ""}
                 owner={owner!}
-                pubKeyIndex={pubKeyIndex}
+                pubKeyIndex={selectedPubKeyIndex}
                 cardBackImage={imagePath}
                 telegramChatInviteLink={telegramChatInviteLink}
                 actions={null}
                 quests={questList}
-                onSwipe={(direction: string) => {
-                  const currentActiveIndex = collectedJubmojis.findIndex(
-                    (jubmoji) => jubmoji?.pubKeyIndex === selectedPubKeyIndex
-                  );
-
-                  const nextIndex =
-                    direction === "right"
-                      ? currentActiveIndex + 1
-                      : currentActiveIndex - 1;
-
-                  if (nextIndex < 0 || nextIndex > collectedJubmojis.length - 1)
-                    return; // can't go past the first or last slide
-
-                  const selectedSwipeJubmojiPubKey =
-                    collectedJubmojis?.[nextIndex]?.pubKeyIndex;
-
-                  if (!selectedSwipeJubmojiPubKey) return;
-
-                  setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
+                className="mt-5 xs:mt-6 px-[2px] keen-slider__slide"
+                style={{
+                  height: `${cardSize}px`,
                 }}
               />
-            </Transition>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -404,7 +388,10 @@ export default function JubmojisPage() {
                   <JubmojiNavItem
                     key={index}
                     active={isActive}
-                    onClick={() => setSelectedPubKeyIndex(jubmoji?.pubKeyIndex)}
+                    onClick={() => {
+                      setSelectedPubKeyIndex(jubmoji?.pubKeyIndex);
+                      instanceRef.current?.moveToIdx(index);
+                    }}
                   >
                     {jubmoji?.emoji!}
                   </JubmojiNavItem>
