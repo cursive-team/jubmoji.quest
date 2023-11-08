@@ -20,11 +20,11 @@ import {
 } from "@/hooks/useFetchCards";
 import Image from "next/image";
 import { PowerTypeIconMapping } from "@/components/cards/PowerCard";
-import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { SimpleCard } from "@/components/cards/SimpleCard";
 import { HUNT_TEAM_JUBMOJI_PUBKEY_INDICES } from "@/constants";
-import { AppContext } from "next/app";
+import { classed } from "@tw-classed/react";
+import { CollectionCard } from "@/components/cards/CollectionCard";
 
 enum CollectStatus {
   UNKNOWN = "Unknown",
@@ -36,12 +36,19 @@ enum CollectStatus {
   STANDARD = "Standard",
 }
 
+const OnboardingCard = classed.div(Card.Base, "grid grid-rows-[200px_180px]", {
+  defaultVariants: {
+    rounded: true,
+    centred: true,
+  },
+});
+
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
   return (
     <Onboarding>
-      <Card.Base centred>
+      <OnboardingCard>
         <Card.Header spacing="md">
-          <span className="my-auto text-[40px] leading-none pt-[32px] pb-[22px]">
+          <span className="my-auto text-[60px] leading-none pt-[32px] pb-[22px]">
             {jubmoji.emoji}
           </span>
         </Card.Header>
@@ -54,8 +61,8 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             and verifiable.`}
           </Card.Description>
         </Card.Content>
-      </Card.Base>
-      <Card.Base centred>
+      </OnboardingCard>
+      <OnboardingCard>
         <Card.Header>
           <div className="flex flex-col gap-4">
             <Image
@@ -76,8 +83,8 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             browser storage.
           </Card.Description>
         </Card.Content>
-      </Card.Base>
-      <Card.Base centred>
+      </OnboardingCard>
+      <OnboardingCard>
         <Card.Header>
           <Image
             height={120}
@@ -96,8 +103,8 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             app!
           </Card.Description>
         </Card.Content>
-      </Card.Base>
-      <Card.Base centred>
+      </OnboardingCard>
+      <OnboardingCard>
         <Card.Header>
           <Image
             height={120}
@@ -115,11 +122,11 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             Collect specific jubmojis on quests to unlock powers!
           </Card.Description>
         </Card.Content>
-      </Card.Base>
-      <Card.Base centred>
+      </OnboardingCard>
+      <OnboardingCard>
         <Card.Header>
           <div
-            className={`grid grid-flow-col gap-4 grid-cols-[${
+            className={`w-full grid grid-flow-col justify-around grid-cols-[${
               Object.keys(PowerTypeIconMapping).length
             }]`}
           >
@@ -137,7 +144,7 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
             unlock tickets and discounts
           </Card.Description>
         </Card.Content>
-      </Card.Base>
+      </OnboardingCard>
     </Onboarding>
   );
 };
@@ -245,7 +252,7 @@ export default function CollectJubmojiPage() {
   const renderMainInfo = (status: CollectStatus) => {
     switch (status) {
       case CollectStatus.UNKNOWN:
-        return <Card.Base className="h-[260px]" loading />;
+        return <Card.Base className="h-[300px]" rounded loading />;
       case CollectStatus.ZERO_TAP:
         return (
           <SimpleCard
@@ -286,9 +293,9 @@ export default function CollectJubmojiPage() {
         );
       default: {
         if (!collectedCard || !collectedJubmoji)
-          return <Card.Base className="h-[260px]" loading />;
+          return <Card.Base className="h-[300px]" rounded loading />;
         return (
-          <CollectionCardArc
+          <CollectionCard
             className="text-center w-full !max-w-none"
             label={collectedCard.name}
             icon={collectedCard.emoji}

@@ -63,9 +63,7 @@ export const getJubmojiCardByPubIndex = (
   cards: JubmojiCardMap,
   pubKeyIndex: Jubmoji["pubKeyIndex"]
 ): JubmojiCardProps | undefined => {
-  if (!cards[pubKeyIndex]) {
-    return undefined;
-  }
+  if (!cards[pubKeyIndex]) return;
 
   // The following properties are fixed, and associated with the physical cards
   const { emoji, imageBlobUrl: imagePath } = cardPubKeys[pubKeyIndex];

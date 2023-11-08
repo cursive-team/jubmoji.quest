@@ -13,6 +13,10 @@ const CardBase = classed.div(
       loading: {
         true: "animate-pulse bg-slate-200",
       },
+      rounded: {
+        true: "rounded-[20px]",
+        false: "rounded-none",
+      },
     },
     defaultVariants: {
       centred: false,
