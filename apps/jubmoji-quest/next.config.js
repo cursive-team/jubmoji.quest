@@ -35,6 +35,12 @@ const nextConfig = {
         destination: "https://airtable.com/apprikYUs5WuXJRbN/shrIHSLl3CiJ76OxI",
         permanent: true,
       },
+      {
+        source: "/about",
+        destination:
+          "https://pse-team.notion.site/Jubmojis-One-Pager-c9c9c8e6d8ed4c84a37aaa121d03d03c",
+        permanent: true,
+      },
     ];
   },
 };
