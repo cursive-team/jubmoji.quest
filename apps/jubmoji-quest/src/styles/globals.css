@@ -66,6 +66,10 @@ input[type="search"] {
 }
 
 
+#jubmoji-slider .slick-slide,
+#jubmoji-slider .slick-list {
+  @apply !w-full;
+}
 #jubmoji-slider .slick-track {
   @apply flex gap-[4px] mt-5;
 }
@@ -88,5 +92,5 @@ input[type="search"] {
 }
 
 #nav-wrapper .slick-slide.slick-active {
- @apply first:ml-0 !mx-1;
+ @apply first:ml-0 !mx-2;
 }

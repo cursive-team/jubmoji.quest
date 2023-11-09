@@ -17,6 +17,7 @@ import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
 import Link from "next/link";
 import Slider, { Settings as SliderSettings } from "react-slick";
+import { useQuery } from "react-query";
 
 const JubmojiNavItem = classed.div(
   "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-200",
@@ -43,7 +44,7 @@ const JubmojiNavItem = classed.div(
 );
 
 const JubmojiNavWrapper = classed.div(
-  "fixed-bottom grid grid-flow-col justify-center auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
+  "fixed-bottom overflow-hidden grid grid-flow-col justify-center auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
 );
 
 const PagePlaceholder = () => {
@@ -61,28 +62,56 @@ const PagePlaceholder = () => {
   );
 };
 
-const navigatorSliderConfig: SliderSettings = {
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  centerMode: true,
-  variableWidth: true,
-  focusOnSelect: true,
-  infinite: false,
-  dots: false,
-  arrows: false,
+interface getDefaultIndexProps {
+  defaultPubKeyIndex?: number;
+  collectedJubmojis: any[];
+}
+
+// get collection index from query params
+const getDefaultIndex = ({
+  defaultPubKeyIndex = 0,
+  collectedJubmojis,
+}: getDefaultIndexProps): Promise<number | null> => {
+  if (collectedJubmojis?.length === 0) return Promise.resolve(null);
+
+  let defaultIndex = collectedJubmojis.findIndex(
+    (jubmoji) => jubmoji?.pubKeyIndex === Number(defaultPubKeyIndex)
+  );
+
+  defaultIndex = defaultIndex === -1 ? 0 : defaultIndex;
+
+  const selectedPubKey = collectedJubmojis[defaultIndex]?.pubKeyIndex;
+
+  if (!selectedPubKey) return Promise.resolve(0);
+  return Promise.resolve(defaultIndex);
 };
 
 export default function JubmojisPage() {
   const router = useRouter();
   const { pubKeyIndex } = router.query;
-  const [selectedPubKeyIndex, setSelectedPubKeyIndex] =
-    React.useState<number>(0);
-  const { data: jubmojis = [] } = useJubmojis();
+  const [selectedPubKeyIndex, setSelectedPubKeyIndex] = useState<
+    number | undefined
+  >(undefined);
+  const { isLoading: isLoadingJubmojis, data: jubmojis = [] } = useJubmojis();
   const [infoModalOpen, setIsModalOpen] = useState(false);
   const [backupModalOpen, setBackupModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
+
+  const [navigatorSliderConfig, setNavigatorSliderConfig] =
+    useState<SliderSettings>({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      centerMode: true,
+      variableWidth: true,
+      focusOnSelect: true,
+      infinite: false,
+      dots: false,
+      arrows: false,
+      initialSlide: 0,
+      centerPadding: "0px",
+    });
 
   const [jubmojiSliderConfig, setJubmojiSliderConfig] =
     useState<SliderSettings>({
@@ -92,7 +121,7 @@ export default function JubmojisPage() {
       dots: false,
       arrows: false,
       infinite: false,
-      initialSlide: 2,
+      initialSlide: 0,
     });
 
   const [jubmojiSlider, setJubmojiSlider] = useState<any>(null);
@@ -101,12 +130,10 @@ export default function JubmojisPage() {
   const calculateCardSize = () => {
     const footer = document.getElementById("footer")?.clientHeight ?? 0;
     const header = document.getElementById("header")?.clientHeight ?? 0;
-    const navWrapper = 0; //document.getElementById("nav-wrapper")?.clientHeight ?? 0;
 
-    const SPACING = 50; // spacing between header and footer
+    const SPACING = 100; // spacing between header and footer
 
-    const cardSize =
-      window?.innerHeight - footer - header - navWrapper - SPACING;
+    const cardSize = window?.innerHeight - footer - header - SPACING;
 
     setCardSize(cardSize); // set card size container size
   };
@@ -115,19 +142,6 @@ export default function JubmojisPage() {
     isLoading: isLoadingJubmojiCards,
     data: jubmojiCollectionCards = [],
   } = useFetchCards();
-
-  useEffect(() => {
-    calculateCardSize();
-  }, [isLoadingJubmojiCards, jubmojis, pubKeyIndex]);
-
-  useEffect(() => {
-    window.addEventListener("resize", calculateCardSize); // add resize listener
-  }, []);
-
-  const selectedJubmoji = getJubmojiCardByPubIndex(
-    jubmojiCollectionCards,
-    selectedPubKeyIndex
-  );
 
   // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
@@ -138,22 +152,45 @@ export default function JubmojisPage() {
     return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
   });
 
-  useEffect(() => {
-    return;
-    if (isLoadingJubmojiCards) return;
-    if (jubmojiSliderConfig.initialSlide === undefined) return;
-    // set default pubKeyIndex from query params
-    const currentPubKeyIndex = Number(pubKeyIndex) || 0;
-    const activeIndex = collectedJubmojis.findIndex(
-      (jubmoji) => jubmoji?.pubKeyIndex === currentPubKeyIndex
-    );
+  const { isLoading: isLoadingDefaultIndex } = useQuery(
+    ["getDefaultIndex", isLoadingJubmojiCards, collectedJubmojis],
+    async () => {
+      const defaultIndex = await getDefaultIndex({
+        defaultPubKeyIndex: Number(pubKeyIndex),
+        collectedJubmojis: collectedJubmojis || [],
+      });
 
-    console.log("default index", activeIndex, jubmojiSliderConfig);
-    setJubmojiSliderConfig({
-      ...jubmojiSliderConfig,
-      initialSlide: activeIndex,
-    });
-  }, [isLoadingJubmojiCards]);
+      return defaultIndex;
+    },
+    {
+      onSuccess: (defaultIndex: number | null) => {
+        if (defaultIndex == null) return;
+
+        const selectedPubKey = collectedJubmojis[defaultIndex]?.pubKeyIndex;
+
+        setSelectedPubKeyIndex(selectedPubKey);
+
+        setJubmojiSliderConfig((prev) => ({
+          ...prev,
+          initialSlide: defaultIndex,
+        }));
+        setNavigatorSliderConfig((prev) => ({
+          ...prev,
+          initialSlide: defaultIndex,
+        }));
+      },
+    }
+  );
+
+  useEffect(() => {
+    calculateCardSize();
+  }, [isLoadingJubmojiCards, jubmojis, pubKeyIndex]);
+
+  useEffect(() => {
+    window.addEventListener("resize", calculateCardSize); // add resize listener
+  }, []);
+
+  const hasSelectedJubmoji = selectedPubKeyIndex !== undefined;
 
   // get all jubmojis that match the search
   const filteredJubmojis = collectedJubmojis
@@ -176,8 +213,36 @@ export default function JubmojisPage() {
     setIsSearchMode(true);
   };
 
+  const handleIndexChange = (index: number) => {
+    const selectedIndex = collectedJubmojis[index]?.pubKeyIndex;
+    if (!selectedIndex) return;
+    if (selectedIndex === selectedPubKeyIndex) return; // ignore if same index, no need to change
+    setSelectedPubKeyIndex(selectedIndex);
+  };
+
+  const handleSearchItem = (pubKeyIndex: number) => {
+    setSearch(""); // clear search to show selected item
+    setIsSearchMode(false);
+    setSelectedPubKeyIndex(pubKeyIndex);
+    const index = collectedJubmojis.findIndex(
+      (jubmoji) => jubmoji?.pubKeyIndex === pubKeyIndex
+    );
+
+    if (!index) return;
+    setNavigatorSliderConfig((prev) => ({
+      ...prev,
+      initialSlide: index,
+    }));
+    setJubmojiSliderConfig((prev) => ({
+      ...prev,
+      initialSlide: index,
+    }));
+  };
+
+  const isLoadingPage =
+    isLoadingJubmojiCards || isLoadingDefaultIndex || isLoadingJubmojis;
   const showNav =
-    collectedJubmojis.length > 0 && !isSearchMode && !isLoadingJubmojiCards;
+    collectedJubmojis.length > 0 && !isSearchMode && !isLoadingPage;
 
   return (
     <>
@@ -211,7 +276,7 @@ export default function JubmojisPage() {
               value={search}
               onChange={onSearch}
               onFocus={() => setIsSearchMode(true)}
-              disabled={!selectedJubmoji}
+              disabled={!hasSelectedJubmoji}
             />
             {isSearchMode ? (
               <button
@@ -227,7 +292,7 @@ export default function JubmojisPage() {
                 variant="blue"
                 onClick={() => setBackupModalOpen(true)}
                 className="!font-semibold"
-                disabled={!selectedJubmoji}
+                disabled={!hasSelectedJubmoji}
               >
                 Back up!
               </Button>
@@ -238,10 +303,10 @@ export default function JubmojisPage() {
           id="jubmoji-slider"
           className={cn("flex flex-col xs:mt-0")}
           style={{
-            height: `${cardSize - 50}px`,
+            height: `${cardSize}px`,
           }}
         >
-          {isLoadingJubmojiCards ? (
+          {isLoadingPage ? (
             <PagePlaceholder />
           ) : isSearchMode ? (
             noSearchResults ? (
@@ -252,17 +317,10 @@ export default function JubmojisPage() {
                   if (!jubmoji) return null;
                   return (
                     <JubmojiNavItem
-                      key={index}
+                      key={jubmoji.pubKeyIndex}
                       size="full"
                       className="!w-[70px] !h-[70px]"
-                      onClick={() => {
-                        setSearch(""); // clear search to show selected item
-                        setIsSearchMode(false);
-                        setSelectedPubKeyIndex(jubmoji?.pubKeyIndex);
-                        if (!jubmojiSlider) return;
-                        console.log("jubmojiSlider before go", jubmojiSlider);
-                        jubmojiSlider?.slickGoTo(index);
-                      }}
+                      onClick={() => handleSearchItem(jubmoji.pubKeyIndex)}
                     >
                       <div className="flex items-center content-center">
                         <span className="text-[40px] leading-none mx-auto py-auto mt-2">
@@ -274,7 +332,7 @@ export default function JubmojisPage() {
                 })}
               </div>
             )
-          ) : !selectedJubmoji ? (
+          ) : !hasSelectedJubmoji ? (
             <div className="flex flex-col mx-auto gap-2 mt-5 h-full">
               <div className="my-auto">
                 <div className="mx-auto">
@@ -297,23 +355,14 @@ export default function JubmojisPage() {
             </div>
           ) : (
             <Slider
-              {...jubmojiSliderConfig}
               asNavFor={navigatorSlider}
               ref={(slider: any) => {
                 if (!slider) return;
                 setJubmojiSlider(slider);
               }}
               className={`min-[${cardSize}px] h-full`}
-              onInit={() => {
-                console.log("on init");
-                if (!navigatorSlider) return;
-                navigatorSlider.slickGoTo(2);
-              }}
-              afterChange={(index) => {
-                const selectedIndex = collectedJubmojis[index]?.pubKeyIndex;
-                if (!selectedIndex) return;
-                setSelectedPubKeyIndex(selectedIndex);
-              }}
+              afterChange={handleIndexChange}
+              {...jubmojiSliderConfig}
             >
               {collectedJubmojis.map((jubmoji, index) => {
                 if (!jubmoji) return null;
@@ -329,7 +378,7 @@ export default function JubmojisPage() {
 
                 return (
                   <CollectionCard
-                    key={index}
+                    key={jubmoji.pubKeyIndex}
                     height={cardSize}
                     label={jubmoji.name}
                     icon={jubmoji.emoji}
@@ -341,7 +390,7 @@ export default function JubmojisPage() {
                     actions={null}
                     quests={jubmojiQuests}
                     onBackup={() => setBackupModalOpen(true)}
-                    className={`min-[${cardSize - 50}px] h-full`}
+                    className={`min-[${cardSize}px] h-full`}
                   />
                 );
               })}
@@ -352,7 +401,7 @@ export default function JubmojisPage() {
         {showNav && (
           <div
             id="nav-wrapper"
-            className="mt-auto fixed-bottom z-1 h-[50px] xs:h-[70px] my-1"
+            className="mt-auto fixed-bottom z-1 h-[50px] xs:h-[70px] my-1 -ml-[17px]"
           >
             <Slider
               {...navigatorSliderConfig}
@@ -367,7 +416,13 @@ export default function JubmojisPage() {
 
                 if (!jubmoji) return null;
                 return (
-                  <JubmojiNavItem key={index} active={isActive}>
+                  <JubmojiNavItem
+                    key={index}
+                    active={isActive}
+                    onClick={() => {
+                      handleIndexChange(index);
+                    }}
+                  >
                     {jubmoji?.emoji!}
                   </JubmojiNavItem>
                 );
