@@ -3,7 +3,7 @@ import { Icons } from "@/components/Icons";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/Placeholder";
@@ -16,9 +16,10 @@ import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
 import Link from "next/link";
+import Slider, { Settings as SliderSettings } from "react-slick";
 
 const JubmojiNavItem = classed.div(
-  "flex items-center justify-center p-2 rounded cursor-pointer",
+  "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-200",
   {
     variants: {
       size: {
@@ -26,20 +27,50 @@ const JubmojiNavItem = classed.div(
         full: "w-full",
       },
       active: {
-        true: "bg-shark-600 mx-2 first:ml-0 mx-2 last:mr-0",
+        true: "bg-shark-600",
         false: "bg-shark-900",
+      },
+      loading: {
+        true: "bg-slate-200 animate-pulse",
       },
     },
     defaultVariants: {
       size: "md",
       active: false,
+      loading: false,
     },
   }
 );
 
 const JubmojiNavWrapper = classed.div(
-  "fixed-bottom grid grid-flow-col auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
+  "fixed-bottom grid grid-flow-col justify-center auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-auto"
 );
+
+const PagePlaceholder = () => {
+  return (
+    <div className="flex flex-col w-full grow">
+      <div className="flex flex-col h-full mt-4">
+        <Placeholder.Card className="!rounded-[20px] w-full h-full" />
+      </div>
+      <JubmojiNavWrapper className="fixed-bottom grid grid-flow-col justify-center auto-cols-max h-[60px] xs:h-[80px] py-2 xs:py-[6px] gap-[1px] px-2 w-full overflow-x-scroll bg-shark-970 mx-autoz-1">
+        <JubmojiNavItem loading />
+        <JubmojiNavItem loading />
+        <JubmojiNavItem loading />
+      </JubmojiNavWrapper>
+    </div>
+  );
+};
+
+const navigatorSliderConfig: SliderSettings = {
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  centerMode: true,
+  variableWidth: true,
+  focusOnSelect: true,
+  infinite: false,
+  dots: false,
+  arrows: false,
+};
 
 export default function JubmojisPage() {
   const router = useRouter();
@@ -53,16 +84,26 @@ export default function JubmojisPage() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
 
-  const startX = useRef(0);
-  const startY = useRef(0);
+  const [jubmojiSliderConfig, setJubmojiSliderConfig] =
+    useState<SliderSettings>({
+      adaptiveHeight: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      dots: false,
+      arrows: false,
+      infinite: false,
+      initialSlide: 2,
+    });
+
+  const [jubmojiSlider, setJubmojiSlider] = useState<any>(null);
+  const [navigatorSlider, setNavigatorSlider] = useState<any>(null);
 
   const calculateCardSize = () => {
     const footer = document.getElementById("footer")?.clientHeight ?? 0;
     const header = document.getElementById("header")?.clientHeight ?? 0;
-    const navWrapper =
-      document.getElementById("nav-wrapper")?.clientHeight ?? 0;
+    const navWrapper = 0; //document.getElementById("nav-wrapper")?.clientHeight ?? 0;
 
-    const SPACING = 70; // spacing between header and footer
+    const SPACING = 50; // spacing between header and footer
 
     const cardSize =
       window?.innerHeight - footer - header - navWrapper - SPACING;
@@ -83,38 +124,36 @@ export default function JubmojisPage() {
     window.addEventListener("resize", calculateCardSize); // add resize listener
   }, []);
 
-  useEffect(() => {
-    if (isLoadingJubmojiCards) return;
-    // set default pubKeyIndex from query params
-    setSelectedPubKeyIndex(Number(pubKeyIndex) || jubmojis[0]?.pubKeyIndex);
-  }, [isLoadingJubmojiCards, jubmojis, pubKeyIndex]);
-
   const selectedJubmoji = getJubmojiCardByPubIndex(
     jubmojiCollectionCards,
     selectedPubKeyIndex
   );
-  const {
-    emoji,
-    name,
-    owner,
-    prerequisitesFor,
-    collectsFor,
-    imagePath,
-    telegramChatInviteLink,
-  } = selectedJubmoji ?? {};
 
   // get all jubmojis collected infos
   const collectedPubKeys = Object.entries(jubmojis).map(
     ([_index, { pubKeyIndex }]) => pubKeyIndex
   );
 
-  const msgNonce = jubmojis.find((jubmoji: Jubmoji) => {
-    return jubmoji.pubKeyIndex === selectedPubKeyIndex;
-  })?.msgNonce;
-
   const collectedJubmojis = collectedPubKeys.map((pubKeyIndex) => {
     return getJubmojiCardByPubIndex(jubmojiCollectionCards, pubKeyIndex);
   });
+
+  useEffect(() => {
+    return;
+    if (isLoadingJubmojiCards) return;
+    if (jubmojiSliderConfig.initialSlide === undefined) return;
+    // set default pubKeyIndex from query params
+    const currentPubKeyIndex = Number(pubKeyIndex) || 0;
+    const activeIndex = collectedJubmojis.findIndex(
+      (jubmoji) => jubmoji?.pubKeyIndex === currentPubKeyIndex
+    );
+
+    console.log("default index", activeIndex, jubmojiSliderConfig);
+    setJubmojiSliderConfig({
+      ...jubmojiSliderConfig,
+      initialSlide: activeIndex,
+    });
+  }, [isLoadingJubmojiCards]);
 
   // get all jubmojis that match the search
   const filteredJubmojis = collectedJubmojis
@@ -130,148 +169,11 @@ export default function JubmojisPage() {
     })
     .filter(Boolean);
 
-  // get all quests that the selected jubmoji is a prerequisite or collection card for
-  const jubmojiQuests = [...(prerequisitesFor || []), ...(collectsFor || [])];
-
-  const JubmojiContent = () => {
-    if (isLoadingJubmojiCards)
-      return (
-        <div className="flex flex-col w-full">
-          <div
-            style={{
-              height: `${cardSize}px`,
-            }}
-            className="flex flex-col grow h-full"
-          >
-            <Placeholder.Card
-              style={{
-                height: `${cardSize - 80}px`,
-              }}
-              className="!rounded-[20px] w-full"
-            />
-          </div>
-          <JubmojiNavWrapper className="z-1">
-            <JubmojiNavItem className="bg-slate-200 animate-pulse" />
-            <JubmojiNavItem className="bg-slate-200 animate-pulse" />
-            <JubmojiNavItem className="bg-slate-200 animate-pulse" />
-          </JubmojiNavWrapper>
-        </div>
-      );
-
-    if (!selectedJubmoji) {
-      return (
-        <div
-          className="flex flex-col mx-auto gap-2 mt-5"
-          style={{
-            height: `${cardSize}px`,
-          }}
-        >
-          <div className="my-auto">
-            <div className="mx-auto">
-              <Icons.starSolid />
-            </div>
-            <div className="mx-auto flex flex-col gap-5">
-              <Image
-                height={220}
-                width={300}
-                src="/images/no-jubmojis.png"
-                alt="no result"
-              />
-              <Link href="/">
-                <Button rounded size="sm" className="max-w-[100px] mx-auto">
-                  {"Let's go"}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <>
-        {name && owner && (
-          <div
-            className="flex flex-col justify-center xs:mt-0"
-            style={{
-              height: `${cardSize}px`,
-            }}
-          >
-            <CollectionCard
-              height={cardSize}
-              label={name}
-              icon={emoji}
-              edition={msgNonce ? msgNonce - 1 : ""}
-              owner={owner}
-              pubKeyIndex={selectedPubKeyIndex}
-              cardBackImage={imagePath}
-              telegramChatInviteLink={telegramChatInviteLink}
-              actions={null}
-              quests={jubmojiQuests}
-              onBackup={() => setBackupModalOpen(true)}
-            />
-          </div>
-        )}
-      </>
-    );
-  };
-
-  const JubmojiSearchItems = () => {
-    if (filteredJubmojis.length === 0) {
-      return <Message>No results found.</Message>;
-    }
-
-    return (
-      <div className="flex flex-wrap gap-3 mt-4 mx-auto">
-        {filteredJubmojis?.map((jubmoji, index) => {
-          if (!jubmoji) return null;
-          return (
-            <JubmojiNavItem
-              key={index}
-              size="full"
-              className="!w-[70px] !h-[70px]"
-              onClick={() => {
-                setSearch(""); // clear search to show selected item
-                setIsSearchMode(false);
-                setSelectedPubKeyIndex(jubmoji?.pubKeyIndex);
-              }}
-            >
-              <div className="flex items-center content-center">
-                <span className="text-[40px] leading-none mx-auto py-auto mt-2">
-                  {jubmoji?.emoji}
-                </span>
-              </div>
-            </JubmojiNavItem>
-          );
-        })}
-      </div>
-    );
-  };
+  const noSearchResults = filteredJubmojis?.length === 0;
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e?.target?.value);
     setIsSearchMode(true);
-  };
-
-  const handleNavSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
-    const MIN_SWIPE_DISTANCE = 20; // min distance to swipe
-    const clientX = event.touches[0].clientX;
-
-    const distance = clientX - startX.current;
-    const index = Math.min(
-      Math.round(distance / MIN_SWIPE_DISTANCE),
-      collectedJubmojis.length
-    );
-    const swipeIndex = index < 0 ? 0 : index;
-
-    if (swipeIndex < 0 || swipeIndex == collectedJubmojis.length) return;
-
-    const selectedSwipeJubmojiPubKey =
-      collectedJubmojis?.[swipeIndex]?.pubKeyIndex;
-
-    if (selectedSwipeJubmojiPubKey) {
-      setSelectedPubKeyIndex(selectedSwipeJubmojiPubKey);
-    }
   };
 
   const showNav =
@@ -332,37 +234,145 @@ export default function JubmojisPage() {
             )}
           </div>
         </AppHeader>
+        <div
+          id="jubmoji-slider"
+          className={cn("flex flex-col xs:mt-0")}
+          style={{
+            height: `${cardSize - 50}px`,
+          }}
+        >
+          {isLoadingJubmojiCards ? (
+            <PagePlaceholder />
+          ) : isSearchMode ? (
+            noSearchResults ? (
+              <Message>No results found.</Message>
+            ) : (
+              <div className="flex gap-2 justify-center flex-wrap">
+                {filteredJubmojis?.map((jubmoji, index) => {
+                  if (!jubmoji) return null;
+                  return (
+                    <JubmojiNavItem
+                      key={index}
+                      size="full"
+                      className="!w-[70px] !h-[70px]"
+                      onClick={() => {
+                        setSearch(""); // clear search to show selected item
+                        setIsSearchMode(false);
+                        setSelectedPubKeyIndex(jubmoji?.pubKeyIndex);
+                        if (!jubmojiSlider) return;
+                        console.log("jubmojiSlider before go", jubmojiSlider);
+                        jubmojiSlider?.slickGoTo(index);
+                      }}
+                    >
+                      <div className="flex items-center content-center">
+                        <span className="text-[40px] leading-none mx-auto py-auto mt-2">
+                          {jubmoji?.emoji}
+                        </span>
+                      </div>
+                    </JubmojiNavItem>
+                  );
+                })}
+              </div>
+            )
+          ) : !selectedJubmoji ? (
+            <div className="flex flex-col mx-auto gap-2 mt-5 h-full">
+              <div className="my-auto">
+                <div className="mx-auto">
+                  <Icons.starSolid />
+                </div>
+                <div className="mx-auto flex flex-col gap-5">
+                  <Image
+                    height={220}
+                    width={300}
+                    src="/images/no-jubmojis.png"
+                    alt="no result"
+                  />
+                  <Link href="/">
+                    <Button rounded size="sm" className="max-w-[100px] mx-auto">
+                      {"Let's go"}
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Slider
+              {...jubmojiSliderConfig}
+              asNavFor={navigatorSlider}
+              ref={(slider: any) => {
+                if (!slider) return;
+                setJubmojiSlider(slider);
+              }}
+              className={`min-[${cardSize}px] h-full`}
+              onInit={() => {
+                console.log("on init");
+                if (!navigatorSlider) return;
+                navigatorSlider.slickGoTo(2);
+              }}
+              afterChange={(index) => {
+                const selectedIndex = collectedJubmojis[index]?.pubKeyIndex;
+                if (!selectedIndex) return;
+                setSelectedPubKeyIndex(selectedIndex);
+              }}
+            >
+              {collectedJubmojis.map((jubmoji, index) => {
+                if (!jubmoji) return null;
 
-        {isSearchMode ? <JubmojiSearchItems /> : <JubmojiContent />}
+                const jubmojiQuests = [
+                  ...(jubmoji.prerequisitesFor || []),
+                  ...(jubmoji.collectsFor || []),
+                ];
+
+                const msgNonce = jubmojis.find((jubmojiItem: Jubmoji) => {
+                  return jubmojiItem.pubKeyIndex === jubmoji?.pubKeyIndex;
+                })?.msgNonce;
+
+                return (
+                  <CollectionCard
+                    key={index}
+                    height={cardSize}
+                    label={jubmoji.name}
+                    icon={jubmoji.emoji}
+                    edition={msgNonce ? msgNonce - 1 : ""}
+                    owner={jubmoji.owner}
+                    pubKeyIndex={jubmoji.pubKeyIndex}
+                    cardBackImage={jubmoji.imagePath}
+                    telegramChatInviteLink={jubmoji.telegramChatInviteLink}
+                    actions={null}
+                    quests={jubmojiQuests}
+                    onBackup={() => setBackupModalOpen(true)}
+                    className={`min-[${cardSize - 50}px] h-full`}
+                  />
+                );
+              })}
+            </Slider>
+          )}
+        </div>
 
         {showNav && (
-          <div id="nav-wrapper" className="mt-auto">
-            <JubmojiNavWrapper
-              onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
-                startX.current = event.touches[0].clientX;
-                startY.current = event.touches[0].clientY;
+          <div
+            id="nav-wrapper"
+            className="mt-auto fixed-bottom z-1 h-[50px] xs:h-[70px] my-1"
+          >
+            <Slider
+              {...navigatorSliderConfig}
+              asNavFor={jubmojiSlider}
+              ref={(slider: any) => {
+                if (!slider) return;
+                setNavigatorSlider(slider);
               }}
-              onTouchEnd={() => {
-                startX.current = 0;
-                startY.current = 0;
-              }}
-              onTouchMove={handleNavSwipe}
             >
               {collectedJubmojis?.map((jubmoji, index) => {
                 const isActive = jubmoji?.pubKeyIndex === selectedPubKeyIndex;
 
                 if (!jubmoji) return null;
                 return (
-                  <JubmojiNavItem
-                    key={index}
-                    active={isActive}
-                    onClick={() => setSelectedPubKeyIndex(jubmoji?.pubKeyIndex)}
-                  >
+                  <JubmojiNavItem key={index} active={isActive}>
                     {jubmoji?.emoji!}
                   </JubmojiNavItem>
                 );
               })}
-            </JubmojiNavWrapper>
+            </Slider>
           </div>
         )}
       </div>
