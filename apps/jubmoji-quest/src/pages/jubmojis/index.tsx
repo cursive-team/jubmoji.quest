@@ -266,8 +266,8 @@ export default function JubmojisPage() {
         >
           <div
             className={cn(
-              "grid justify-between gap-2",
-              isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr_110px]"
+              "grid justify-between gap-2 duration-200",
+              isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr]"
             )}
           >
             <Input
@@ -278,24 +278,13 @@ export default function JubmojisPage() {
               onFocus={() => setIsSearchMode(true)}
               disabled={!hasSelectedJubmoji}
             />
-            {isSearchMode ? (
+            {isSearchMode && (
               <button
                 onClick={() => setIsSearchMode(false)}
                 className="font-dm-sans text-[13px]"
               >
                 Cancel
               </button>
-            ) : (
-              <Button
-                icon={<Icons.download className="text-black" />}
-                size="tiny"
-                variant="blue"
-                onClick={() => setBackupModalOpen(true)}
-                className="!font-semibold"
-                disabled={!hasSelectedJubmoji}
-              >
-                Back up!
-              </Button>
             )}
           </div>
         </AppHeader>

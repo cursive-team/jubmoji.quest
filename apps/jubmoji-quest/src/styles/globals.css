@@ -87,10 +87,12 @@ input[type="search"] {
   @apply !h-full;
 }
 
-#nav-wrapper .slick-slide {
-  @apply duration-200 first:ml-0 mx-[1px] last:mr-0;
-}
+
 
 #nav-wrapper .slick-slide.slick-active {
  @apply first:ml-0 !mx-2;
+}
+
+#nav-wrapper .slick-slide {
+  @apply duration-200 first:ml-0 mx-[1px] last:mr-0 only-of-type:!ml-[50%] only-of-type:translate-x-[-8px];
 }

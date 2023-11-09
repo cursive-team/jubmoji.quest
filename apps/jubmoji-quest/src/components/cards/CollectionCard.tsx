@@ -85,7 +85,7 @@ const CollectionCardBackupButton = ({
 };
 
 const CardLabel = classed.span(
-  "font-dm-sans text-[13px] font-normal  text-shark-50 text-base",
+  "font-dm-sans text-[13px] font-normal text-left text-shark-50 text-base",
   {
     variants: {
       clamp: {
