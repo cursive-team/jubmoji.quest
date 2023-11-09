@@ -30,6 +30,11 @@ const nextConfig = {
         destination: "https://www.jubmoji.quest/quests/7",
         permanent: true,
       },
+      {
+        source: "/card-request",
+        destination: "https://airtable.com/apprikYUs5WuXJRbN/shrIHSLl3CiJ76OxI",
+        permanent: true,
+      },
     ];
   },
 };
