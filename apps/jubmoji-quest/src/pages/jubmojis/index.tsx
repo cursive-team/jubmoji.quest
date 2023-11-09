@@ -11,7 +11,7 @@ import BackupModal from "@/components/modals/BackupModal";
 import { cn } from "@/lib/utils";
 import { Jubmoji } from "jubmoji-api";
 import { useRouter } from "next/router";
-import { CollectionCardArc } from "@/components/cards/CollectionCardArc";
+import { CollectionCard } from "@/components/cards/CollectionCard";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
@@ -136,10 +136,19 @@ export default function JubmojisPage() {
   const JubmojiContent = () => {
     if (isLoadingJubmojiCards)
       return (
-        <div className="flex flex-col">
-          <div className="flex flex-col mx-auto justify-center h-[calc(100vh-350px)] xs:h-[calc(100vh-380px)]">
-            <Placeholder.CardArc className="w-[300px]" />
-            <Placeholder.Card className="w-[300px] !rounded-t-none" size="xs" />
+        <div className="flex flex-col w-full">
+          <div
+            style={{
+              height: `${cardSize}px`,
+            }}
+            className="flex flex-col grow h-full"
+          >
+            <Placeholder.Card
+              style={{
+                height: `${cardSize - 80}px`,
+              }}
+              className="!rounded-[20px] w-full"
+            />
           </div>
           <JubmojiNavWrapper className="z-1">
             <JubmojiNavItem className="bg-slate-200 animate-pulse" />
@@ -188,7 +197,7 @@ export default function JubmojisPage() {
               height: `${cardSize}px`,
             }}
           >
-            <CollectionCardArc
+            <CollectionCard
               height={cardSize}
               label={name}
               icon={emoji}
@@ -199,6 +208,7 @@ export default function JubmojisPage() {
               telegramChatInviteLink={telegramChatInviteLink}
               actions={null}
               quests={jubmojiQuests}
+              onBackup={() => setBackupModalOpen(true)}
             />
           </div>
         )}

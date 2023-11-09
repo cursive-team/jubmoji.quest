@@ -50,7 +50,7 @@ const Onboarding = ({ children }: OnboardingProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1 grid-rows-[300px_10px] flex-col gap-8 w-full">
+    <div className="grid grid-cols-1 grid-rows-[1fr_10px] flex-col gap-8 w-full">
       <div
         className="flex overflow-x-hidden w-full relative"
         onTouchStart={(event: React.TouchEvent<HTMLDivElement>) => {
@@ -63,7 +63,7 @@ const Onboarding = ({ children }: OnboardingProps) => {
           handleSwipe();
         }}
       >
-        <div className="min-h-[220px] my-auto">
+        <div className="relative my-auto">
           {onBoardingItems?.map((child, index) => (
             <div key={index}>
               <Transition
