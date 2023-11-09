@@ -51,7 +51,7 @@ const Modal = ({
             >
               <Dialog.Panel className="fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full transform overflow-hidden p-6 text-left align-middle shadow-xl transition-all">
                 {closable && (
-                  <div className="fixed z-100 right-[24px] top-[9px] flex items-center h-12 py-8">
+                  <div className="fixed z-100 right-[24px] top-[6px] flex items-center h-12 py-8">
                     <button
                       type="button"
                       className="ml-auto ring-0 focus:right-0 focus:outline-none outline-none cursor-pointer"

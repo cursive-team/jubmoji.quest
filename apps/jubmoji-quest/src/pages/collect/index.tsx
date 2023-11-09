@@ -367,7 +367,7 @@ export default function CollectJubmojiPage() {
             edition={collectedJubmoji.msgNonce - 1}
             pubKeyIndex={collectedJubmoji.pubKeyIndex}
             cardBackImage={collectedCard.imagePath}
-            height={450}
+            height={420}
             size="sm"
             disabled
             preview
