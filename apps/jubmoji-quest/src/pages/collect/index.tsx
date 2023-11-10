@@ -12,7 +12,6 @@ import { Card } from "@/components/cards/Card";
 import { Button } from "@/components/ui/Button";
 import { Icons } from "@/components/Icons";
 import { Modal } from "@/components/modals/Modal";
-import { Onboarding } from "@/components/Onboarding";
 import {
   JubmojiCardProps,
   getJubmojiCardByPubIndex,
@@ -25,6 +24,8 @@ import { SimpleCard } from "@/components/cards/SimpleCard";
 import { HUNT_TEAM_JUBMOJI_PUBKEY_INDICES } from "@/constants";
 import { classed } from "@tw-classed/react";
 import { CollectionCard } from "@/components/cards/CollectionCard";
+import Slider from "react-slick";
+import { cn } from "@/lib/utils";
 
 enum CollectStatus {
   UNKNOWN = "Unknown",
@@ -36,116 +37,179 @@ enum CollectStatus {
   STANDARD = "Standard",
 }
 
-const OnboardingCard = classed.div(Card.Base, "grid grid-rows-[200px_180px]", {
+const OnboardingCard = classed.div(Card.Base, "!grid grid-rows-[200px_180px]", {
   defaultVariants: {
     rounded: true,
     centred: true,
   },
 });
 
+const OnboardingIndicator = classed.div(
+  "h-2 border border-shark-600 grow duration-300",
+  {
+    variants: {
+      active: {
+        true: "bg-shark-600",
+      },
+    },
+    defaultVariants: {
+      active: false,
+    },
+  }
+);
+
 const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
+  const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <Onboarding>
-      <OnboardingCard>
-        <Card.Header spacing="md">
-          <span className="my-auto text-[60px] leading-none pt-[32px] pb-[22px]">
-            {jubmoji.emoji}
-          </span>
-        </Card.Header>
-        <Card.Content className="!gap-4" spacing="sm">
-          <Card.Title centred font="giorgio" size="md">
-            Yay, you got a jubmoji!
-          </Card.Title>
-          <Card.Description font="dm">
-            {`This is a digital memento of an in-person experience that's unique
+    <div className="flex flex-col gap-6" id="onboarding-slider">
+      <Slider
+        infinite={false}
+        arrows={false}
+        fade={true}
+        dots={true}
+        dotsClass="flex gap-2 mt-6"
+        afterChange={(index: number) => {
+          setActiveIndex(index);
+        }}
+        appendDots={(dots: any) => {
+          return (
+            <div className="py-2">
+              {dots?.map((item: any, index: number) => {
+                const activeIndex = dots.findIndex((dot: any) => {
+                  return dot.props.className.includes("slick-active");
+                });
+
+                const isActive = index <= activeIndex;
+
+                return (
+                  <OnboardingIndicator
+                    key={index}
+                    active={isActive}
+                    onClick={item?.props?.children?.props?.onClick}
+                  />
+                );
+              })}
+            </div>
+          );
+        }}
+      >
+        <OnboardingCard>
+          <Card.Header spacing="md">
+            <span className="my-auto text-[60px] leading-none pt-[32px] pb-[22px]">
+              {jubmoji.emoji}
+            </span>
+          </Card.Header>
+          <Card.Content className="!gap-4" spacing="sm">
+            <Card.Title centred font="giorgio" size="md">
+              Yay, you got a jubmoji!
+            </Card.Title>
+            <Card.Description font="dm">
+              {`This is a digital memento of an in-person experience that's unique
             and verifiable.`}
-          </Card.Description>
-        </Card.Content>
-      </OnboardingCard>
-      <OnboardingCard>
-        <Card.Header>
-          <div className="flex flex-col gap-4">
+            </Card.Description>
+          </Card.Content>
+        </OnboardingCard>
+        <OnboardingCard>
+          <Card.Header>
+            <div className="flex flex-col gap-4">
+              <Image
+                src="/images/onboarding-privacy.svg"
+                alt="onboarding browser"
+                width={180}
+                height={120}
+                sizes="100vw"
+              />
+            </div>
+          </Card.Header>
+          <Card.Content className="!gap-4" spacing="sm">
+            <Card.Title centred font="giorgio" size="md">
+              It lives in your browser
+            </Card.Title>
+            <Card.Description centred font="dm">
+              Our server never sees your collection. Your data lives in
+              temporary browser storage.
+            </Card.Description>
+          </Card.Content>
+        </OnboardingCard>
+        <OnboardingCard>
+          <Card.Header>
             <Image
-              src="/images/onboarding-privacy.svg"
-              alt="onboarding browser"
-              width={180}
               height={120}
+              width={190}
               sizes="100vw"
+              src="/images/onboarding-backup.svg"
+              alt="onboarding backup"
             />
-          </div>
-        </Card.Header>
-        <Card.Content className="!gap-4" spacing="sm">
-          <Card.Title centred font="giorgio" size="md">
-            It lives in your browser
-          </Card.Title>
-          <Card.Description centred font="dm">
-            Our server never sees your collection. Your data lives in temporary
-            browser storage.
-          </Card.Description>
-        </Card.Content>
-      </OnboardingCard>
-      <OnboardingCard>
-        <Card.Header>
-          <Image
-            height={120}
-            width={190}
-            sizes="100vw"
-            src="/images/onboarding-backup.svg"
-            alt="onboarding backup"
-          />
-        </Card.Header>
-        <Card.Content className="!gap-4" spacing="sm">
-          <Card.Title centred font="giorgio" size="md">
-            Make sure to back up!
-          </Card.Title>
-          <Card.Description font="dm">
-            You can use a mobile wallet, password manager, or an E2EE messaging
-            app!
-          </Card.Description>
-        </Card.Content>
-      </OnboardingCard>
-      <OnboardingCard>
-        <Card.Header>
-          <Image
-            height={120}
-            width={190}
-            sizes="100vw"
-            src="/images/onboarding-quests.svg"
-            alt="onboarding quests"
-          />
-        </Card.Header>
-        <Card.Content className="!gap-4" spacing="sm">
-          <Card.Title centred font="giorgio" size="md">
-            Embark on quests
-          </Card.Title>
-          <Card.Description font="dm">
-            Collect specific jubmojis on quests to unlock powers!
-          </Card.Description>
-        </Card.Content>
-      </OnboardingCard>
-      <OnboardingCard>
-        <Card.Header>
-          <div
-            className={`w-full grid grid-flow-col justify-around grid-cols-[${
-              Object.keys(PowerTypeIconMapping).length
-            }]`}
-          >
-            {Object.entries(PowerTypeIconMapping).map(([key, icon]) => {
-              return <span key={key}>{icon}</span>;
-            })}
-          </div>
-        </Card.Header>
-        <Card.Content className="!gap-4" spacing="sm" centred>
-          <Card.Title centred font="giorgio" size="md">
-            Use your new powers!
-          </Card.Title>
-          <Card.Description font="dm" centred>
-            Make zk proofs about your private collection to verifiably post or
-            unlock tickets and discounts
-          </Card.Description>
-        </Card.Content>
-      </OnboardingCard>
-    </Onboarding>
+          </Card.Header>
+          <Card.Content className="!gap-4" spacing="sm">
+            <Card.Title centred font="giorgio" size="md">
+              Make sure to back up!
+            </Card.Title>
+            <Card.Description font="dm">
+              You can use a mobile wallet, password manager, or an E2EE
+              messaging app!
+            </Card.Description>
+          </Card.Content>
+        </OnboardingCard>
+        <OnboardingCard>
+          <Card.Header>
+            <Image
+              height={120}
+              width={190}
+              sizes="100vw"
+              src="/images/onboarding-quests.svg"
+              alt="onboarding quests"
+            />
+          </Card.Header>
+          <Card.Content className="!gap-4" spacing="sm">
+            <Card.Title centred font="giorgio" size="md">
+              Embark on quests
+            </Card.Title>
+            <Card.Description font="dm">
+              Collect specific jubmojis on quests to unlock powers!
+            </Card.Description>
+          </Card.Content>
+        </OnboardingCard>
+
+        <div className="flex flex-col">
+          <OnboardingCard>
+            <Card.Header>
+              <div
+                className={`w-full grid grid-flow-col justify-around grid-cols-[${
+                  Object.keys(PowerTypeIconMapping).length
+                }]`}
+              >
+                {Object.entries(PowerTypeIconMapping).map(([key, icon]) => {
+                  return <span key={key}>{icon}</span>;
+                })}
+              </div>
+            </Card.Header>
+            <Card.Content className="!gap-4" spacing="sm" centred>
+              <Card.Title centred font="giorgio" size="md">
+                Use your new powers!
+              </Card.Title>
+              <Card.Description font="dm" centred>
+                Make zk proofs about your private collection to verifiably post
+                or unlock tickets and discounts
+              </Card.Description>
+            </Card.Content>
+          </OnboardingCard>
+        </div>
+      </Slider>
+      <Button
+        className={cn("duration-100 opacity-100", {
+          "invisible opacity-0": activeIndex !== 4,
+        })}
+        icon={<Icons.arrowRight className="text-black" />}
+        iconPosition="right"
+        variant="secondary"
+        onClick={() => router.push(`/jubmojis`)}
+      >
+        Go to app!
+      </Button>
+    </div>
   );
 };
 
@@ -303,7 +367,7 @@ export default function CollectJubmojiPage() {
             edition={collectedJubmoji.msgNonce - 1}
             pubKeyIndex={collectedJubmoji.pubKeyIndex}
             cardBackImage={collectedCard.imagePath}
-            height={500}
+            height={420}
             size="sm"
             disabled
             preview
@@ -372,7 +436,7 @@ export default function CollectJubmojiPage() {
         );
     }
 
-    return <></>;
+    return null;
   };
 
   return (

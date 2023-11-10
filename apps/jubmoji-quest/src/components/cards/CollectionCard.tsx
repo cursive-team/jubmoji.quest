@@ -84,6 +84,20 @@ const CollectionCardBackupButton = ({
   );
 };
 
+const CardLabel = classed.span(
+  "font-dm-sans text-[13px] font-normal text-left text-shark-50 text-base",
+  {
+    variants: {
+      clamp: {
+        true: "line-clamp-2",
+      },
+    },
+    defaultVariants: {
+      clamp: false,
+    },
+  }
+);
+
 const CollectionCard = ({
   label,
   edition,
@@ -151,15 +165,37 @@ const CollectionCard = ({
       <div className="flex flex-col relative">
         <div className="flex flex-col gap-2 bg-shark-970 z-[2]">
           {!preview && (
-            <span className="font-dm-sans text-[13px] font-normal line-clamp-2 text-shark-50">
-              {label}
-            </span>
+            <div className="flex flex-col gap-3">
+              <Link href={telegramChatInviteUrl ?? "#"}>
+                <div>
+                  <Button
+                    size="tiny"
+                    variant="blue"
+                    className="max-w-[150px]"
+                    rounded
+                    disabled={!telegramChatInviteUrl}
+                  >
+                    <div className="flex items-center gap-1">
+                      <Image
+                        src="/images/telegram-icon.svg"
+                        alt="Collector's chat"
+                        width={16}
+                        height={16}
+                        sizes="100vw"
+                      />
+                      <span className="font-semibold font-dm-sans text-[13px]">
+                        {"Collector's Chat"}
+                      </span>
+                    </div>
+                  </Button>
+                </div>
+              </Link>
+              <CardLabel clamp>{label}</CardLabel>
+            </div>
           )}
           <div className="flex">
             {preview ? (
-              <span className="text-shark-50 font-dm-sans max-w-[190px] text-base">
-                {label}
-              </span>
+              <CardLabel className="max-w-[190px]">{label}</CardLabel>
             ) : (
               backedUp !== undefined && (
                 <CollectionCardBackupButton
@@ -229,29 +265,6 @@ const CollectionCard = ({
                   </div>
                 );
               })}
-              {telegramChatInviteUrl && (
-                <Link href={telegramChatInviteUrl}>
-                  <div>
-                    <Button
-                      size="tiny"
-                      variant="blue"
-                      className="max-w-[150px]"
-                      rounded
-                    >
-                      <div className="flex items-center gap-1">
-                        <Image
-                          src="/images/telegram-icon.svg"
-                          alt="Collector's chat"
-                          width={16}
-                          height={16}
-                          sizes="100vw"
-                        />
-                        <span>{"Collector's Chat"}</span>
-                      </div>
-                    </Button>
-                  </div>
-                </Link>
-              )}
             </div>
           </div>
         </div>
