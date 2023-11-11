@@ -167,30 +167,33 @@ const CollectionCard = ({
         <div className="flex flex-col gap-2 bg-shark-970 z-[2]">
           {!preview && (
             <div className="flex flex-col gap-3">
-              <Link href={telegramChatInviteUrl ?? "#"}>
-                <div>
-                  <Button
-                    size="tiny"
-                    variant="blue"
-                    className="max-w-[150px]"
-                    rounded
-                    disabled={!telegramChatInviteUrl}
-                  >
-                    <div className="flex items-center gap-1">
-                      <Image
-                        src="/images/telegram-icon.svg"
-                        alt="Collector's chat"
-                        width={16}
-                        height={16}
-                        sizes="100vw"
-                      />
-                      <span className="font-semibold font-dm-sans text-[13px]">
-                        {"Collector's Chat"}
-                      </span>
-                    </div>
-                  </Button>
-                </div>
-              </Link>
+              {telegramChatInviteUrl && (
+                <Link href={telegramChatInviteUrl ?? "#"}>
+                  <div>
+                    <Button
+                      size="tiny"
+                      variant="blue"
+                      className="max-w-[80px]"
+                      rounded
+                      disabled={!telegramChatInviteUrl}
+                    >
+                      <div className="flex items-center gap-1">
+                        <Image
+                          src="/images/telegram-icon.svg"
+                          alt="Chat"
+                          width={16}
+                          height={16}
+                          sizes="100vw"
+                        />
+                        <span className="font-semibold font-dm-sans text-[13px]">
+                          {"Chat"}
+                        </span>
+                      </div>
+                    </Button>
+                  </div>
+                </Link>
+              )}
+
               <CardLabel clamp>{label}</CardLabel>
             </div>
           )}
@@ -220,6 +223,10 @@ const CollectionCard = ({
   let telegramChatInviteUrl: URL | undefined;
   if (telegramChatInviteLink) {
     try {
+      if (!telegramChatInviteLink.startsWith("https://")) {
+        telegramChatInviteLink = "https://" + telegramChatInviteLink;
+      }
+
       telegramChatInviteUrl = new URL(telegramChatInviteLink);
     } catch {
       console.error("Invalid telegram chat invite link");

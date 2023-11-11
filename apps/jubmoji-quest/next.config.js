@@ -36,6 +36,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/quest-proposal",
+        destination: "https://airtable.com/apprikYUs5WuXJRbN/shrmBY44Nzg3o2nn8",
+        permanent: true,
+      },
+      {
         source: "/about",
         destination:
           "https://pse-team.notion.site/Jubmojis-One-Pager-c9c9c8e6d8ed4c84a37aaa121d03d03c",

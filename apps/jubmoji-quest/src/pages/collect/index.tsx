@@ -177,13 +177,13 @@ const OnboardSection = ({ jubmoji }: { jubmoji: JubmojiCardProps }) => {
           <OnboardingCard>
             <Card.Header>
               <div
-                className={`w-full grid grid-flow-col justify-around grid-cols-[${
-                  Object.keys(PowerTypeIconMapping).length
-                }]`}
+                className={`w-full grid grid-flow-col justify-around grid-cols-[4]`}
               >
-                {Object.entries(PowerTypeIconMapping).map(([key, icon]) => {
-                  return <span key={key}>{icon}</span>;
-                })}
+                {Array.from(new Set(Object.values(PowerTypeIconMapping)))
+                  .slice(0, 4)
+                  .map((icon, index) => {
+                    return <span key={index}>{icon}</span>;
+                  })}
               </div>
             </Card.Header>
             <Card.Content className="!gap-4" spacing="sm" centred>

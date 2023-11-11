@@ -21,13 +21,15 @@ import {
   NfcCardRawSignature,
 } from "jubmoji-api";
 import { bigIntToHex } from "babyjubjub-ecdsa";
+import Link from "next/link";
+import { Textarea } from "@/components/ui/Textarea";
 
 enum CardholderActions {
   EDIT_CARD_DETAILS,
   PROPOSE_QUEST,
-  RECOMMEND_CARDHOLDER,
   PSEUD_X_POST,
   PSEUD_TELEGRAM_POST,
+  JOIN_TG_GROUP,
 }
 
 const cardholderActionDetails: Record<
@@ -35,42 +37,32 @@ const cardholderActionDetails: Record<
   {
     title: string;
     buttonText: string;
-    entryFields: { field: string; size: "big" | "small" }[];
+    entryFields?: { field: string; size: "big" | "small" }[];
+    redirect?: string;
   }
 > = {
   [CardholderActions.EDIT_CARD_DETAILS]: {
     title: "Cardholder edit portal",
     buttonText: "Unlock editing",
-    entryFields: [
-      { field: "Card Number", size: "big" },
-      { field: "Card Name", size: "big" },
-    ],
-  },
-  [CardholderActions.PROPOSE_QUEST]: {
-    title: "Quest proposal portal",
-    buttonText: "Unlock proposal",
-    entryFields: [
-      { field: "Quest Name", size: "big" },
-      { field: "Quest Description", size: "small" },
-    ],
-  },
-  [CardholderActions.RECOMMEND_CARDHOLDER]: {
-    title: "New cardholder recommendation portal",
-    buttonText: "Unlock recommendation",
-    entryFields: [
-      { field: "Cardholder Name", size: "big" },
-      { field: "Cardholder Details", size: "small" },
-    ],
   },
   [CardholderActions.PSEUD_X_POST]: {
     title: "Pseudonymous X Post",
     buttonText: "Unlock posting",
-    entryFields: [{ field: "Post Content", size: "big" }],
   },
   [CardholderActions.PSEUD_TELEGRAM_POST]: {
     title: "Pseudonymous Telegram Message",
     buttonText: "Unlock messaging",
-    entryFields: [{ field: "Message Content", size: "big" }],
+  },
+  [CardholderActions.PROPOSE_QUEST]: {
+    title: "Quest proposal portal",
+    buttonText: "Unlock proposal",
+    redirect: "/quest-proposal",
+  },
+  [CardholderActions.JOIN_TG_GROUP]: {
+    title: "Join cardholder TG group",
+    buttonText: "Unlock joining",
+    entryFields: [],
+    redirect: "https://t.me/+gD_iKIoH2w1lMDUx",
   },
 };
 
@@ -102,12 +94,12 @@ export default function CardholderEditPage() {
             </button>
           }
         />
-        <Message>
-          {`Every cardholder action is gated by two separate NFC taps to protect your card data.`}
-        </Message>
+
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
             <div className="flex flex-col gap-4">
+              <Message>{`Cardholder powers (need 2 taps)`}</Message>
+
               <div
                 onClick={() =>
                   setCardholderAction(CardholderActions.EDIT_CARD_DETAILS)
@@ -119,6 +111,33 @@ export default function CardholderEditPage() {
                   powerType="REDIRECT"
                 />
               </div>
+
+              {/* <div
+                onClick={() =>
+                  setCardholderAction(CardholderActions.PSEUD_X_POST)
+                }
+              >
+                <PowerCard
+                  title="Pseudonymous X post"
+                  description="Cardholders can post to X using their jubmoji identity"
+                  powerType="TWITTER"
+                />
+              </div> */}
+
+              <div
+              // onClick={() =>
+              //   setCardholderAction(CardholderActions.PSEUD_TELEGRAM_POST)
+              // }
+              >
+                <PowerCard
+                  title="Pseudonymous TG (Soon™)"
+                  description="Cardholders can message on TG using their jubmoji identity"
+                  powerType="TELEGRAM"
+                  disabled
+                />
+              </div>
+
+              <Message>{`Cardholder gated (need 1 tap)`}</Message>
 
               <div
                 onClick={() =>
@@ -134,39 +153,25 @@ export default function CardholderEditPage() {
 
               <div
                 onClick={() =>
-                  setCardholderAction(CardholderActions.RECOMMEND_CARDHOLDER)
+                  setCardholderAction(CardholderActions.JOIN_TG_GROUP)
                 }
               >
                 <PowerCard
-                  title="Recommend a new cardholder"
-                  description="Existing cardholders can vouch for new cardholders and experiences"
-                  powerType="QR_CODE"
-                />
-              </div>
-
-              <div
-                onClick={() =>
-                  setCardholderAction(CardholderActions.PSEUD_X_POST)
-                }
-              >
-                <PowerCard
-                  title="Pseudonymous X post"
-                  description="Cardholders can post to X using their jubmoji identity"
-                  powerType="TWITTER"
-                />
-              </div>
-
-              <div
-                onClick={() =>
-                  setCardholderAction(CardholderActions.PSEUD_TELEGRAM_POST)
-                }
-              >
-                <PowerCard
-                  title="Pseudonymous Telegram message"
-                  description="Cardholders can message on TG using their jubmoji identity"
+                  title="Join cardholder TG group"
+                  description="Group where updates are sent & feedback can be shared"
                   powerType="TELEGRAM"
                 />
               </div>
+
+              <Message>{`Open to all`}</Message>
+
+              <Link href="/card-request">
+                <PowerCard
+                  title="Apply to be a cardholder"
+                  description="Describe what you'd like to do with your card during Devconnect"
+                  powerType="QR_CODE"
+                />
+              </Link>
             </div>
           </div>
         </div>
@@ -202,6 +207,9 @@ const CardholderTapModal = ({
     CardholderTapModalState.UNLOCKING
   );
   const [pubKeyIndex, setPubKeyIndex] = useState<number>();
+  const [meaning, setMeaning] = useState<string>();
+  const [telegramLink, setTelegramLink] = useState<string>();
+  const [website, setWebsite] = useState<string>("");
 
   const initialTap = async () => {
     const initMessage = getRandomNullifierRandomness();
@@ -245,13 +253,85 @@ const CardholderTapModal = ({
       if (verified) {
         toast.success("Cardholder verified!");
         setPubKeyIndex(pubKeyIndex);
-        setModalState(CardholderTapModalState.EDITING);
+
+        const redirectAfterTap = cardholderActionDetails[action].redirect;
+        if (redirectAfterTap) {
+          window.location.href = redirectAfterTap;
+        } else {
+          setModalState(CardholderTapModalState.EDITING);
+        }
       } else {
         toast.error("Cardholder verification failed, please try again.");
       }
     } catch (error) {
       console.error(error);
       toast.error("Tapping failed, please try again.");
+    }
+  };
+
+  const sendTap = async () => {
+    const updateData = JSON.stringify({
+      meaning,
+      telegramLink,
+      website,
+    });
+    const messageHash = bigIntToHex(getMessageHash(updateData));
+    let command = {
+      name: "sign",
+      keyNo: 1,
+      digest: messageHash,
+    };
+
+    let res: {
+      input: { digest: string };
+      signature: { raw: NfcCardRawSignature };
+      publicKey: string;
+    };
+    try {
+      // --- request NFC command execution ---
+      res = await execHaloCmdWeb(command, {
+        statusCallback: (cause: any) => {
+          if (cause === "retry") {
+            toast.error("Tapping failed, please try again.");
+          } else {
+            console.log("Tapping status", cause);
+          }
+        },
+      });
+
+      const proofInstance = createProofInstance(PublicMessageSignature, {
+        randStr: "",
+      });
+      const proof = await proofInstance.prove({
+        message: updateData,
+        rawSig: res.signature.raw,
+        pubKeyIndex,
+      });
+      const { verified } = await proofInstance.verify(proof);
+
+      if (verified) {
+        const response = await fetch("/api/updateCard", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            updateData,
+            rawSig: res.signature.raw,
+            pubKeyIndex,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        toast.success("Update sent!");
+        setIsOpen(false);
+      } else {
+        toast.error("Cardholder verification failed, please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Update failed, please try again or exit.");
     }
   };
 
@@ -295,7 +375,7 @@ const CardholderTapModal = ({
     case CardholderTapModalState.EDITING:
       return (
         <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-          <div className="text-center my-auto">
+          <div className="flex flex-col gap-4">
             <div className="w-[331px]">
               <Card.Title centred className="!font-[22px] mt-16 mb-2">
                 {`Editing ${cardPubKeys[pubKeyIndex!].emoji}`}
@@ -314,12 +394,43 @@ const CardholderTapModal = ({
               }}
             ></div>
 
+            <span className=" font-dm-sans text-[13px] font-semibold text-shark-50">
+              Meaning*
+            </span>
+            <Textarea
+              onChange={(event) => setMeaning(event.target.value)}
+              placeholder="Edit your jubmoji's meaning"
+              rows={1}
+            />
+
+            <span className=" font-dm-sans text-[13px] font-semibold text-shark-50">
+              Telegram link*
+            </span>
+            <Textarea
+              onChange={(event) => setTelegramLink(event.target.value)}
+              placeholder="t.me/username or chat link"
+              rows={1}
+            />
+
+            <span className=" font-dm-sans text-[13px] font-semibold text-shark-50">
+              Website
+            </span>
+            <Textarea
+              onChange={(event) => setWebsite(event.target.value)}
+              placeholder="Enter relevant website, Twitter, or Github"
+              rows={1}
+            />
+
             <div className="flex flex-col gap-8">
               <Button
                 variant="secondary"
-                onClick={() =>
-                  setModalState(CardholderTapModalState.CONFIRMING)
-                }
+                onClick={() => {
+                  if (meaning && telegramLink) {
+                    setModalState(CardholderTapModalState.CONFIRMING);
+                  } else {
+                    toast.error("Please fill in all fields correctly.");
+                  }
+                }}
               >
                 Submit
               </Button>
@@ -347,7 +458,7 @@ const CardholderTapModal = ({
               className="mx-auto py-12"
             />
             <div className="flex flex-col gap-8">
-              <Button variant="secondary" onClick={initialTap}>
+              <Button variant="secondary" onClick={sendTap}>
                 Confirm
               </Button>
               <span className=" font-dm-sans ">
