@@ -127,7 +127,7 @@ export default function Home() {
                       ellipsis
                     >
                       <div className="flex flex-col gap-1">
-                        <div className="ml-auto">
+                        <div className="mr-auto">
                           <span className="text-shark-400 text-[13px] font-dm-sans">
                             {endDateLabel}
                           </span>

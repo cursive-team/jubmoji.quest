@@ -252,7 +252,7 @@ export default function QuestDetailPage() {
               </>
             )}
 
-            <div className="ml-auto">
+            <div className="mr-auto">
               <span className="text-shark-400 text-[13px] font-dm-sans">
                 {endDateLabel}
               </span>
