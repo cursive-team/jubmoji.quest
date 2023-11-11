@@ -18,6 +18,16 @@ export default async function handler(
     const power: JubmojiPower | null = await prisma.power.findUnique({
       where: { id: Number(id) },
       include: {
+        prerequisiteCards: {
+          select: {
+            index: true,
+          },
+        },
+        collectionCards: {
+          select: {
+            index: true,
+          },
+        },
         quest: {
           select: {
             id: true,

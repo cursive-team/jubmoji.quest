@@ -38,6 +38,10 @@ export type JubmojiQuest = Quest & {
 };
 
 export type JubmojiPower = Power & {
+  prerequisiteCards: { index: number }[];
+  collectionCards: {
+    index: number;
+  }[];
   quest: {
     id: number;
     name: string;

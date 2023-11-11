@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiPower } from "@/types";
 import {
-  jubmojiPowerToQuestProofConfig,
+  jubmojiPowerToProofConfig,
   verifyJubmojiQuestProof,
 } from "@/lib/proving";
 import { getServerPathToCircuits } from "@/lib/config";
@@ -23,6 +23,16 @@ export default async function handler(
     const power: JubmojiPower | null = await prisma.power.findUnique({
       where: { id: Number(powerId) },
       include: {
+        prerequisiteCards: {
+          select: {
+            index: true,
+          },
+        },
+        collectionCards: {
+          select: {
+            index: true,
+          },
+        },
         quest: {
           select: {
             id: true,
@@ -51,11 +61,10 @@ export default async function handler(
       return;
     }
 
-    const config = jubmojiPowerToQuestProofConfig(power);
+    const config = jubmojiPowerToProofConfig(power);
     const { verified } = await verifyJubmojiQuestProof({
       config,
       serializedProof,
-      overrideSigNullifierRandomness: power.sigNullifierRandomness || undefined,
       pathToCircuits: getServerPathToCircuits(),
     });
     if (!verified) {

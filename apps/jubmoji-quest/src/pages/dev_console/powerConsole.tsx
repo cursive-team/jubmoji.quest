@@ -11,6 +11,12 @@ export default function PowerConsole({ password }: { password: string }) {
   const [endTime, setEndTime] = useState(new Date());
   const [powerType, setPowerType] = useState("QR_CODE");
   const [redirectUrl, setRedirectUrl] = useState<string>("");
+  const [prerequisiteCardIndices, setPrerequisiteCardIndices] =
+    useState<string>("");
+  const [collectionCardIndices, setCollectionCardIndices] =
+    useState<string>("");
+  const [proofType, setProofType] = useState("IN_COLLECTION");
+  const [N, setN] = useState<number>();
   const [questId, setQuestId] = useState<number>();
 
   useEffect(() => {
@@ -35,6 +41,13 @@ export default function PowerConsole({ password }: { password: string }) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      const parsedPrerequisiteCardIndices = prerequisiteCardIndices
+        .split(",")
+        .map(Number);
+      const parsedCollectionCardIndices = collectionCardIndices
+        .split(",")
+        .map(Number);
+
       const response = await fetch("/api/dev_powers", {
         method: "POST",
         headers: {
@@ -49,6 +62,10 @@ export default function PowerConsole({ password }: { password: string }) {
           powerType,
           redirectUrl,
           questId,
+          prerequisiteCardIndices: parsedPrerequisiteCardIndices,
+          collectionCardIndices: parsedCollectionCardIndices,
+          proofType,
+          N,
         }),
       });
 
@@ -147,6 +164,66 @@ export default function PowerConsole({ password }: { password: string }) {
                   placeholder="Enter Redirect URL (must include https://)"
                   value={redirectUrl || "https://"}
                   onChange={(e) => setRedirectUrl(e.target.value)}
+                />
+              )}
+              {/* Input for Prerequisite Card Indices */}
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="prerequisiteCardIndices"
+                >
+                  Prerequisite Card Indices (comma-separated) (used as team card
+                  indices for team leaderboard)
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="prerequisiteCardIndices"
+                  type="text"
+                  value={prerequisiteCardIndices}
+                  onChange={(e) => setPrerequisiteCardIndices(e.target.value)}
+                  placeholder="e.g., 1,2,3"
+                />
+              </div>
+
+              {/* Input for Collection Card Indices */}
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="collectionCardIndices"
+                >
+                  Collection Card Indices (comma-separated)
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="collectionCardIndices"
+                  type="text"
+                  value={collectionCardIndices}
+                  onChange={(e) => setCollectionCardIndices(e.target.value)}
+                  placeholder="e.g., 4,5,6"
+                />
+              </div>
+              <div>
+                <label>Proof Type:</label>
+                <select
+                  value={proofType}
+                  onChange={(e) => setProofType(e.target.value)}
+                >
+                  <option value="IN_COLLECTION">In Collection</option>
+                  <option value="IN_COLLECTION_NONCE">
+                    In Collection Nonce
+                  </option>
+                  <option value="N_UNIQUE_IN_COLLECTION">
+                    N Unique In Collection
+                  </option>
+                  <option value="TEAM_LEADERBOARD">Team Leaderboard</option>
+                </select>
+              </div>
+              {proofType === "N_UNIQUE_IN_COLLECTION" && (
+                <input
+                  type="number"
+                  placeholder="Enter N"
+                  value={N || ""}
+                  onChange={(e) => setN(parseInt(e.target.value))}
                 />
               )}
               <div>

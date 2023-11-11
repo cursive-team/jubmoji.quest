@@ -28,13 +28,22 @@ export default async function handler(
               eventLocation: true,
               startTime: true,
               endTime: true,
-              sigNullifierRandomness: true,
               powerType: true,
               powerParams: true,
               proofType: true,
               proofParams: true,
               createdAt: true,
               questId: true,
+              prerequisiteCards: {
+                select: {
+                  index: true,
+                },
+              },
+              collectionCards: {
+                select: {
+                  index: true,
+                },
+              },
               quest: {
                 select: {
                   id: true,

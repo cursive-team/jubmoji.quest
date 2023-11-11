@@ -44,7 +44,6 @@ export interface CreateJubmojiQuestProofArgs {
 export interface VerifyJubmojiQuestProofArgs {
   config: JubmojiQuestProofConfig;
   serializedProof: string;
-  overrideSigNullifierRandomness?: string;
   pathToCircuits?: string;
 }
 
@@ -52,7 +51,6 @@ export interface VerifyJubmojiQuestProofArgs {
 // Exact proof type is based on quest proofType parameter
 export const createJubmojiQuestProofInstance = ({
   config,
-  overrideSigNullifierRandomness,
   pathToCircuits,
   onUpdateProvingState,
 }: CreateJubmojiQuestProofInstanceArgs): ProofClass<any, any> => {
@@ -69,9 +67,7 @@ export const createJubmojiQuestProofInstance = ({
   const collectionPubKeys = collectionCardIndices.map((index) =>
     getCardPubKeyFromIndex(index)
   );
-  const sigNullifierRandomness =
-    overrideSigNullifierRandomness ||
-    (proofParams.sigNullifierRandomness as string);
+  const sigNullifierRandomness = proofParams.sigNullifierRandomness as string;
 
   switch (config.proofType) {
     case $Enums.ProofType.IN_COLLECTION:
@@ -189,13 +185,11 @@ export const createJubmojiQuestProof = async ({
 export const verifyJubmojiQuestProof = async ({
   config,
   serializedProof,
-  overrideSigNullifierRandomness,
   pathToCircuits,
 }: VerifyJubmojiQuestProofArgs): Promise<VerificationResult> => {
   const proof = JSON.parse(serializedProof);
   const proofClass = createJubmojiQuestProofInstance({
     config,
-    overrideSigNullifierRandomness,
     pathToCircuits,
   });
 
@@ -203,13 +197,22 @@ export const verifyJubmojiQuestProof = async ({
 };
 
 // Retrieves quest proof parameters from a JubmojiPower
-export const jubmojiPowerToQuestProofConfig = (
+export const jubmojiPowerToProofConfig = (
   power: JubmojiPower
 ): JubmojiQuestProofConfig => {
+  const prerequisiteCards =
+    power.prerequisiteCards.length > 0
+      ? power.prerequisiteCards
+      : power.quest.prerequisiteCards;
+  const collectionCards =
+    power.collectionCards.length > 0
+      ? power.collectionCards
+      : power.quest.collectionCards;
+
   return {
-    proofType: power.quest.proofType,
-    proofParams: power.quest.proofParams as Prisma.JsonObject,
-    prerequisiteCards: power.quest.prerequisiteCards,
-    collectionCards: power.quest.collectionCards,
+    proofType: power.proofType,
+    proofParams: power.proofParams as Prisma.JsonObject,
+    prerequisiteCards,
+    collectionCards,
   };
 };

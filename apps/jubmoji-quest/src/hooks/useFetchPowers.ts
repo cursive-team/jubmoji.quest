@@ -1,7 +1,7 @@
 import { getClientPathToCircuits } from "@/lib/config";
 import {
   createJubmojiQuestProof,
-  jubmojiPowerToQuestProofConfig,
+  jubmojiPowerToProofConfig,
 } from "@/lib/proving";
 import { JubmojiPower } from "@/types";
 import { Jubmoji, ProvingState } from "jubmoji-api";
@@ -63,14 +63,12 @@ export const useQRCodePowerMutation = () => {
       jubmojis,
       onUpdateProvingState,
     }: PowerMutationProps) => {
-      const config = jubmojiPowerToQuestProofConfig(power);
+      const config = jubmojiPowerToProofConfig(power);
       let serializedProof;
       try {
         serializedProof = await createJubmojiQuestProof({
           config,
           jubmojis,
-          overrideSigNullifierRandomness:
-            power.sigNullifierRandomness || undefined,
           pathToCircuits: getClientPathToCircuits(),
           onUpdateProvingState,
         });
@@ -108,14 +106,12 @@ export const useRedirectPowerMutation = () => {
       jubmojis,
       onUpdateProvingState,
     }: PowerMutationProps) => {
-      const config = jubmojiPowerToQuestProofConfig(power);
+      const config = jubmojiPowerToProofConfig(power);
       let serializedProof;
       try {
         serializedProof = await createJubmojiQuestProof({
           config,
           jubmojis,
-          overrideSigNullifierRandomness:
-            power.sigNullifierRandomness || undefined,
           pathToCircuits: getClientPathToCircuits(),
           onUpdateProvingState,
         });
