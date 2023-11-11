@@ -17,7 +17,7 @@ model Card {
   name                    String
   description             String
   owner                   String  // the owner of a card is set by whoever currently holds the card
-  type                    CardType?
+  type                    CardType  @default(PERSONAL)
   telegramChatInviteLink  String? // Link to telegram chat for collectors of this card
   twitterLink             String? // Link to twitter account for collectors of this card
   websiteLink             String? // Link to website for collectors of this card
@@ -33,8 +33,8 @@ model Quest {
   id              Int      @id @default(autoincrement())
   name            String
   description     String
-  startTime       DateTime?
-  endTime         DateTime?
+  startTime       DateTime
+  endTime         DateTime
   proofType       ProofType
   proofParams     Json    // params for the specific proof type
   imageLink       String?
@@ -55,13 +55,12 @@ model Power {
   description            String
   eventTitle             String?
   eventLocation          String?
-  startTime              DateTime?
-  endTime                DateTime?
-  sigNullifierRandomness String? // used if we want unique nullifiers for each power
+  startTime              DateTime
+  endTime                DateTime
   powerType              PowerType
   powerParams            Json    // params for the specific power type
-  proofType              ProofType?
-  proofParams            Json?    // params for the specific proof type
+  proofType              ProofType
+  proofParams            Json    // params for the specific proof type
   createdAt              DateTime @default(now())
 
   // Relationships

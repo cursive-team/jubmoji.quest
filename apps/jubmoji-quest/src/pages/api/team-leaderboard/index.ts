@@ -2,7 +2,7 @@ import { JubmojiQuest } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { Prisma, $Enums } from "@prisma/client";
-import { TeamLeaderboardProof, cardPubKeys } from "jubmoji-api";
+import { TeamLeaderboardProof } from "jubmoji-api";
 import { areAllBigIntsDifferent, bigIntToHex } from "babyjubjub-ecdsa";
 import { verifyJubmojiQuestProof } from "@/lib/proving";
 import { getServerPathToCircuits } from "@/lib/config";

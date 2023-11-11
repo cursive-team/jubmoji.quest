@@ -131,21 +131,23 @@ export default function QuestConsole({ password }: { password: string }) {
         <div>
           <span>Is official quest</span>
           <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => {
               setIsOfficial(!isOfficial);
             }}
           >
-            {isOfficial}
+            {isOfficial.toString()}
           </button>
         </div>
         <div>
           <span>Is always visible quest</span>
           <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => {
               setIsAlwaysVisible(!isAlwaysVisible);
             }}
           >
-            {isAlwaysVisible}
+            {isAlwaysVisible.toString()}
           </button>
         </div>
 

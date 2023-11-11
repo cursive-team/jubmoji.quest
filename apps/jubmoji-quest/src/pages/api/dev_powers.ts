@@ -16,6 +16,10 @@ export default async function handler(
       powerType,
       redirectUrl,
       questId,
+      proofType,
+      N,
+      prerequisiteCardIndices,
+      collectionCardIndices,
     } = req.body;
 
     if (password !== process.env.DEV_CONSOLE_PASSWORD) {
@@ -36,6 +40,14 @@ export default async function handler(
     // Todo: Need validations for data
 
     const sigNullifierRandomness = getRandomNullifierRandomness();
+    const proofParams: any = {
+      sigNullifierRandomness,
+    };
+
+    // If the proofType requires an 'N', add it to proofParams
+    if (proofType === "N_UNIQUE_IN_COLLECTION" && N) {
+      proofParams.N = N;
+    }
 
     const powerParams = powerType === "REDIRECT" ? { redirectUrl } : {};
 
@@ -46,10 +58,19 @@ export default async function handler(
           description,
           startTime,
           endTime,
-          sigNullifierRandomness,
           powerType,
           powerParams,
           questId,
+          proofType,
+          proofParams,
+          prerequisiteCards: {
+            connect: prerequisiteCardIndices.map((index: number) => ({
+              index,
+            })),
+          },
+          collectionCards: {
+            connect: collectionCardIndices.map((index: number) => ({ index })),
+          },
         },
       });
       return res.status(201).json(newPower);

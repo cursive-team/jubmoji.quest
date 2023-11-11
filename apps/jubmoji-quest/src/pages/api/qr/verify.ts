@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { JubmojiQRCodeData } from "@/types";
 import {
-  jubmojiPowerToQuestProofConfig,
+  jubmojiPowerToProofConfig,
   verifyJubmojiQuestProof,
 } from "@/lib/proving";
 import { bigIntToHex } from "babyjubjub-ecdsa";
@@ -33,13 +33,22 @@ export default async function handler(
               eventLocation: true,
               startTime: true,
               endTime: true,
-              sigNullifierRandomness: true,
               powerType: true,
               powerParams: true,
               proofType: true,
               proofParams: true,
               createdAt: true,
               questId: true,
+              prerequisiteCards: {
+                select: {
+                  index: true,
+                },
+              },
+              collectionCards: {
+                select: {
+                  index: true,
+                },
+              },
               quest: {
                 select: {
                   id: true,
@@ -71,12 +80,10 @@ export default async function handler(
     }
 
     const powerId = qrCodeData.power.id;
-    const config = jubmojiPowerToQuestProofConfig(qrCodeData.power);
+    const config = jubmojiPowerToProofConfig(qrCodeData.power);
     const verificationResult = await verifyJubmojiQuestProof({
       config,
       serializedProof: qrCodeData.serializedProof,
-      overrideSigNullifierRandomness:
-        qrCodeData.power.sigNullifierRandomness || undefined,
       pathToCircuits: getServerPathToCircuits(),
     });
     if (!verificationResult.verified) {

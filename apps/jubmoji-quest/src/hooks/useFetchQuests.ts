@@ -2,7 +2,6 @@ import { JubmojiQuest } from "@/types";
 import { useQuery } from "react-query";
 import { useJubmojis } from "./useJubmojis";
 import { $Enums, Prisma } from "@prisma/client";
-import { jubmojiPowerToQuestProofConfig } from "@/lib/proving";
 
 export const useGetQuestPowerLockedStatus = (questId?: string | number) => {
   const { data: jubmojis = [] } = useJubmojis();

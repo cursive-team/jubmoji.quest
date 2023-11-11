@@ -15,6 +15,16 @@ export default async function handler(
   try {
     const powers: JubmojiPower[] = await prisma.power.findMany({
       include: {
+        prerequisiteCards: {
+          select: {
+            index: true,
+          },
+        },
+        collectionCards: {
+          select: {
+            index: true,
+          },
+        },
         quest: {
           select: {
             id: true,
