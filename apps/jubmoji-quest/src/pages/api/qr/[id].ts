@@ -29,6 +29,9 @@ export default async function handler(
               sigNullifierRandomness: true,
               powerType: true,
               powerParams: true,
+              proofType: true,
+              proofParams: true,
+              createdAt: true,
               questId: true,
               quest: {
                 select: {

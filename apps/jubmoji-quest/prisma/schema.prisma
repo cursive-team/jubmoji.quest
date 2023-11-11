@@ -53,6 +53,8 @@ model Power {
   id                     Int     @id @default(autoincrement())
   name                   String
   description            String
+  eventTitle             String?
+  eventLocation          String?
   startTime              DateTime?
   endTime                DateTime?
   sigNullifierRandomness String? // used if we want unique nullifiers for each power

@@ -74,6 +74,7 @@ const PowerTypeContentMapping: Record<$Enums.PowerType, any> = {
   TELEGRAM: TelegramPower,
   TWITTER: TwitterPower,
   REDIRECT: RedirectPower,
+  POAP: () => null,
 };
 
 export default function PowerDetailPage() {
