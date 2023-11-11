@@ -43,24 +43,24 @@ const cardholderActionDetails: Record<
 > = {
   [CardholderActions.EDIT_CARD_DETAILS]: {
     title: "Cardholder edit portal",
-    buttonText: "Unlock editing",
+    buttonText: "Begin editing",
   },
   [CardholderActions.PSEUD_X_POST]: {
     title: "Pseudonymous X Post",
-    buttonText: "Unlock posting",
+    buttonText: "Begin posting",
   },
   [CardholderActions.PSEUD_TELEGRAM_POST]: {
     title: "Pseudonymous Telegram Message",
-    buttonText: "Unlock messaging",
+    buttonText: "Begin messaging",
   },
   [CardholderActions.PROPOSE_QUEST]: {
     title: "Quest proposal portal",
-    buttonText: "Unlock proposal",
+    buttonText: "Verify cardholder",
     redirect: "/quest-proposal",
   },
   [CardholderActions.JOIN_TG_GROUP]: {
     title: "Join cardholder TG group",
-    buttonText: "Unlock joining",
+    buttonText: "Verify cardholder",
     entryFields: [],
     redirect: "https://t.me/+gD_iKIoH2w1lMDUx",
   },
