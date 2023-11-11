@@ -133,7 +133,7 @@ export const loadNullifiedSigs = async (): Promise<NullifiedSigs> => {
 /**
  * COLLECTED TIME UTILITIES
  */
-export const loadCollectedTimes = async (): Promise<Record<number, number>> => {
+export const loadCollectedTimes = (): Record<number, number> => {
   const collectedTimes = window.localStorage["collectedTimes"];
 
   if (!collectedTimes) {
@@ -143,15 +143,13 @@ export const loadCollectedTimes = async (): Promise<Record<number, number>> => {
   return JSON.parse(collectedTimes);
 };
 
-export const readCollectedTime = async (
-  pubKeyIndex: number
-): Promise<number | undefined> => {
-  const collectedTimes = await loadCollectedTimes();
+export const readCollectedTime = (pubKeyIndex: number): number | undefined => {
+  const collectedTimes = loadCollectedTimes();
   return collectedTimes[pubKeyIndex];
 };
 
-export const addCollectedTime = async (pubKeyIndex: number): Promise<void> => {
-  const collectedTimes = await loadCollectedTimes();
+export const addCollectedTime = (pubKeyIndex: number): void => {
+  const collectedTimes = loadCollectedTimes();
 
   if (!(pubKeyIndex in collectedTimes)) {
     collectedTimes[pubKeyIndex] = Date.now();

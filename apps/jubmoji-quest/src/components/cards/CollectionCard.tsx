@@ -8,6 +8,7 @@ import { classed } from "@tw-classed/react";
 import { useBackupState } from "@/hooks/useBackupState";
 import Image from "next/image";
 import { MIN_SWIPE_DISTANCE } from "@/constants";
+import { readCollectedTime } from "@/lib/localStorage";
 
 interface CollectionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: string;
@@ -225,12 +226,26 @@ const CollectionCard = ({
     }
   }
 
+  const cardCollectedTime = readCollectedTime(pubKeyIndex);
+  let readableTime: string | undefined = undefined;
+  if (cardCollectedTime) {
+    const now = new Date(cardCollectedTime);
+    readableTime = now.toLocaleString("en-US");
+  }
+
   const CollectionQuestContent = () => {
     if (quests.length === 0) {
       return (
-        <span className="block mt-4 font-dm-sans font-normal text-base">
-          No active quests.
-        </span>
+        <div className="h-full flex flex-col gap-2 m-4">
+          <div className="font-giorgio text-shark-400 text-[16px] tracking-[0.36px]">
+            No active quests.
+          </div>
+          {readableTime && (
+            <span className="font-dm-sans text-shark-400 text-[11px]">
+              Collected on {readableTime}
+            </span>
+          )}
+        </div>
       );
     }
     return (
@@ -266,6 +281,11 @@ const CollectionCard = ({
                 );
               })}
             </div>
+            {readableTime && (
+              <span className="font-dm-sans text-shark-400 text-[11px]">
+                Collected on {readableTime}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -284,7 +304,7 @@ const CollectionCard = ({
       }}
       onTouchEnd={handleCardSwipe}
     >
-      {quests?.length > 0 && (
+      {!disabled && (
         <QuestButtonWrapper>
           <Button
             onClick={() => {
