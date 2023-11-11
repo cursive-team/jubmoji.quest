@@ -17,23 +17,30 @@ model Card {
   name                    String
   description             String
   owner                   String  // the owner of a card is set by whoever currently holds the card
+  type                    CardType?
   telegramChatInviteLink  String? // Link to telegram chat for collectors of this card
+  twitterLink             String? // Link to twitter account for collectors of this card
+  websiteLink             String? // Link to website for collectors of this card
 
   // Relationships
-  prerequisitesFor Quest[] @relation("PrerequisiteCards")
-  collectsFor      Quest[] @relation("CollectionCards")
+  prerequisitesFor      Quest[] @relation("PrerequisiteCards")
+  collectsFor           Quest[] @relation("CollectionCards")
+  powerPrerequisitesFor Power[] @relation("PowerPrerequisiteCards")
+  powerCollectsFor      Power[] @relation("PowerCollectionCards")
 }
 
 model Quest {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  tags        CardTag[]
-  startTime   DateTime?
-  endTime     DateTime?
-  proofType   ProofType
-  proofParams Json    // params for the specific proof type
-  imageLink   String?
+  id              Int      @id @default(autoincrement())
+  name            String
+  description     String
+  startTime       DateTime?
+  endTime         DateTime?
+  proofType       ProofType
+  proofParams     Json    // params for the specific proof type
+  imageLink       String?
+  isOfficial      Boolean @default(false)
+  isAlwaysVisible Boolean @default(false)
+  createdAt       DateTime @default(now())
 
   // Relationships
   prerequisiteCards         Card[] @relation("PrerequisiteCards") // cards needed to see the quest
@@ -51,18 +58,24 @@ model Power {
   sigNullifierRandomness String? // used if we want unique nullifiers for each power
   powerType              PowerType
   powerParams            Json    // params for the specific power type
+  proofType              ProofType?
+  proofParams            Json?    // params for the specific proof type
+  createdAt              DateTime @default(now())
 
   // Relationships
-  questId       Int  
-  quest         Quest   @relation(fields: [questId], references: [id])
-  qrCodes       QRCode[]   
-  sigNullifiers PowerSigNullifier[]
+  questId                   Int  
+  quest                     Quest   @relation(fields: [questId], references: [id])
+  prerequisiteCards         Card[]  @relation("PowerPrerequisiteCards") // cards needed to see the power
+  collectionCards           Card[]  @relation("PowerCollectionCards")   // cards needed to complete the power
+  qrCodes                   QRCode[]   
+  sigNullifiers             PowerSigNullifier[]
 }
 
 model QRCode {
   id                Int      @id @default(autoincrement())
   uuid              String   @unique @default(uuid()) 
-  serializedProof   String   
+  serializedProof   String  
+  createdAt         DateTime @default(now()) 
 
   // Relationships
   powerId   Int      
@@ -72,6 +85,7 @@ model QRCode {
 model PowerSigNullifier {
   id        Int    @id @default(autoincrement())
   nullifier String 
+  createdAt DateTime @default(now())
   
   // Relationships
   powerId   Int   
@@ -107,15 +121,9 @@ model TeamLeaderboardProofLog {
   createdAt                    DateTime @default(now())
 }
 
-enum CardTag {
-  OFFICIAL
-  ROLES
-  APPLICATIONS
-  COMMUNITY
-  DEV_TOOLS
-  INFRASTRUCTURE
-  PRIVACY
+enum CardType {
   PERSONAL
+  GROUP
 }
 
 enum ProofType {
@@ -130,4 +138,5 @@ enum PowerType {
   TELEGRAM
   TWITTER
   REDIRECT
+  POAP
 }
