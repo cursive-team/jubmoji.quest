@@ -5,7 +5,7 @@ import { useJubmojis } from "../hooks/useJubmojis";
 import { Filters } from "@/components/Filters";
 import Link from "next/link";
 import { useState } from "react";
-import { filterItems } from "@/lib/utils";
+import { filterItems, isPowerCompleted } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
 import { QuestCard } from "@/components/cards/QuestCard";
@@ -67,11 +67,7 @@ export default function Home() {
                 const questImagePath = imageLink;
 
                 const numPowersCompleted = powers.filter((power) =>
-                  power.collectionCards
-                    .map((card) => card.index)
-                    .every((index) =>
-                      jubmojis.find((jubmoji) => jubmoji.pubKeyIndex === index)
-                    )
+                  isPowerCompleted(power, jubmojis)
                 ).length;
 
                 return (

@@ -17,7 +17,7 @@ import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { Message } from "@/components/Message";
 import { cn } from "@/lib/utils";
-import { useGetPowerLockedStatus } from "@/hooks/useFetchQuests";
+import { useGetPowerLockedStatus } from "@/hooks/useFetchPowers";
 import { RedirectPower } from "@/components/powers/RedirectPower";
 
 interface PowerDetailLabelProps {

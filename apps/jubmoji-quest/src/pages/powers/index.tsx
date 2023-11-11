@@ -11,7 +11,7 @@ import { useFetchPowers } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
-import { useGetPowerLockedStatus } from "@/hooks/useFetchQuests";
+import { useGetPowerLockedStatus } from "@/hooks/useFetchPowers";
 
 type PowerCardDetailProps = {
   power: JubmojiPower;

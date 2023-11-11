@@ -1,52 +1,5 @@
 import { JubmojiQuest } from "@/types";
 import { useQuery } from "react-query";
-import { useJubmojis } from "./useJubmojis";
-import { $Enums, Prisma } from "@prisma/client";
-import { useFetchPowerById } from "./useFetchPowers";
-
-export const useGetPowerLockedStatus = (
-  powerId: string | number | undefined
-) => {
-  const { data: jubmojis = [] } = useJubmojis();
-  const { data: power } = useFetchPowerById(powerId);
-
-  return useQuery(
-    ["questPowerLockedStatus", power?.id, jubmojis.length],
-    async (): Promise<{ locked: boolean }> => {
-      if (!power) {
-        return {
-          locked: true,
-        };
-      }
-
-      const collectionCardIndices = power.collectionCards.map(
-        (card) => card.index
-      );
-
-      const collectedItems =
-        jubmojis?.filter((jubmoji) =>
-          collectionCardIndices.includes(jubmoji.pubKeyIndex)
-        ).length ?? 0;
-
-      const proofParams = power.proofParams as Prisma.JsonObject;
-
-      if (power.proofType === $Enums.ProofType.N_UNIQUE_IN_COLLECTION) {
-        return {
-          locked: collectedItems < (proofParams.N as number),
-        };
-      }
-
-      return {
-        locked: collectionCardIndices.length > 0 && collectedItems === 0,
-      };
-    },
-    {
-      refetchOnWindowFocus: false,
-      enabled: power?.id !== undefined,
-      retry: power?.id !== undefined,
-    }
-  );
-};
 
 export const useFetchQuests = () => {
   return useQuery(

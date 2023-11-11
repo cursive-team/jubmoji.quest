@@ -20,7 +20,7 @@ import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import { ProvingState, cardPubKeys } from "jubmoji-api";
 import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
 import { useFetchCollectedCards } from "@/hooks/useFetchCards";
-import { cn } from "@/lib/utils";
+import { cn, isPowerCompleted } from "@/lib/utils";
 import ProofProgressBar from "@/components/ui/ProofProgressBar";
 import { Prisma } from "@prisma/client";
 
@@ -166,15 +166,9 @@ export default function QuestDetailPage() {
       return unique;
     }, []);
 
-  const numPowersCompleted = quest.powers.filter((power) =>
-    power.collectionCards
-      .map((card) => card.index)
-      .every((index) =>
-        collectedCards.find(
-          (collectedCard) => collectedCard.pubKeyIndex === index
-        )
-      )
-  ).length;
+  const numPowersCompleted = jubmojis
+    ? quest.powers.filter((power) => isPowerCompleted(power, jubmojis)).length
+    : 0;
 
   const proofProgressPercentage = provingState
     ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
@@ -283,11 +277,11 @@ export default function QuestDetailPage() {
           if (power.proofType === $Enums.ProofType.N_UNIQUE_IN_COLLECTION) {
             const N = proofParams.N as number;
             powerIsLocked = collectedItems < N;
-            numCardsCollected = Math.max(collectedItems, N);
+            numCardsCollected = Math.min(collectedItems, N);
             numCardsTotal = N;
           } else {
             powerIsLocked = collectedItems === 0;
-            numCardsCollected = Math.max(collectedItems, 1);
+            numCardsCollected = Math.min(collectedItems, 1);
             numCardsTotal = 1;
           }
 
