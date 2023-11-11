@@ -299,13 +299,21 @@ const CardholderTapModal = ({
         },
       });
 
+      const retrievedPubKeyIndex = cardPubKeys.findIndex(
+        (key) => key.pubKeySlot1 === res.publicKey // Use secp256k1 key here, which is in slot 1
+      );
+      if (retrievedPubKeyIndex !== pubKeyIndex) {
+        toast.error("Tapping with a different card, try again.");
+        return;
+      }
+
       const proofInstance = createProofInstance(PublicMessageSignature, {
         randStr: "",
       });
       const proof = await proofInstance.prove({
         message: updateData,
         rawSig: res.signature.raw,
-        pubKeyIndex,
+        pubKeyIndex: retrievedPubKeyIndex,
       });
       const { verified } = await proofInstance.verify(proof);
 
