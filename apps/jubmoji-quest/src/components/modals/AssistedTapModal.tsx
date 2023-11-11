@@ -1,12 +1,11 @@
 // @ts-ignore
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Modal, ModalProps } from "./Modal";
 import { Card } from "../cards/Card";
 import { Button } from "../ui/Button";
 import Image from "next/image";
 import MobileDetect from "mobile-detect";
-import Link from "next/link";
 import { cardPubKeys, recoverCounterMessageHash } from "jubmoji-api";
 import {
   Signature,
