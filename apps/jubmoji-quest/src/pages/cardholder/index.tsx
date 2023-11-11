@@ -74,110 +74,6 @@ const cardholderActionDetails: Record<
   },
 };
 
-interface CardholderTapModalProps extends ModalProps {
-  action: CardholderActions;
-}
-
-const CardholderTapModal = ({
-  action,
-  isOpen,
-  setIsOpen,
-}: CardholderTapModalProps) => {
-  const md = useRef<any>();
-  useEffect(() => {
-    md.current = new MobileDetect(window?.navigator?.userAgent);
-  }, []);
-  const deviceImage = md?.current?.is("iPhone")
-    ? "/images/tap-phone-ios.png"
-    : "/images/tap-phone-android.png";
-
-  const initialTap = async () => {
-    const initMessage = getRandomNullifierRandomness();
-    const messageHash = bigIntToHex(getMessageHash(initMessage));
-    let command = {
-      name: "sign",
-      keyNo: 1,
-      digest: messageHash,
-    };
-
-    let res: {
-      input: { digest: string };
-      signature: { raw: NfcCardRawSignature };
-      publicKey: string;
-    };
-    try {
-      // --- request NFC command execution ---
-      res = await execHaloCmdWeb(command, {
-        statusCallback: (cause: any) => {
-          if (cause === "retry") {
-            toast.error("Tapping failed, please try again.");
-          } else {
-            console.log("Tapping status", cause);
-          }
-        },
-      });
-
-      const proofInstance = createProofInstance(PublicMessageSignature, {
-        randStr: "",
-      });
-      const pubKeyIndex = cardPubKeys.findIndex(
-        (key) => key.pubKeySlot1 === res.publicKey // Use secp256k1 key here, which is in slot 1
-      );
-      const proof = await proofInstance.prove({
-        message: res.input.digest,
-        rawSig: res.signature.raw,
-        pubKeyIndex,
-      });
-      const { verified } = await proofInstance.verify(proof);
-
-      if (verified) {
-        toast.success("Cardholder verified!");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Tapping failed, please try again.");
-    }
-  };
-
-  console.log(action);
-
-  return (
-    <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-      <div className="text-center my-auto">
-        <div className="w-[331px] leading-tight">
-          <Card.Title centred className="!font-[22px] mt-16 mb-2">
-            {cardholderActionDetails[action].title}
-          </Card.Title>
-          <span className="font-dm-sans text-[16px] text-shark-400">
-            Tap unlock, then hold your card to your phone as pictured.
-          </span>
-        </div>
-        <Image
-          src={deviceImage}
-          width={180}
-          height={200}
-          alt="tap card"
-          className="mx-auto py-12"
-        />
-        <div className="flex flex-col gap-8">
-          <Button variant="secondary" onClick={initialTap}>
-            {cardholderActionDetails[action].buttonText}
-          </Button>
-          <span className=" font-dm-sans ">
-            {`If you still can't tap, check out our `}
-            <u>
-              <a href="https://pse-team.notion.site/Card-tapping-instructions-ac5cae2f72e34155ba67d8a251b2857c">
-                troubleshooting guide
-              </a>
-            </u>
-            {"."}
-          </span>
-        </div>
-      </div>
-    </Modal>
-  );
-};
-
 export default function CardholderEditPage() {
   const [infoModalOpen, setIsModalOpen] = useState(false);
   const [cardholderAction, setCardholderAction] = useState<CardholderActions>();
@@ -278,3 +174,194 @@ export default function CardholderEditPage() {
     </>
   );
 }
+
+enum CardholderTapModalState {
+  UNLOCKING,
+  EDITING,
+  CONFIRMING,
+}
+
+interface CardholderTapModalProps extends ModalProps {
+  action: CardholderActions;
+}
+
+const CardholderTapModal = ({
+  action,
+  isOpen,
+  setIsOpen,
+}: CardholderTapModalProps) => {
+  const md = useRef<any>();
+  useEffect(() => {
+    md.current = new MobileDetect(window?.navigator?.userAgent);
+  }, []);
+  const deviceImage = md?.current?.is("iPhone")
+    ? "/images/tap-phone-ios.png"
+    : "/images/tap-phone-android.png";
+
+  const [modalState, setModalState] = useState(
+    CardholderTapModalState.UNLOCKING
+  );
+  const [pubKeyIndex, setPubKeyIndex] = useState<number>();
+
+  const initialTap = async () => {
+    const initMessage = getRandomNullifierRandomness();
+    const messageHash = bigIntToHex(getMessageHash(initMessage));
+    let command = {
+      name: "sign",
+      keyNo: 1,
+      digest: messageHash,
+    };
+
+    let res: {
+      input: { digest: string };
+      signature: { raw: NfcCardRawSignature };
+      publicKey: string;
+    };
+    try {
+      // --- request NFC command execution ---
+      res = await execHaloCmdWeb(command, {
+        statusCallback: (cause: any) => {
+          if (cause === "retry") {
+            toast.error("Tapping failed, please try again.");
+          } else {
+            console.log("Tapping status", cause);
+          }
+        },
+      });
+
+      const proofInstance = createProofInstance(PublicMessageSignature, {
+        randStr: "",
+      });
+      const pubKeyIndex = cardPubKeys.findIndex(
+        (key) => key.pubKeySlot1 === res.publicKey // Use secp256k1 key here, which is in slot 1
+      );
+      const proof = await proofInstance.prove({
+        message: initMessage,
+        rawSig: res.signature.raw,
+        pubKeyIndex,
+      });
+      const { verified } = await proofInstance.verify(proof);
+
+      if (verified) {
+        toast.success("Cardholder verified!");
+        setPubKeyIndex(pubKeyIndex);
+        setModalState(CardholderTapModalState.EDITING);
+      } else {
+        toast.error("Cardholder verification failed, please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Tapping failed, please try again.");
+    }
+  };
+
+  switch (modalState) {
+    case CardholderTapModalState.UNLOCKING:
+      return (
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+          <div className="text-center my-auto">
+            <div className="w-[331px] leading-tight">
+              <Card.Title centred className="!font-[22px] mt-16 mb-2">
+                {cardholderActionDetails[action].title}
+              </Card.Title>
+              <span className="font-dm-sans text-[16px] text-shark-400">
+                Tap unlock, then hold your card to your phone as pictured.
+              </span>
+            </div>
+            <Image
+              src={deviceImage}
+              width={180}
+              height={200}
+              alt="tap card"
+              className="mx-auto py-12"
+            />
+            <div className="flex flex-col gap-8">
+              <Button variant="secondary" onClick={initialTap}>
+                {cardholderActionDetails[action].buttonText}
+              </Button>
+              <span className=" font-dm-sans ">
+                {`If you still can't tap, check out our `}
+                <u>
+                  <a href="https://pse-team.notion.site/Card-tapping-instructions-ac5cae2f72e34155ba67d8a251b2857c">
+                    troubleshooting guide
+                  </a>
+                </u>
+                {"."}
+              </span>
+            </div>
+          </div>
+        </Modal>
+      );
+    case CardholderTapModalState.EDITING:
+      return (
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+          <div className="text-center my-auto">
+            <div className="w-[331px]">
+              <Card.Title centred className="!font-[22px] mt-16 mb-2">
+                {`Editing ${cardPubKeys[pubKeyIndex!].emoji}`}
+              </Card.Title>
+            </div>
+
+            <div
+              className="w-full h-[200px]"
+              style={{
+                backgroundImage: `url(${
+                  cardPubKeys[pubKeyIndex!].imageBlobUrl
+                })`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
+
+            <div className="flex flex-col gap-8">
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setModalState(CardholderTapModalState.CONFIRMING)
+                }
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      );
+    case CardholderTapModalState.CONFIRMING:
+      return (
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+          <div className="text-center my-auto">
+            <div className="w-[331px] leading-tight">
+              <Card.Title centred className="!font-[22px] mt-16 mb-2">
+                Use card to confirm your submission
+              </Card.Title>
+              <span className="font-dm-sans text-[16px] text-shark-400">
+                Tap confirm, then hold your card to your phone as pictured.
+              </span>
+            </div>
+            <Image
+              src={deviceImage}
+              width={180}
+              height={200}
+              alt="tap card"
+              className="mx-auto py-12"
+            />
+            <div className="flex flex-col gap-8">
+              <Button variant="secondary" onClick={initialTap}>
+                Confirm
+              </Button>
+              <span className=" font-dm-sans ">
+                {`If you still can't tap, check out our `}
+                <u>
+                  <a href="https://pse-team.notion.site/Card-tapping-instructions-ac5cae2f72e34155ba67d8a251b2857c">
+                    troubleshooting guide
+                  </a>
+                </u>
+                {"."}
+              </span>
+            </div>
+          </div>
+        </Modal>
+      );
+  }
+};

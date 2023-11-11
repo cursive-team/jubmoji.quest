@@ -15,18 +15,14 @@ import {
 } from "babyjubjub-ecdsa";
 import { toast } from "react-hot-toast";
 
-type Device = "android" | "ios";
-const DeviceImageMapping: Record<Device, string> = {
-  android: "/images/tap-phone-android.png",
-  ios: "/images/tap-phone-ios.png",
-};
-
 const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
   const md = useRef<any>();
   useEffect(() => {
     md.current = new MobileDetect(window?.navigator?.userAgent);
   }, []);
-  const device: Device = md?.current?.is("iPhone") ? "ios" : "android";
+  const deviceImage = md?.current?.is("iPhone")
+    ? "/images/tap-phone-ios.png"
+    : "/images/tap-phone-android.png";
 
   const onReadyToTap = async () => {
     let command = {
@@ -79,7 +75,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
           Hold the card on your phone as pictured, then press start below.
         </Card.Title>
         <Image
-          src={DeviceImageMapping[device]}
+          src={deviceImage}
           width={180}
           height={200}
           alt="tap card"
