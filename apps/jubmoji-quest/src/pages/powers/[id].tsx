@@ -160,13 +160,6 @@ export default function PowerDetailPage() {
               (card) => cardPubKeys[card.index].emoji
             )}
           />
-          <PowerDetailLabel
-            label="Expires"
-            value={new Intl.DateTimeFormat("en-US", {
-              dateStyle: "long",
-              timeStyle: "medium",
-            }).format(new Date(power.endTime))}
-          />
           {/* <PowerDetailLabel
             label="Proof"
             value={<PowerLabel>{power.name}</PowerLabel>}
