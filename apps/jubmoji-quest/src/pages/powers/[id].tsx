@@ -14,9 +14,9 @@ import { PowerQrCode } from "@/components/powers/PowerQrCode";
 import { TelegramPower } from "@/components/powers/TelegramPower";
 import { TwitterPower } from "@/components/powers/TwitterPower";
 import { JubmojiPower } from "@/types";
-import { Jubmoji } from "jubmoji-api";
+import { Jubmoji, cardPubKeys } from "jubmoji-api";
 import { Message } from "@/components/Message";
-import { cn } from "@/lib/utils";
+import { cn, getNumCardsToCollect } from "@/lib/utils";
 import { useGetPowerLockedStatus } from "@/hooks/useFetchPowers";
 import { RedirectPower } from "@/components/powers/RedirectPower";
 
@@ -101,8 +101,8 @@ export default function PowerDetailPage() {
   }
 
   const powerIcon = PowerTypeIconMapping[power.powerType];
-
   const PowerContentByType = PowerTypeContentMapping[power.powerType];
+
   return (
     <div>
       <AppHeader
@@ -147,6 +147,18 @@ export default function PowerDetailPage() {
                 {power.quest.name}
               </Link>
             }
+          />
+          <PowerDetailLabel
+            label={
+              "Collect " +
+              getNumCardsToCollect(
+                power.proofType,
+                power.proofParams
+              ).toString()
+            }
+            value={power.collectionCards?.map(
+              (card) => cardPubKeys[card.index].emoji
+            )}
           />
           {/* <PowerDetailLabel
             label="Proof"

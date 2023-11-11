@@ -5,7 +5,7 @@ import { useJubmojis } from "../hooks/useJubmojis";
 import { Filters } from "@/components/Filters";
 import Link from "next/link";
 import { useState } from "react";
-import { filterItems, isPowerCompleted } from "@/lib/utils";
+import { getQuestCollectionCardIndices, isPowerCompleted } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
 import { QuestCard } from "@/components/cards/QuestCard";
@@ -17,41 +17,70 @@ import { InfoModal } from "@/components/modals/InfoModal";
 import { AssistedTapModal } from "@/components/modals/AssistedTapModal";
 
 export const QuestTagMapping: Record<
-  "ALL" | "IN_PROGRESS" | "COMPLETED" | "STARRED" | "OFFICIAL" | "COMMUNITY",
+  "ACTIVE" | "ALL" | "OFFICIAL" | "EXPIRED",
   string
 > = {
+  ACTIVE: "Active",
   ALL: "All",
-  IN_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
-  STARRED: "Starred",
   OFFICIAL: "Official",
-  COMMUNITY: "Community",
+  EXPIRED: "Expired",
 };
 
 export default function Home() {
-  const [selectedOption, setSelectedOption] = useState("all");
+  const [selectedOption, setSelectedOption] = useState("ACTIVE");
   const [infoModalOpen, setIsModalOpen] = useState(false);
   const [assistedTapModal, setAssistedTapModal] = useState(false);
   const { data: jubmojis = [] } = useJubmojis();
 
   const { isLoading: isLoadingQuests, data: quests = [] } = useFetchQuests();
 
-  const filteredItems =
-    selectedOption === "all" ? quests : filterItems(quests, selectedOption);
+  const viewableQuests = quests?.filter((quest) => {
+    const questCardIndicesFilter = [
+      ...quest.prerequisiteCards.map((card) => card.index),
+      ...getQuestCollectionCardIndices(quest),
+    ];
+    return (
+      quest.isAlwaysVisible ||
+      jubmojis?.some((jubmoji) =>
+        questCardIndicesFilter.includes(jubmoji.pubKeyIndex)
+      )
+    );
+  });
 
+  const expiredQuests: JubmojiQuest[] = [];
   const officialQuests: JubmojiQuest[] = [];
-  const otherQuests: JubmojiQuest[] = [];
-  filteredItems?.forEach((quest) => {
-    if (quest.isOfficial) {
+  const nonOfficialActiveQuests: JubmojiQuest[] = [];
+  viewableQuests?.forEach((quest) => {
+    if (new Date(quest.endTime) < new Date()) {
+      expiredQuests.push(quest);
+    } else if (quest.isOfficial) {
       officialQuests.push(quest);
     } else {
-      otherQuests.push(quest);
+      nonOfficialActiveQuests.push(quest);
     }
   });
 
-  const allQuests = [...officialQuests, ...otherQuests];
+  let filteredQuests: JubmojiQuest[];
+  switch (selectedOption) {
+    case "ACTIVE":
+      filteredQuests = [...officialQuests, ...nonOfficialActiveQuests];
+      break;
+    case "OFFICIAL":
+      filteredQuests = officialQuests;
+      break;
+    case "EXPIRED":
+      filteredQuests = expiredQuests;
+      break;
+    default:
+      filteredQuests = [
+        ...officialQuests,
+        ...nonOfficialActiveQuests,
+        ...expiredQuests,
+      ];
+      break;
+  }
 
-  const hasItemsForActiveOption = filteredItems?.length > 0;
+  const hasItemsForActiveOption = filteredQuests?.length > 0;
 
   const QuestContent = () => {
     return (
@@ -60,8 +89,15 @@ export default function Home() {
           <Message>{MESSAGES.NO_RESULTS}</Message>
         ) : (
           <>
-            {allQuests?.map(
-              ({ id, name, description, imageLink, powers }: JubmojiQuest) => {
+            {filteredQuests?.map(
+              ({
+                id,
+                name,
+                description,
+                imageLink,
+                powers,
+                endTime,
+              }: JubmojiQuest) => {
                 const questPageUrl = `/quests/${id}`;
 
                 const questImagePath = imageLink;
@@ -69,6 +105,15 @@ export default function Home() {
                 const numPowersCompleted = powers.filter((power) =>
                   isPowerCompleted(power, jubmojis)
                 ).length;
+
+                const endDateFormattedTime = new Intl.DateTimeFormat("en-US", {
+                  dateStyle: "long",
+                  timeStyle: "medium",
+                }).format(new Date(endTime));
+                const endDateLabel =
+                  new Date(endTime) < new Date()
+                    ? `Ended on ${endDateFormattedTime}`
+                    : `Ends on ${endDateFormattedTime}`;
 
                 return (
                   <Link key={id} href={questPageUrl}>
@@ -80,7 +125,15 @@ export default function Home() {
                       numPowersTotal={powers.length}
                       showProgress
                       ellipsis
-                    />
+                    >
+                      <div className="flex flex-col gap-1">
+                        <div className="mr-auto">
+                          <span className="text-shark-400 text-[13px] font-dm-sans">
+                            {endDateLabel}
+                          </span>
+                        </div>
+                      </div>
+                    </QuestCard>
                   </Link>
                 );
               }
@@ -128,12 +181,12 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
-            {/* <Filters
-              defaultValue="all"
+            <Filters
+              defaultValue="ACTIVE"
               object={QuestTagMapping}
               onChange={setSelectedOption}
               disabled={isLoadingQuests}
-            /> */}
+            />
             <div className="flex flex-col gap-4">
               {isLoadingQuests ? (
                 <>

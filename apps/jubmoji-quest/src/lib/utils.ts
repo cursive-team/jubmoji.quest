@@ -1,4 +1,4 @@
-import { JubmojiPower } from "@/types";
+import { JubmojiPower, JubmojiQuest } from "@/types";
 import { $Enums, Prisma } from "@prisma/client";
 import clsx, { ClassValue } from "clsx";
 import { Jubmoji } from "jubmoji-api";
@@ -13,6 +13,33 @@ export function filterItems<T>(items: T[], filter: string) {
     const itemString = JSON.stringify(item).toLowerCase();
     return itemString.includes(filter.toLowerCase());
   });
+}
+
+export function getQuestCollectionCardIndices(quest: JubmojiQuest): number[] {
+  return quest.powers
+    .flatMap((power) => power.collectionCards.map((card) => card.index))
+    .reduce(
+      (unique: number[], index: number) => {
+        if (!unique.includes(index)) {
+          unique.push(index);
+        }
+        return unique;
+      },
+      quest.collectionCards.map((card) => card.index)
+    );
+}
+
+export function getNumCardsToCollect(
+  proofType: $Enums.ProofType,
+  proofParams: Prisma.JsonValue
+): number {
+  const proofParamsObj = proofParams as Prisma.JsonObject;
+  switch (proofType) {
+    case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
+      return proofParamsObj.N as number;
+    default:
+      return 1;
+  }
 }
 
 export function isPowerCompleted(
