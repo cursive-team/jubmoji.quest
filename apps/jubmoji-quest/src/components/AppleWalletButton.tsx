@@ -1,4 +1,4 @@
-import { loadBackupState, saveBackupState } from "../lib/localStorage";
+import { loadBackupState, writeBackupState } from "../lib/localStorage";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { succinctSerializeJubmojiList } from "jubmoji-api";
 import Image from "next/image";
@@ -34,7 +34,7 @@ export const AppleWalletButton = () => {
     const succinctSerialization = encodeURIComponent(
       succinctSerializeJubmojiList(jubmojis)
     );
-    await saveBackupState({
+    await writeBackupState({
       type: "apple",
       serialNum: serial,
     });
