@@ -24,6 +24,8 @@ export default async function handler(
               id: true,
               name: true,
               description: true,
+              eventTitle: true,
+              eventLocation: true,
               startTime: true,
               endTime: true,
               sigNullifierRandomness: true,
