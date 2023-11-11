@@ -20,7 +20,11 @@ import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import { ProvingState, cardPubKeys } from "jubmoji-api";
 import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
 import { useFetchCollectedCards } from "@/hooks/useFetchCards";
-import { cn, isPowerCompleted } from "@/lib/utils";
+import {
+  cn,
+  getQuestCollectionCardIndices,
+  isPowerCompleted,
+} from "@/lib/utils";
 import ProofProgressBar from "@/components/ui/ProofProgressBar";
 import { Prisma } from "@prisma/client";
 
@@ -65,13 +69,6 @@ export default function QuestDetailPage() {
       refetchLeaderboard();
     }
   }, [refetchLeaderboard, updateTeamLeaderboardMutation.isSuccess]);
-
-  const endDateLabel = quest?.endTime
-    ? new Intl.DateTimeFormat("en-US", {
-        dateStyle: "long",
-        timeStyle: "medium",
-      }).format(new Date(quest.endTime))
-    : undefined;
 
   const onUpdateTeamLeaderboardScore = async () => {
     if (!quest) return;
@@ -157,14 +154,7 @@ export default function QuestDetailPage() {
 
   const showLeaderboard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
-  const collectionCardIndices = quest.powers
-    .flatMap((power) => power.collectionCards.map((card) => card.index))
-    .reduce((unique: number[], index: number) => {
-      if (!unique.includes(index)) {
-        unique.push(index);
-      }
-      return unique;
-    }, []);
+  const collectionCardIndices = getQuestCollectionCardIndices(quest);
 
   const numPowersCompleted = jubmojis
     ? quest.powers.filter((power) => isPowerCompleted(power, jubmojis)).length
@@ -193,6 +183,15 @@ export default function QuestDetailPage() {
     }
   }
 
+  const endDateFormattedTime = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "long",
+    timeStyle: "medium",
+  }).format(new Date(quest.endTime));
+  const endDateLabel =
+    new Date(quest.endTime) < new Date()
+      ? `Ended on ${endDateFormattedTime}`
+      : `Ends on ${endDateFormattedTime}`;
+
   return (
     <div>
       <AppHeader
@@ -215,7 +214,7 @@ export default function QuestDetailPage() {
           numPowersTotal={quest.powers.length}
         >
           <div className="flex flex-col gap-1 mt-2">
-            {quest.collectionCards.length > 0 && (
+            {collectionCardIndices.length > 0 && (
               <>
                 <div className="flex flex-col">
                   <Card.Title className="!text-base text-left">
@@ -255,7 +254,7 @@ export default function QuestDetailPage() {
 
             <div className="ml-auto">
               <span className="text-shark-400 text-[13px] font-dm-sans">
-                {`Ends on ${endDateLabel}`}
+                {endDateLabel}
               </span>
             </div>
           </div>
