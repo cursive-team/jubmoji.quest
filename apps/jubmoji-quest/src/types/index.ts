@@ -34,6 +34,10 @@ export type JubmojiQuest = Quest & {
     name: string;
     description: string;
     powerType: $Enums.PowerType;
+    proofType: $Enums.ProofType;
+    proofParams: Prisma.JsonValue;
+    prerequisiteCards: { index: number }[];
+    collectionCards: { index: number }[];
   }[];
 };
 

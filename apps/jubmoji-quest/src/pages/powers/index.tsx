@@ -11,7 +11,7 @@ import { useFetchPowers } from "@/hooks/useFetchPowers";
 import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
-import { useGetQuestPowerLockedStatus } from "@/hooks/useFetchQuests";
+import { useGetPowerLockedStatus } from "@/hooks/useFetchQuests";
 
 type PowerCardDetailProps = {
   power: JubmojiPower;
@@ -40,7 +40,7 @@ const PlaceholderContent = () => {
 };
 
 const PowerCardDetail = ({ power }: PowerCardDetailProps) => {
-  const { data: { locked: powerIsLocked } = {} } = useGetQuestPowerLockedStatus(
+  const { data: { locked: powerIsLocked } = {} } = useGetPowerLockedStatus(
     power.quest.id
   );
 

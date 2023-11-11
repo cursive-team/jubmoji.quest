@@ -65,6 +65,18 @@ export default async function handler(
               name: true,
               description: true,
               powerType: true,
+              proofType: true,
+              proofParams: true,
+              prerequisiteCards: {
+                select: {
+                  index: true,
+                },
+              },
+              collectionCards: {
+                select: {
+                  index: true,
+                },
+              },
             },
           },
         },

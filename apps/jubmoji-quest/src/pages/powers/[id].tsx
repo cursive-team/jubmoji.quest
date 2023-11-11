@@ -17,7 +17,7 @@ import { JubmojiPower } from "@/types";
 import { Jubmoji } from "jubmoji-api";
 import { Message } from "@/components/Message";
 import { cn } from "@/lib/utils";
-import { useGetQuestPowerLockedStatus } from "@/hooks/useFetchQuests";
+import { useGetPowerLockedStatus } from "@/hooks/useFetchQuests";
 import { RedirectPower } from "@/components/powers/RedirectPower";
 
 interface PowerDetailLabelProps {
@@ -89,7 +89,7 @@ export default function PowerDetailPage() {
   );
 
   const { data: { locked: powerIsLocked } = { locked: true } } =
-    useGetQuestPowerLockedStatus(power?.questId);
+    useGetPowerLockedStatus(power?.id);
 
   if (isLoadingPower) return <PagePlaceholder />;
   if (!power) {

@@ -34,10 +34,12 @@ export const useFetchPowers = () => {
   );
 };
 
-export const useFetchPowerById = (id: string | number) => {
+export const useFetchPowerById = (id: string | number | undefined) => {
   return useQuery(
     ["powers", id],
     async (): Promise<JubmojiPower | null> => {
+      if (id === undefined) return null;
+
       const response = await fetch(`/api/powers/${id}`);
 
       if (!response.ok) {
