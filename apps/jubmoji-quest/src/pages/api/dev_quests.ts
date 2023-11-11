@@ -15,9 +15,10 @@ export default async function handler(
         password,
         name,
         description,
-        tags,
         startTime,
         endTime,
+        isOfficial,
+        isAlwaysVisible,
         proofType,
         N,
         prerequisiteCardIndices,
@@ -44,9 +45,10 @@ export default async function handler(
         data: {
           name,
           description,
-          tags,
           startTime,
           endTime,
+          isOfficial,
+          isAlwaysVisible,
           proofType,
           proofParams,
           prerequisiteCards: {

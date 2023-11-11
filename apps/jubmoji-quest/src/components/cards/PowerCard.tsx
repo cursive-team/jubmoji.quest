@@ -23,6 +23,7 @@ export const PowerTypeIconMapping: Record<$Enums.PowerType, any> = {
   TWITTER: <PowerIcons.twitter />,
   TELEGRAM: <PowerIcons.telegram />,
   REDIRECT: <PowerIcons.access />,
+  POAP: <PowerIcons.access />,
 };
 
 const PowerCard = ({

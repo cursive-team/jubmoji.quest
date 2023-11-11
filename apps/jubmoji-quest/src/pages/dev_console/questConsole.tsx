@@ -6,9 +6,10 @@ import "react-datepicker/dist/react-datepicker.css";
 export default function QuestConsole({ password }: { password: string }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
+  const [isOfficial, setIsOfficial] = useState(false);
+  const [isAlwaysVisible, setIsAlwaysVisible] = useState(false);
   const [prerequisiteCardIndices, setPrerequisiteCardIndices] =
     useState<string>("");
   const [collectionCardIndices, setCollectionCardIndices] =
@@ -16,17 +17,6 @@ export default function QuestConsole({ password }: { password: string }) {
   const [proofType, setProofType] = useState("IN_COLLECTION");
   const [N, setN] = useState<number>();
   const [quests, setQuests] = useState<JubmojiQuest[]>([]);
-
-  const availableTags = [
-    "OFFICIAL",
-    "ROLES",
-    "APPLICATIONS",
-    "COMMUNITY",
-    "DEV_TOOLS",
-    "INFRASTRUCTURE",
-    "PRIVACY",
-    "PERSONAL",
-  ];
 
   useEffect(() => {
     const fetchQuests = async () => {
@@ -49,9 +39,10 @@ export default function QuestConsole({ password }: { password: string }) {
     const formData = {
       name,
       description,
-      tags,
       startTime,
       endTime,
+      isOfficial,
+      isAlwaysVisible,
       prerequisiteCardIndices: parsedPrerequisiteCardIndices,
       collectionCardIndices: parsedCollectionCardIndices,
       proofType,
@@ -101,24 +92,6 @@ export default function QuestConsole({ password }: { password: string }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <div>
-          <label>Tags:</label>
-          <select
-            multiple
-            value={tags}
-            onChange={(e) =>
-              setTags(
-                Array.from(e.target.selectedOptions, (option) => option.value)
-              )
-            }
-          >
-            {availableTags.map((tag) => (
-              <option key={tag} value={tag}>
-                {tag}
-              </option>
-            ))}
-          </select>
-        </div>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -154,6 +127,26 @@ export default function QuestConsole({ password }: { password: string }) {
             dateFormat="MMMM d, yyyy h:mm aa"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
+        </div>
+        <div>
+          <span>Is official quest</span>
+          <button
+            onClick={() => {
+              setIsOfficial(!isOfficial);
+            }}
+          >
+            {isOfficial}
+          </button>
+        </div>
+        <div>
+          <span>Is always visible quest</span>
+          <button
+            onClick={() => {
+              setIsAlwaysVisible(!isAlwaysVisible);
+            }}
+          >
+            {isAlwaysVisible}
+          </button>
         </div>
 
         {/* Input for Prerequisite Card Indices */}
@@ -230,7 +223,6 @@ export default function QuestConsole({ password }: { password: string }) {
             <div key={quest.id} className="p-4 border mb-4">
               <h3>{`Quest ID: ${quest.id} - ${quest.name}`}</h3>
               <p>Description: {quest.description}</p>
-              <p>Tags: {quest.tags.join(", ")}</p>
               <p>
                 Start Time:{" "}
                 {quest.startTime && new Date(quest.startTime).toLocaleString()}
@@ -239,6 +231,8 @@ export default function QuestConsole({ password }: { password: string }) {
                 End Time:{" "}
                 {quest.endTime && new Date(quest.endTime).toLocaleString()}
               </p>
+              <p>Is Official: {quest.isOfficial.toString()}</p>
+              <p>Is Always Visible: {quest.isAlwaysVisible.toString()}</p>
               <p>Proof Type: {quest.proofType}</p>
               <p>
                 Prerequisite Cards:{" "}
