@@ -181,9 +181,9 @@ export const cardPubKeys: CardPubKey[] = [
   },
   {
     category: "community",
-    emoji: "🗣",
-    cardName: "speaking head",
-    unicode: "U+1F5E3",
+    emoji: "🐸",
+    cardName: "FROGCRYPTO",
+    unicode: "U+1F438",
     pubKeySlot1:
       "04a2673b858d0cf22d8a168c241d597b134cf8b920976e53a9b445fb491dd34b5f6d53a29cec07f2c9378b46174a7d086036679b6635c2540cbc9611f47f797966",
     pubKeySlot2:
