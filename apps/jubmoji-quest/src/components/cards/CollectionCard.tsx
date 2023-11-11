@@ -161,70 +161,20 @@ const CollectionCard = ({
     }
   };
 
-  const CardDetail = () => {
-    return (
-      <div className="flex flex-col relative">
-        <div className="flex flex-col gap-2 bg-shark-970 z-[2]">
-          {!preview && (
-            <div className="flex flex-col gap-3">
-              <Link href={telegramChatInviteUrl ?? "#"}>
-                <div>
-                  <Button
-                    size="tiny"
-                    variant="blue"
-                    className="max-w-[150px]"
-                    rounded
-                    disabled={!telegramChatInviteUrl}
-                  >
-                    <div className="flex items-center gap-1">
-                      <Image
-                        src="/images/telegram-icon.svg"
-                        alt="Collector's chat"
-                        width={16}
-                        height={16}
-                        sizes="100vw"
-                      />
-                      <span className="font-semibold font-dm-sans text-[13px]">
-                        {"Collector's Chat"}
-                      </span>
-                    </div>
-                  </Button>
-                </div>
-              </Link>
-              <CardLabel clamp>{label}</CardLabel>
-            </div>
-          )}
-          <div className="flex">
-            {preview ? (
-              <CardLabel className="max-w-[190px]">{label}</CardLabel>
-            ) : (
-              backedUp !== undefined && (
-                <CollectionCardBackupButton
-                  backedUp={backedUp}
-                  onBackup={onBackup}
-                />
-              )
-            )}
-            <div className="ml-auto">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{icon}</span>
-                <span className="font-giorgio text-shark-50 text-lg tracking-[0.36px] ">{`#${edition}`}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   let telegramChatInviteUrl: URL | undefined;
   if (telegramChatInviteLink) {
     try {
+      if (!telegramChatInviteLink.startsWith("https://")) {
+        telegramChatInviteLink = "https://" + telegramChatInviteLink;
+      }
+
       telegramChatInviteUrl = new URL(telegramChatInviteLink);
     } catch {
       console.error("Invalid telegram chat invite link");
     }
   }
+
+  const CARD_HEIGHT = telegramChatInviteUrl ? height - 160 : height - 120;
 
   const cardCollectedTime = readCollectedTime(pubKeyIndex);
   let readableTime: string | undefined = undefined;
@@ -292,7 +242,64 @@ const CollectionCard = ({
     );
   };
 
-  const CARD_HEIGHT = height - 160;
+  const CardDetail = () => {
+    return (
+      <div className="flex flex-col relative">
+        <div className="flex flex-col gap-2 bg-shark-970 z-[2]">
+          {!preview && (
+            <div className="flex flex-col gap-3">
+              {telegramChatInviteUrl && (
+                <Link href={telegramChatInviteUrl ?? "#"}>
+                  <div>
+                    <Button
+                      size="tiny"
+                      variant="blue"
+                      className="max-w-[80px]"
+                      rounded
+                      disabled={!telegramChatInviteUrl}
+                    >
+                      <div className="flex items-center gap-1">
+                        <Image
+                          src="/images/telegram-icon.svg"
+                          alt="Chat"
+                          width={16}
+                          height={16}
+                          sizes="100vw"
+                        />
+                        <span className="font-semibold font-dm-sans text-[13px]">
+                          {"Chat"}
+                        </span>
+                      </div>
+                    </Button>
+                  </div>
+                </Link>
+              )}
+
+              <CardLabel clamp>{label}</CardLabel>
+            </div>
+          )}
+          <div className="flex">
+            {preview ? (
+              <CardLabel className="max-w-[190px]">{label}</CardLabel>
+            ) : (
+              backedUp !== undefined && (
+                <CollectionCardBackupButton
+                  backedUp={backedUp}
+                  onBackup={onBackup}
+                />
+              )
+            )}
+            <div className="ml-auto">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{icon}</span>
+                <span className="font-giorgio text-shark-50 text-lg tracking-[0.36px] ">{`#${edition}`}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div

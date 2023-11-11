@@ -1,12 +1,11 @@
 // @ts-ignore
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Modal, ModalProps } from "./Modal";
 import { Card } from "../cards/Card";
 import { Button } from "../ui/Button";
 import Image from "next/image";
 import MobileDetect from "mobile-detect";
-import Link from "next/link";
 import { cardPubKeys, recoverCounterMessageHash } from "jubmoji-api";
 import {
   Signature,
@@ -16,18 +15,14 @@ import {
 } from "babyjubjub-ecdsa";
 import { toast } from "react-hot-toast";
 
-type Device = "android" | "ios";
-const DeviceImageMapping: Record<Device, string> = {
-  android: "/images/tap-phone-android.png",
-  ios: "/images/tap-phone-ios.png",
-};
-
 const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
   const md = useRef<any>();
   useEffect(() => {
     md.current = new MobileDetect(window?.navigator?.userAgent);
   }, []);
-  const device: Device = md?.current?.is("iPhone") ? "ios" : "android";
+  const deviceImage = md?.current?.is("iPhone")
+    ? "/images/tap-phone-ios.png"
+    : "/images/tap-phone-android.png";
 
   const onReadyToTap = async () => {
     let command = {
@@ -80,7 +75,7 @@ const AssistedTapModal = ({ isOpen, setIsOpen }: ModalProps) => {
           Hold the card on your phone as pictured, then press start below.
         </Card.Title>
         <Image
-          src={DeviceImageMapping[device]}
+          src={deviceImage}
           width={180}
           height={200}
           alt="tap card"

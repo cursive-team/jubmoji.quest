@@ -46,10 +46,10 @@ export default function AppFooter() {
       iconActive: Icons.questSolid,
     },
     {
-      label: "Powers",
-      href: "/powers",
-      icon: Icons.power,
-      iconActive: Icons.powerSolid,
+      label: "Cardholder",
+      href: "/cardholder",
+      icon: Icons.cardholder,
+      iconActive: Icons.cardholderActive,
     },
   ];
 
@@ -60,7 +60,10 @@ export default function AppFooter() {
     >
       <div className="md:container grid grid-cols-3 bottom-0 py-2 xs:py-4">
         {routerItems?.map((route, index) => {
-          const isActive = activeRoute === route.href;
+          const isActive =
+            route.href === "/"
+              ? activeRoute === "/" || activeRoute.includes("/quests")
+              : activeRoute.includes(route.href);
           return <TabItem key={index} {...route} isActive={isActive} />;
         })}
       </div>
