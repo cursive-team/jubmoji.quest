@@ -5,6 +5,9 @@ import {
 } from "jubmoji-api";
 import { BackupState, NullifiedSigs } from "../types";
 
+/**
+ * JUBMOJI UTILITIES
+ */
 export const loadJubmojis = async (): Promise<Jubmoji[]> => {
   const jubmojis = window.localStorage["jubmojis"];
 
@@ -62,6 +65,9 @@ export const addJubmoji = async (jubmoji: Jubmoji): Promise<void> => {
   await writeJubmojis(jubmojis);
 };
 
+/**
+ * BACKUP STATE UTILITIES
+ */
 export async function loadBackupState(): Promise<BackupState | undefined> {
   const serializedBackup = window.localStorage["backup"];
   if (serializedBackup != null && serializedBackup !== "") {
@@ -70,12 +76,15 @@ export async function loadBackupState(): Promise<BackupState | undefined> {
   return undefined;
 }
 
-export async function saveBackupState(backup: BackupState): Promise<void> {
+export async function writeBackupState(backup: BackupState): Promise<void> {
   const backedUpJubmojis = await loadJubmojis();
   backup.backedUpPubKeyIndices = backedUpJubmojis.map((j) => j.pubKeyIndex);
   window.localStorage["backup"] = JSON.stringify(backup);
 }
 
+/**
+ * NULLIFIED SIGS UTILITIES
+ */
 export const addNullifiedSigs = async ({
   quests: questNullifiedSigs,
   powers: powerNullifiedSigs,
@@ -119,4 +128,33 @@ export const loadNullifiedSigs = async (): Promise<NullifiedSigs> => {
   }
 
   return JSON.parse(sigs);
+};
+
+/**
+ * COLLECTED TIME UTILITIES
+ */
+export const loadCollectedTimes = async (): Promise<Record<number, number>> => {
+  const collectedTimes = window.localStorage["collectedTimes"];
+
+  if (!collectedTimes) {
+    return {};
+  }
+
+  return JSON.parse(collectedTimes);
+};
+
+export const readCollectedTime = async (
+  pubKeyIndex: number
+): Promise<number | undefined> => {
+  const collectedTimes = await loadCollectedTimes();
+  return collectedTimes[pubKeyIndex];
+};
+
+export const addCollectedTime = async (pubKeyIndex: number): Promise<void> => {
+  const collectedTimes = await loadCollectedTimes();
+
+  if (!(pubKeyIndex in collectedTimes)) {
+    collectedTimes[pubKeyIndex] = Date.now();
+    window.localStorage["collectedTimes"] = JSON.stringify(collectedTimes);
+  }
 };

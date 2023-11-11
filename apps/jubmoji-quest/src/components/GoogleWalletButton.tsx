@@ -1,4 +1,4 @@
-import { loadBackupState, saveBackupState } from "../lib/localStorage";
+import { loadBackupState, writeBackupState } from "../lib/localStorage";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import * as jose from "jose";
@@ -79,7 +79,7 @@ export const GoogleWalletButton = () => {
       // clicks backup from the app but doesn't actually add it to their wallet
     }
 
-    await saveBackupState({
+    await writeBackupState({
       type: "google",
       serialNum: serial,
     });

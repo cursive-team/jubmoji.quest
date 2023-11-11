@@ -7,7 +7,7 @@ import {
   cardPubKeys,
   getJubmojiFromNonceSignature,
 } from "jubmoji-api";
-import { addJubmoji } from "@/lib/localStorage";
+import { addCollectedTime, addJubmoji } from "@/lib/localStorage";
 import { Card } from "@/components/cards/Card";
 import { Button } from "@/components/ui/Button";
 import { Icons } from "@/components/Icons";
@@ -298,6 +298,7 @@ export default function CollectJubmojiPage() {
         setCollectStatus(CollectStatus.STANDARD);
       }
 
+      await addCollectedTime(jubmojiToCollect.pubKeyIndex);
       await addJubmoji(jubmojiToCollect);
       setCollectedJubmoji(jubmojiToCollect);
     }

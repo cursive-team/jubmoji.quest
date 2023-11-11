@@ -10,7 +10,7 @@ import { succinctSerializeJubmojiList } from "jubmoji-api";
 import toast from "react-hot-toast";
 import { APP_CONFIG } from "@/constants";
 import Image from "next/image";
-import { saveBackupState } from "@/lib/localStorage";
+import { writeBackupState } from "@/lib/localStorage";
 
 export default function BackupModal({ children, ...props }: ModalProps) {
   const { data: jubmojis } = useJubmojis();
@@ -23,7 +23,7 @@ export default function BackupModal({ children, ...props }: ModalProps) {
       "Jubmoji recovery link: " +
       APP_CONFIG.RECOVERY_URL(succinctSerialization);
 
-    await saveBackupState({
+    await writeBackupState({
       type: "copypaste",
     });
 
@@ -67,7 +67,7 @@ export default function BackupModal({ children, ...props }: ModalProps) {
                 const succinctSerialization = succinctSerializeJubmojiList(
                   jubmojis!
                 );
-                await saveBackupState({
+                await writeBackupState({
                   type: "whatsapp",
                 });
                 const whatsappUrl =
