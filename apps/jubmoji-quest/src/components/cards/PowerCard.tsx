@@ -12,6 +12,9 @@ export interface PowerCardProps {
   disabled?: boolean;
   shortDescription?: boolean;
   bookmarked?: boolean;
+  numCardsCollected?: number;
+  numCardsTotal?: number;
+  showProgress?: boolean;
   locked?: boolean;
   ellipsis?: boolean;
 }
@@ -33,10 +36,14 @@ const PowerCard = ({
   disabled = false,
   shortDescription = false,
   bookmarked = false,
+  numCardsCollected = 0,
+  numCardsTotal = 0,
+  showProgress = false,
   locked = false,
   ellipsis = false,
 }: PowerCardProps) => {
   const powerIcon = PowerTypeIconMapping[powerType];
+  const percentageProgress = (numCardsCollected / (numCardsTotal || 1)) * 100;
 
   return (
     <Card.Base disabled={disabled}>
@@ -85,6 +92,21 @@ const PowerCard = ({
             {locked && <Icons.locked />}
           </button>
         </div>
+        {showProgress && (
+          <div className="flex justify-center items-center gap-2 self-stretch">
+            <div className="flex items-center self-stretch border border-shark-400 w-full">
+              <div
+                className={`h-full bg-shark-400`}
+                style={{
+                  width: `${percentageProgress}%`,
+                }}
+              />
+            </div>
+            <span className="font-bold font-hind-siliguri text-shark-600 text-[13px] leading-[120%]">
+              {numCardsCollected}/{numCardsTotal}
+            </span>
+          </div>
+        )}
       </Card.Content>
     </Card.Base>
   );

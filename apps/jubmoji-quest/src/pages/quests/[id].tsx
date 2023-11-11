@@ -6,10 +6,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import {
-  useFetchQuestById,
-  useGetQuestPowerLockedStatus,
-} from "@/hooks/useFetchQuests";
+import { useFetchQuestById } from "@/hooks/useFetchQuests";
 import { Placeholder } from "@/components/Placeholder";
 import { Card } from "@/components/cards/Card";
 import { $Enums } from "@prisma/client";
@@ -23,8 +20,9 @@ import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
 import { ProvingState, cardPubKeys } from "jubmoji-api";
 import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
 import { useFetchCollectedCards } from "@/hooks/useFetchCards";
-import { cn } from "@/lib/utils";
+import { cn, isPowerCompleted } from "@/lib/utils";
 import ProofProgressBar from "@/components/ui/ProofProgressBar";
+import { Prisma } from "@prisma/client";
 
 const PagePlaceholder = () => {
   return (
@@ -49,8 +47,6 @@ export default function QuestDetailPage() {
   const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
     questId as string
   );
-  const { data: { locked: powerIsLocked } = { locked: true } } =
-    useGetQuestPowerLockedStatus(quest?.id);
   const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
   const {
     isLoading: isLoadingLeaderboard,
@@ -161,14 +157,18 @@ export default function QuestDetailPage() {
 
   const showLeaderboard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
-  const collectionCardIndices = quest.collectionCards.map((card) => card.index);
+  const collectionCardIndices = quest.powers
+    .flatMap((power) => power.collectionCards.map((card) => card.index))
+    .reduce((unique: number[], index: number) => {
+      if (!unique.includes(index)) {
+        unique.push(index);
+      }
+      return unique;
+    }, []);
 
-  const collectedItems =
-    jubmojis?.filter((jubmoji) =>
-      collectionCardIndices.includes(jubmoji.pubKeyIndex)
-    ).length ?? 0;
-
-  const collectionTotalItems = quest.collectionCards.length;
+  const numPowersCompleted = jubmojis
+    ? quest.powers.filter((power) => isPowerCompleted(power, jubmojis)).length
+    : 0;
 
   const proofProgressPercentage = provingState
     ? (provingState.numProofsCompleted / (provingState.numProofsTotal || 1)) *
@@ -211,8 +211,8 @@ export default function QuestDetailPage() {
           showProgress
           image={quest.imageLink || ""}
           spacing="sm"
-          collected={collectedItems}
-          collectionTotalItems={collectionTotalItems}
+          numPowersCompleted={numPowersCompleted}
+          numPowersTotal={quest.powers.length}
         >
           <div className="flex flex-col gap-1 mt-2">
             {quest.collectionCards.length > 0 && (
@@ -224,10 +224,9 @@ export default function QuestDetailPage() {
                   <div className="flex gap-2"></div>
                 </div>
                 <div className="flex flex-wrap gap-1 mr-auto">
-                  {quest.collectionCards.map((card, index) => {
+                  {collectionCardIndices.map((index) => {
                     const isCollected = collectedCards.find(
-                      (collectedCard) =>
-                        collectedCard.pubKeyIndex === card.index
+                      (collectedCard) => collectedCard.pubKeyIndex === index
                     )?.pubKeyIndex;
 
                     return isLoadingCollectedCards ? (
@@ -243,10 +242,10 @@ export default function QuestDetailPage() {
                         {quest.proofType ===
                           $Enums.ProofType.TEAM_LEADERBOARD &&
                         !jubmojis?.find(
-                          (jubmoji) => jubmoji.pubKeyIndex === card.index
+                          (jubmoji) => jubmoji.pubKeyIndex === index
                         )
                           ? "❓" // Hide collection emojis that have not been collected for team leaderboard quests
-                          : cardPubKeys[card.index].emoji}
+                          : cardPubKeys[index].emoji}
                       </span>
                     );
                   })}
@@ -263,6 +262,29 @@ export default function QuestDetailPage() {
         </QuestCard>
 
         {quest.powers.map((power) => {
+          const collectionCardIndices = power.collectionCards.map(
+            (card) => card.index
+          );
+          const collectedItems =
+            jubmojis?.filter((jubmoji) =>
+              collectionCardIndices.includes(jubmoji.pubKeyIndex)
+            ).length ?? 0;
+
+          const proofParams = power.proofParams as Prisma.JsonObject;
+          let powerIsLocked: boolean;
+          let numCardsCollected: number;
+          let numCardsTotal: number;
+          if (power.proofType === $Enums.ProofType.N_UNIQUE_IN_COLLECTION) {
+            const N = proofParams.N as number;
+            powerIsLocked = collectedItems < N;
+            numCardsCollected = Math.min(collectedItems, N);
+            numCardsTotal = N;
+          } else {
+            powerIsLocked = collectedItems === 0;
+            numCardsCollected = Math.min(collectedItems, 1);
+            numCardsTotal = 1;
+          }
+
           return powerIsLocked === undefined || powerIsLocked ? (
             <PowerCard
               title={power.name}
@@ -270,6 +292,9 @@ export default function QuestDetailPage() {
               powerType={power.powerType}
               locked={powerIsLocked}
               disabled={powerIsLocked}
+              numCardsCollected={numCardsCollected}
+              numCardsTotal={numCardsTotal}
+              showProgress
             />
           ) : (
             <Link key={power.id} href={`/powers/${power.id}`}>
@@ -279,6 +304,9 @@ export default function QuestDetailPage() {
                 powerType={power.powerType}
                 locked={powerIsLocked}
                 disabled={powerIsLocked}
+                numCardsCollected={numCardsCollected}
+                numCardsTotal={numCardsTotal}
+                showProgress
                 shortDescription
                 ellipsis
               />

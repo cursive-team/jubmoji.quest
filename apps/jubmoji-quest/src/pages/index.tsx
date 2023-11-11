@@ -5,7 +5,7 @@ import { useJubmojis } from "../hooks/useJubmojis";
 import { Filters } from "@/components/Filters";
 import Link from "next/link";
 import { useState } from "react";
-import { filterItems } from "@/lib/utils";
+import { filterItems, isPowerCompleted } from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
 import { QuestCard } from "@/components/cards/QuestCard";
@@ -42,7 +42,7 @@ export default function Home() {
   const officialQuests: JubmojiQuest[] = [];
   const otherQuests: JubmojiQuest[] = [];
   filteredItems?.forEach((quest) => {
-    if (quest.name.includes("OFFICIAL")) {
+    if (quest.isOfficial) {
       officialQuests.push(quest);
     } else {
       otherQuests.push(quest);
@@ -61,26 +61,14 @@ export default function Home() {
         ) : (
           <>
             {allQuests?.map(
-              ({
-                id,
-                name,
-                description,
-                collectionCards,
-                imageLink,
-              }: JubmojiQuest) => {
+              ({ id, name, description, imageLink, powers }: JubmojiQuest) => {
                 const questPageUrl = `/quests/${id}`;
-
-                const collectionCardIndices = collectionCards.map(
-                  (card) => card.index
-                );
 
                 const questImagePath = imageLink;
 
-                const collected = jubmojis.filter((jubmoji) =>
-                  collectionCardIndices.includes(jubmoji.pubKeyIndex)
+                const numPowersCompleted = powers.filter((power) =>
+                  isPowerCompleted(power, jubmojis)
                 ).length;
-
-                const collectionTotalItems = collectionCardIndices.length;
 
                 return (
                   <Link key={id} href={questPageUrl}>
@@ -88,8 +76,8 @@ export default function Home() {
                       title={name}
                       description={description}
                       image={questImagePath || ""}
-                      collected={collected}
-                      collectionTotalItems={collectionTotalItems}
+                      numPowersCompleted={numPowersCompleted}
+                      numPowersTotal={powers.length}
                       showProgress
                       ellipsis
                     />
