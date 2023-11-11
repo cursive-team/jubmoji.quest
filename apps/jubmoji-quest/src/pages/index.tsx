@@ -34,13 +34,18 @@ export default function Home() {
 
   const { isLoading: isLoadingQuests, data: quests = [] } = useFetchQuests();
 
-  const viewableQuests = quests?.filter(
-    (quest) =>
+  const viewableQuests = quests?.filter((quest) => {
+    const questCardIndicesFilter = [
+      ...quest.prerequisiteCards.map((card) => card.index),
+      ...getQuestCollectionCardIndices(quest),
+    ];
+    return (
       quest.isAlwaysVisible ||
       jubmojis?.some((jubmoji) =>
-        getQuestCollectionCardIndices(quest).includes(jubmoji.pubKeyIndex)
+        questCardIndicesFilter.includes(jubmoji.pubKeyIndex)
       )
-  );
+    );
+  });
 
   const expiredQuests: JubmojiQuest[] = [];
   const officialQuests: JubmojiQuest[] = [];

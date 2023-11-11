@@ -18,12 +18,15 @@ export function filterItems<T>(items: T[], filter: string) {
 export function getQuestCollectionCardIndices(quest: JubmojiQuest): number[] {
   return quest.powers
     .flatMap((power) => power.collectionCards.map((card) => card.index))
-    .reduce((unique: number[], index: number) => {
-      if (!unique.includes(index)) {
-        unique.push(index);
-      }
-      return unique;
-    }, []);
+    .reduce(
+      (unique: number[], index: number) => {
+        if (!unique.includes(index)) {
+          unique.push(index);
+        }
+        return unique;
+      },
+      quest.collectionCards.map((card) => card.index)
+    );
 }
 
 export function getNumCardsToCollect(
