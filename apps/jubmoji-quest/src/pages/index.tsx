@@ -5,7 +5,11 @@ import { useJubmojis } from "../hooks/useJubmojis";
 import { Filters } from "@/components/Filters";
 import Link from "next/link";
 import { useState } from "react";
-import { getQuestCollectionCardIndices, isPowerCompleted } from "@/lib/utils";
+import {
+  cn,
+  getQuestCollectionCardIndices,
+  isPowerCompleted,
+} from "@/lib/utils";
 import { MESSAGES } from "@/messages";
 import { Input } from "@/components/ui/Input";
 import { QuestCard } from "@/components/cards/QuestCard";
@@ -15,6 +19,9 @@ import { Placeholder } from "@/components/Placeholder";
 import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import { AssistedTapModal } from "@/components/modals/AssistedTapModal";
+import { useFetchCollectedCards } from "@/hooks/useFetchCards";
+import { cardPubKeys } from "jubmoji-api";
+import { $Enums } from "@prisma/client";
 
 export const QuestTagMapping: Record<
   "ACTIVE" | "ALL" | "OFFICIAL" | "EXPIRED",
@@ -31,7 +38,8 @@ export default function Home() {
   const [infoModalOpen, setIsModalOpen] = useState(false);
   const [assistedTapModal, setAssistedTapModal] = useState(false);
   const { data: jubmojis = [] } = useJubmojis();
-
+  const { isLoading: isLoadingCollectedCards, data: collectedCards = [] } =
+    useFetchCollectedCards();
   const { isLoading: isLoadingQuests, data: quests = [] } = useFetchQuests();
 
   const viewableQuests = quests?.filter((quest) => {
@@ -89,55 +97,79 @@ export default function Home() {
           <Message>{MESSAGES.NO_RESULTS}</Message>
         ) : (
           <>
-            {filteredQuests?.map(
-              ({
-                id,
-                name,
-                description,
-                imageLink,
-                powers,
-                endTime,
-              }: JubmojiQuest) => {
-                const questPageUrl = `/quests/${id}`;
+            {filteredQuests?.map((quest: JubmojiQuest) => {
+              const { id, name, description, imageLink, powers, endTime } =
+                quest;
+              const questPageUrl = `/quests/${id}`;
 
-                const questImagePath = imageLink;
+              const questImagePath = imageLink;
 
-                const numPowersCompleted = powers.filter((power) =>
-                  isPowerCompleted(power, jubmojis)
-                ).length;
+              const numPowersCompleted = powers.filter((power) =>
+                isPowerCompleted(power, jubmojis)
+              ).length;
 
-                const endDateFormattedTime = new Intl.DateTimeFormat("en-US", {
-                  dateStyle: "long",
-                  timeStyle: "medium",
-                }).format(new Date(endTime));
-                const endDateLabel =
-                  new Date(endTime) < new Date()
-                    ? `Ended on ${endDateFormattedTime}`
-                    : `Ends on ${endDateFormattedTime}`;
+              const collectionCardIndices =
+                getQuestCollectionCardIndices(quest);
 
-                return (
-                  <Link key={id} href={questPageUrl}>
-                    <QuestCard
-                      title={name}
-                      description={description}
-                      image={questImagePath || ""}
-                      numPowersCompleted={numPowersCompleted}
-                      numPowersTotal={powers.length}
-                      showProgress
-                      ellipsis
-                    >
-                      <div className="flex flex-col gap-1">
-                        <div className="mr-auto">
-                          <span className="text-shark-400 text-[13px] font-dm-sans">
-                            {endDateLabel}
-                          </span>
-                        </div>
+              const endDateFormattedTime = new Intl.DateTimeFormat("en-US", {
+                dateStyle: "long",
+                timeStyle: "medium",
+              }).format(new Date(endTime));
+              const endDateLabel =
+                new Date(endTime) < new Date()
+                  ? `Ended on ${endDateFormattedTime}`
+                  : `Ends on ${endDateFormattedTime}`;
+
+              return (
+                <Link key={id} href={questPageUrl}>
+                  <QuestCard
+                    title={name}
+                    description={description}
+                    image={questImagePath || ""}
+                    numPowersCompleted={numPowersCompleted}
+                    numPowersTotal={powers.length}
+                    ellipsis
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div className="flex flex-wrap gap-1 mr-auto">
+                        {collectionCardIndices.slice(0, 10).map((index) => {
+                          const isCollected = collectedCards.find(
+                            (collectedCard) =>
+                              collectedCard.pubKeyIndex === index
+                          )?.pubKeyIndex;
+
+                          return isLoadingCollectedCards ? (
+                            <Placeholder.Base className="w-4 h-4"></Placeholder.Base>
+                          ) : (
+                            <span
+                              key={index}
+                              className={cn(
+                                "!text-[20px]",
+                                !isCollected && "opacity-30"
+                              )}
+                            >
+                              {quest.proofType ===
+                                $Enums.ProofType.TEAM_LEADERBOARD &&
+                              !jubmojis?.find(
+                                (jubmoji) => jubmoji.pubKeyIndex === index
+                              )
+                                ? "❓" // Hide collection emojis that have not been collected for team leaderboard quests
+                                : cardPubKeys[index].emoji}
+                            </span>
+                          );
+                        })}
+                        {collectionCardIndices.length > 10 && "…"}
                       </div>
-                    </QuestCard>
-                  </Link>
-                );
-              }
-            )}
+                      <div className="mr-auto">
+                        <span className="text-shark-400 text-[13px] font-dm-sans">
+                          {endDateLabel}
+                        </span>
+                      </div>
+                    </div>
+                  </QuestCard>
+                </Link>
+              );
+            })}
           </>
         )}
       </>
