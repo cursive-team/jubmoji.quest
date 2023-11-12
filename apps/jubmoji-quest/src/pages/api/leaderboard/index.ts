@@ -45,7 +45,7 @@ export default async function handler(
 
     // Post endpoint is used for submitting a leaderboard proof
     // Will return a 200 only if proof is successful, and will return parameter
-    // scoreAdded equal to the number of points added to the team's score
+    // scoreAdded equal to the number of points added to the user's score
   } else if (req.method === "POST") {
     try {
       const { questId, serializedProof, proofGenerationTime } = req.body;
@@ -136,7 +136,7 @@ export default async function handler(
           .pubKeyNullifierRandomnessHash
       );
       const previouslyUsedSigNullifiers =
-        await prisma.teamLeaderboardNullifiers.findMany({
+        await prisma.leaderboardNullifiers.findMany({
           where: {
             questId: Number(questId),
           },
@@ -229,9 +229,7 @@ export default async function handler(
       return res.status(200).json({ scoreAdded });
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .json({ message: "Error submitting team leaderboard score" });
+      res.status(500).json({ message: "Error submitting leaderboard score" });
     }
   } else {
     return res.status(405).json({ message: "Method Not Allowed" });
