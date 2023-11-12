@@ -1,6 +1,6 @@
 // @ts-ignore
 import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import MobileDetect from "mobile-detect";
 import { InfoModal } from "@/components/modals/InfoModal";
 import { AppHeader } from "@/components/AppHeader";
@@ -37,31 +37,41 @@ const cardholderActionDetails: Record<
   {
     title: string;
     buttonText: string;
+    descriptionText: string;
     entryFields?: { field: string; size: "big" | "small" }[];
     redirect?: string;
   }
 > = {
   [CardholderActions.EDIT_CARD_DETAILS]: {
     title: "Cardholder edit portal",
-    buttonText: "Begin editing",
+    buttonText: "Begin",
+    descriptionText:
+      "Press begin, then hold your card to your phone as pictured.",
   },
   [CardholderActions.PSEUD_X_POST]: {
     title: "Pseudonymous X Post",
-    buttonText: "Begin posting",
+    buttonText: "Begin",
+    descriptionText:
+      "Press begin, then hold your card to your phone as pictured.",
   },
   [CardholderActions.PSEUD_TELEGRAM_POST]: {
     title: "Pseudonymous Telegram Message",
-    buttonText: "Begin messaging",
+    buttonText: "Begin",
+    descriptionText:
+      "Press begin, then hold your card to your phone as pictured.",
   },
   [CardholderActions.PROPOSE_QUEST]: {
     title: "Quest proposal portal",
     buttonText: "Verify cardholder",
+    descriptionText:
+      "Press verify, then hold your card to your phone as pictured.",
     redirect: "/quest-proposal",
   },
   [CardholderActions.JOIN_TG_GROUP]: {
     title: "Join cardholder TG group",
     buttonText: "Verify cardholder",
-    entryFields: [],
+    descriptionText:
+      "Press verify, then hold your card to your phone as pictured.",
     redirect: "https://t.me/+gD_iKIoH2w1lMDUx",
   },
 };
@@ -195,13 +205,16 @@ const CardholderTapModal = ({
   isOpen,
   setIsOpen,
 }: CardholderTapModalProps) => {
-  const md = useRef<any>();
+  const [deviceImage, setDeviceImage] = useState<string>(
+    "/images/tap-phone-android.png"
+  );
+
   useEffect(() => {
-    md.current = new MobileDetect(window?.navigator?.userAgent);
+    const md = new MobileDetect(window.navigator.userAgent);
+    if (md.is("iPhone")) {
+      setDeviceImage("/images/tap-phone-ios.png");
+    }
   }, []);
-  const deviceImage = md?.current?.is("iPhone")
-    ? "/images/tap-phone-ios.png"
-    : "/images/tap-phone-android.png";
 
   const [modalState, setModalState] = useState(
     CardholderTapModalState.UNLOCKING
@@ -353,7 +366,7 @@ const CardholderTapModal = ({
                 {cardholderActionDetails[action].title}
               </Card.Title>
               <span className="font-dm-sans text-[16px] text-shark-400">
-                Tap unlock, then hold your card to your phone as pictured.
+                {cardholderActionDetails[action].descriptionText}
               </span>
             </div>
             <Image
@@ -363,6 +376,7 @@ const CardholderTapModal = ({
               alt="tap card"
               className="mx-auto py-12"
             />
+
             <div className="flex flex-col gap-8">
               <Button variant="secondary" onClick={initialTap}>
                 {cardholderActionDetails[action].buttonText}
