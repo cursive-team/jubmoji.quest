@@ -43,6 +43,9 @@ import {
   TeamLeaderboardProofArgs,
   TeamLeaderboardProof,
   ProvingState,
+  LeaderboardProofArgs,
+  LeaderboardProof,
+  LeaderboardClassArgs,
 } from "./types";
 import { Signature } from "@noble/secp256k1";
 import { cardPubKeys } from "./data";
@@ -370,6 +373,108 @@ export class PublicMessageSignature
 
     return Promise.resolve({
       verified: claimedPublicKey === recoveredPublicKey,
+    });
+  }
+}
+
+export class Leaderboard
+  implements ProofClass<LeaderboardProofArgs, LeaderboardProof>
+{
+  collectionPubKeys: string[];
+  sigNullifierRandomness: string;
+  pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
+
+  constructor({
+    collectionPubKeys,
+    sigNullifierRandomness,
+    pathToCircuits,
+    onUpdateProvingState,
+  }: LeaderboardClassArgs) {
+    this.collectionPubKeys = collectionPubKeys;
+    this.sigNullifierRandomness = sigNullifierRandomness;
+    this.pathToCircuits = pathToCircuits;
+    this.onUpdateProvingState = onUpdateProvingState;
+  }
+
+  async prove({
+    pubKeyNullifierRandomness,
+    jubmojis,
+  }: LeaderboardProofArgs): Promise<LeaderboardProof> {
+    const numProofsTotal = jubmojis.length;
+    this.onUpdateProvingState?.({
+      numProofsTotal,
+      numProofsCompleted: 0,
+    });
+
+    const membershipProofs = [];
+    for (let i = 0; i < jubmojis.length; i++) {
+      const jubmoji = jubmojis[i];
+      const { sig, msgHash, pubKey, R, T, U } =
+        getMembershipProofArgsFromJubmoji(jubmoji);
+      const merkleProof = await getMerkleProofFromCache(
+        this.collectionPubKeys,
+        this.collectionPubKeys.indexOf(pubKey)
+      );
+      const membershipProof = await proveMembership({
+        sig,
+        msgHash,
+        publicInputs: {
+          R,
+          T,
+          U,
+        },
+        merkleProof: merkleProof,
+        sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+        pubKeyNullifierRandomness: hexToBigInt(pubKeyNullifierRandomness),
+        pathToCircuits: this.pathToCircuits,
+      });
+      membershipProofs.push(membershipProof);
+      this.onUpdateProvingState?.({
+        numProofsTotal,
+        numProofsCompleted: i + 1, // Include this proof
+      });
+    }
+
+    return {
+      serializedMembershipProofs: membershipProofs.map(
+        serializeMembershipProof
+      ),
+    };
+  }
+
+  async verify({
+    serializedMembershipProofs,
+  }: LeaderboardProof): Promise<VerificationResult> {
+    const membershipProofs = serializedMembershipProofs.map(
+      deserializeMembershipProof
+    );
+    const merkleRoot = await getMerkleRootFromCache(this.collectionPubKeys);
+
+    // Checks that all the pubKeyNullifiers are unique but all the
+    // pubKeyNullifierRandomnessHashes are the same
+    const pubKeyNullifiers = membershipProofs.map(
+      (proof) => getPublicSignalsFromMembershipZKP(proof.zkp).pubKeyNullifier
+    );
+    if (!areAllBigIntsDifferent(pubKeyNullifiers)) {
+      return { verified: false };
+    }
+
+    const pubKeyNullifierRandomnessHashes = membershipProofs.map(
+      (proof) =>
+        getPublicSignalsFromMembershipZKP(proof.zkp)
+          .pubKeyNullifierRandomnessHash
+    );
+    if (!areAllBigIntsTheSame(pubKeyNullifierRandomnessHashes)) {
+      return { verified: false };
+    }
+
+    return await batchVerifyMembership({
+      proofs: membershipProofs,
+      merkleRoot: merkleRoot,
+      sigNullifierRandomness: hexToBigInt(this.sigNullifierRandomness),
+      usedSigNullifiers: undefined, // Verify usedSigNullifiers outside of this proof, since we sometimes want to increase a user's score as long as they have used some new sigs
+      pathToCircuits: this.pathToCircuits,
     });
   }
 }

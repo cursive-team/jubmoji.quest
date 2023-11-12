@@ -5,6 +5,7 @@ import {
   Jubmoji,
   JubmojiInCollection,
   JubmojiInCollectionWithNonce,
+  Leaderboard,
   NUniqueJubmojisInCollection,
   ProofClass,
   ProvingState,
@@ -37,6 +38,7 @@ export interface CreateJubmojiQuestProofArgs {
   config: JubmojiQuestProofConfig;
   jubmojis: Jubmoji[];
   overrideSigNullifierRandomness?: string;
+  pubKeyNullifierRandomness?: string;
   pathToCircuits?: string;
   onUpdateProvingState?: (provingState: ProvingState) => void;
 }
@@ -93,6 +95,13 @@ export const createJubmojiQuestProofInstance = ({
         pathToCircuits,
         onUpdateProvingState,
       });
+    case $Enums.ProofType.LEADERBOARD:
+      return createProofInstance(Leaderboard, {
+        collectionPubKeys,
+        sigNullifierRandomness,
+        pathToCircuits,
+        onUpdateProvingState,
+      });
     case $Enums.ProofType.TEAM_LEADERBOARD:
       return createProofInstance(TeamLeaderboard, {
         teamPubKeys: prerequisitePubKeys,
@@ -112,6 +121,7 @@ export const createJubmojiQuestProof = async ({
   config,
   jubmojis,
   overrideSigNullifierRandomness,
+  pubKeyNullifierRandomness,
   pathToCircuits,
   onUpdateProvingState,
 }: CreateJubmojiQuestProofArgs): Promise<string> => {
@@ -151,6 +161,12 @@ export const createJubmojiQuestProof = async ({
       break;
     case $Enums.ProofType.N_UNIQUE_IN_COLLECTION:
       proofArgs = {
+        jubmojis: proofJubmojis,
+      };
+      break;
+    case $Enums.ProofType.LEADERBOARD:
+      proofArgs = {
+        pubKeyNullifierRandomness,
         jubmojis: proofJubmojis,
       };
       break;

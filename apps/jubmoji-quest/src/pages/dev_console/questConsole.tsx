@@ -198,6 +198,7 @@ export default function QuestConsole({ password }: { password: string }) {
             <option value="N_UNIQUE_IN_COLLECTION">
               N Unique In Collection
             </option>
+            <option value="LEADERBOARD">Leaderboard</option>
             <option value="TEAM_LEADERBOARD">Team Leaderboard</option>
           </select>
         </div>
