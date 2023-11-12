@@ -46,6 +46,7 @@ model Quest {
   prerequisiteCards         Card[] @relation("PrerequisiteCards") // cards needed to see the quest
   collectionCards           Card[] @relation("CollectionCards")   // cards needed to complete the quest
   powers                    Power[] // powers granted upon completion
+  leaderboardNullifiers     LeaderboardNullifiers[]
   teamLeaderboardNullifiers TeamLeaderboardNullifiers[]
 }
 
@@ -99,6 +100,28 @@ model PowerSigNullifier {
   @@unique([nullifier, powerId])
 }
 
+model LeaderboardNullifiers {
+  id                            Int    @id @default(autoincrement())
+  pubKeyNullifier               String
+  pubKeyNullifierRandomnessHash String
+  sigNullifier                  String
+  createdAt                     DateTime @default(now())
+
+  // Relationships
+  questId   Int
+  quest     Quest  @relation(fields: [questId], references: [id])
+}
+
+model LeaderboardProofLog {
+  id                           Int    @id @default(autoincrement())
+  isVerificationLog            Boolean // is this verifying rather than proving?
+  proofCount                   Int  // number of membership proofs in the proofTime
+  verifiedProofCount           Int? // number of membership proofs verified
+  proofTime                    Int  // time of proving or verification in milliseconds
+  questId                      Int  
+  createdAt                    DateTime @default(now())
+}
+
 model TeamLeaderboardNullifiers {
   id              Int    @id @default(autoincrement())
   teamPubKeyIndex Int 
@@ -131,6 +154,7 @@ enum ProofType {
   IN_COLLECTION
   IN_COLLECTION_NONCE
   N_UNIQUE_IN_COLLECTION
+  LEADERBOARD
   TEAM_LEADERBOARD
 }
 

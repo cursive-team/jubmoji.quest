@@ -123,6 +123,22 @@ export interface PublicMessageSignatureProof {
   pubKeyIndex: number;
 }
 
+export interface LeaderboardClassArgs {
+  collectionPubKeys: string[];
+  sigNullifierRandomness: string;
+  pathToCircuits?: string;
+  onUpdateProvingState?: (provingState: ProvingState) => void;
+}
+
+export interface LeaderboardProofArgs {
+  pubKeyNullifierRandomness: string;
+  jubmojis: Jubmoji[];
+}
+
+export interface LeaderboardProof {
+  serializedMembershipProofs: string[];
+}
+
 export interface TeamLeaderboardClassArgs {
   teamPubKeys: string[];
   collectionPubKeys: string[];

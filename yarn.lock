@@ -5719,6 +5719,7 @@ __metadata:
     "@types/react-slick": ^0.23.12
     autoprefixer: ^10
     babyjubjub-ecdsa: ^1.1.2
+    circomlibjs: ^0.1.7
     class-variance-authority: ^0.7.0
     clsx: ^2.0.0
     cross-env: 5.0.5

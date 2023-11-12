@@ -17,8 +17,17 @@ import {
 } from "@/hooks/useTeamLeaderboard";
 import toast from "react-hot-toast";
 import { TeamLeaderboard } from "@/components/ui/TeamLeaderboard";
-import { ProvingState, cardPubKeys } from "jubmoji-api";
-import { addNullifiedSigs, loadNullifiedSigs } from "@/lib/localStorage";
+import {
+  ProvingState,
+  cardPubKeys,
+  getRandomNullifierRandomness,
+} from "jubmoji-api";
+import {
+  addLeaderboardKey,
+  addNullifiedSigs,
+  loadLeaderboardKeys,
+  loadNullifiedSigs,
+} from "@/lib/localStorage";
 import { useFetchCollectedCards } from "@/hooks/useFetchCards";
 import {
   cn,
@@ -27,6 +36,14 @@ import {
 } from "@/lib/utils";
 import ProofProgressBar from "@/components/ui/ProofProgressBar";
 import { Prisma } from "@prisma/client";
+import {
+  useGetLeaderboard,
+  useUpdateLeaderboardMutation,
+} from "@/hooks/useLeaderboard";
+import { Leaderboard } from "@/components/ui/Leaderboard";
+import { hexToBigInt } from "babyjubjub-ecdsa";
+// @ts-ignore
+import { buildPoseidonOpt as buildPoseidon } from "circomlibjs";
 
 const PagePlaceholder = () => {
   return (
@@ -51,24 +68,145 @@ export default function QuestDetailPage() {
   const { isLoading: isLoadingQuest, data: quest = null } = useFetchQuestById(
     questId as string
   );
-  const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
+
+  const [userLeaderboardPublicKey, setUserLeaderboardPublicKey] =
+    useState<string>();
+  useEffect(() => {
+    const fetchUserLeaderboardPublicKey = async () => {
+      if (quest && quest.proofType === $Enums.ProofType.LEADERBOARD) {
+        // Stored pubKeyNullifierRandomness is the private key and must be kept secret
+        // to prevent others from knowing which Jubmojis you own
+        // We use the hash of it as the user's public key, or leaderboard identifier
+        const leaderboardKeys = await loadLeaderboardKeys();
+        const userLeaderboardPrivateKey = leaderboardKeys[quest.id];
+        if (userLeaderboardPrivateKey) {
+          const poseidon = await buildPoseidon();
+          const publicKey = poseidon.F.toString(
+            poseidon([hexToBigInt(userLeaderboardPrivateKey)]),
+            16
+          );
+          setUserLeaderboardPublicKey(publicKey);
+        }
+      }
+    };
+    fetchUserLeaderboardPublicKey();
+  }, [quest]);
+
+  const updateLeaderboardMutation = useUpdateLeaderboardMutation();
   const {
     isLoading: isLoadingLeaderboard,
     data: scoreMapping = {},
     refetch: refetchLeaderboard,
-  } = useGetTeamLeaderboard(questId as string);
-  const [provingState, setProvingState] = useState<ProvingState>();
+  } = useGetLeaderboard(questId as string);
 
+  const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
+  const {
+    isLoading: isLoadingTeamLeaderboard,
+    data: teamScoreMapping = {},
+    refetch: refetchTeamLeaderboard,
+  } = useGetTeamLeaderboard(questId as string);
+
+  const [provingState, setProvingState] = useState<ProvingState>();
   const onUpdateProvingState = (provingState: ProvingState) => {
     setProvingState(provingState);
   };
 
   useEffect(() => {
     // refetch the leaderboard when the mutation is successful
-    if (updateTeamLeaderboardMutation.isSuccess) {
+    if (updateLeaderboardMutation.isSuccess) {
       refetchLeaderboard();
     }
-  }, [refetchLeaderboard, updateTeamLeaderboardMutation.isSuccess]);
+  }, [refetchLeaderboard, updateLeaderboardMutation.isSuccess]);
+
+  useEffect(() => {
+    // refetch the team leaderboard when the mutation is successful
+    if (updateTeamLeaderboardMutation.isSuccess) {
+      refetchTeamLeaderboard();
+    }
+  }, [refetchTeamLeaderboard, updateTeamLeaderboardMutation.isSuccess]);
+
+  const onUpdateLeaderboardScore = async () => {
+    if (!quest) return;
+
+    // User has no Jubmojis at all
+    if (!jubmojis || jubmojis.length === 0) {
+      return toast.error(
+        "Please collect some Jubmojis to participate in this leaderboard!"
+      );
+    }
+
+    // Quest has ended
+    const currentTime = new Date();
+    if (quest.endTime && currentTime > new Date(quest.endTime)) {
+      return toast.error("Quest has ended!");
+    }
+
+    // Get leaderboard key if it exists, otherwise generate a new one
+    const leaderboardKey = await loadLeaderboardKeys();
+    let pubKeyNullifierRandomness;
+    if (leaderboardKey[quest.id]) {
+      pubKeyNullifierRandomness = leaderboardKey[quest.id];
+    } else {
+      pubKeyNullifierRandomness = getRandomNullifierRandomness();
+      await addLeaderboardKey(quest.id, pubKeyNullifierRandomness);
+      // Update the user's leaderboard public key
+      const poseidon = await buildPoseidon();
+      const userLeaderboardPublicKey = poseidon.F.toString(
+        poseidon([hexToBigInt(pubKeyNullifierRandomness)]),
+        16
+      );
+      setUserLeaderboardPublicKey(userLeaderboardPublicKey);
+    }
+
+    const collectionCardIndices = quest.collectionCards.map(
+      (card) => card.index
+    );
+
+    // User has no unnullified collection card Jubmojis
+    const { quests: questNullifiedSigMap } = await loadNullifiedSigs();
+    const nullifiedSigs = questNullifiedSigMap[quest.id] || [];
+    const unnullifiedCollectionJubmojis = jubmojis.filter(
+      (jubmoji) =>
+        collectionCardIndices.includes(jubmoji.pubKeyIndex) &&
+        !nullifiedSigs.includes(jubmoji.sig)
+    );
+    if (unnullifiedCollectionJubmojis.length === 0) {
+      return toast.error(
+        "All of your Jubmojis have already been submitted to the leaderboard!"
+      );
+    }
+
+    await toast.promise(
+      updateLeaderboardMutation.mutateAsync({
+        pubKeyNullifierRandomness,
+        jubmojis: unnullifiedCollectionJubmojis,
+        quest,
+        onUpdateProvingState,
+      }),
+      {
+        loading: "Updating score...",
+        success: (scoreAdded: any) => {
+          // Add all used collection card signatures to nullified sigs
+          const nullifiedSigs = unnullifiedCollectionJubmojis.map(
+            (jubmoji) => jubmoji.sig
+          );
+          addNullifiedSigs({
+            quests: {
+              [quest.id]: nullifiedSigs,
+            },
+            powers: {},
+          });
+          setProvingState(undefined);
+
+          return `Added ${scoreAdded} points to your score!`;
+        },
+        error: (err: any) => {
+          setProvingState(undefined);
+          return err.message;
+        },
+      }
+    );
+  };
 
   const onUpdateTeamLeaderboardScore = async () => {
     if (!quest) return;
@@ -152,7 +290,9 @@ export default function QuestDetailPage() {
   if (isLoadingQuest) return <PagePlaceholder />;
   if (!quest) return <div>Quest not found</div>;
 
-  const showLeaderboard = quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
+  const showLeaderboard = quest.proofType === $Enums.ProofType.LEADERBOARD;
+  const showTeamLeaderboard =
+    quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD;
 
   const collectionCardIndices = getQuestCollectionCardIndices(quest);
 
@@ -166,20 +306,30 @@ export default function QuestDetailPage() {
     : 0;
   let proofProgressDisplayText = "";
   if (provingState) {
-    switch (provingState.numProofsCompleted) {
-      case 0:
-        proofProgressDisplayText =
-          "Proving ownership of a team card Jubmoji...";
-        break;
-      case provingState.numProofsTotal:
-        proofProgressDisplayText = "Submitting proof to leaderboard...";
-        break;
-      default:
-        proofProgressDisplayText = `Proving ownership of Jubmoji ${
-          provingState.numProofsCompleted
-        } of ${
-          provingState.numProofsTotal - 1 // -1 because the team proof is already counted
-        }...`;
+    if (quest.proofType === $Enums.ProofType.TEAM_LEADERBOARD) {
+      switch (provingState.numProofsCompleted) {
+        case 0:
+          proofProgressDisplayText =
+            "Proving ownership of a team card Jubmoji...";
+          break;
+        case provingState.numProofsTotal:
+          proofProgressDisplayText = "Submitting proof to team leaderboard...";
+          break;
+        default:
+          proofProgressDisplayText = `Proving ownership of Jubmoji ${
+            provingState.numProofsCompleted
+          } of ${
+            provingState.numProofsTotal - 1 // -1 because the team proof is already counted
+          }...`;
+      }
+    } else if (quest.proofType === $Enums.ProofType.LEADERBOARD) {
+      switch (provingState.numProofsCompleted) {
+        case provingState.numProofsTotal:
+          proofProgressDisplayText = "Submitting proof to leaderboard...";
+          break;
+        default:
+          proofProgressDisplayText = `Proving ownership of Jubmoji ${provingState.numProofsCompleted} of ${provingState.numProofsTotal}...`;
+      }
     }
   }
 
@@ -315,9 +465,33 @@ export default function QuestDetailPage() {
 
         {showLeaderboard && (
           <>
-            <TeamLeaderboard
+            <Leaderboard
               items={scoreMapping}
+              currentUserKey={userLeaderboardPublicKey}
               loading={isLoadingLeaderboard}
+            />
+            {provingState && (
+              <ProofProgressBar
+                displayText={proofProgressDisplayText}
+                progressPercentage={proofProgressPercentage}
+              />
+            )}
+            <Button
+              variant="secondary"
+              onClick={onUpdateLeaderboardScore}
+              disabled={provingState !== undefined}
+              loading={provingState !== undefined}
+            >
+              Update leaderboard score
+            </Button>
+          </>
+        )}
+
+        {showTeamLeaderboard && (
+          <>
+            <TeamLeaderboard
+              items={teamScoreMapping}
+              loading={isLoadingTeamLeaderboard}
             />
             {provingState && (
               <ProofProgressBar

@@ -131,6 +131,36 @@ export const loadNullifiedSigs = async (): Promise<NullifiedSigs> => {
 };
 
 /**
+ * LEADERBOARD UTILITIES
+ */
+export const addLeaderboardKey = async (
+  questId: number,
+  leaderboardKey: string
+): Promise<void> => {
+  const leaderboardKeys = await loadLeaderboardKeys();
+  leaderboardKeys[questId] = leaderboardKey;
+
+  await writeLeaderboardKeys(leaderboardKeys);
+};
+
+export const writeLeaderboardKeys = async (
+  leaderboardKeys: Record<number, string>
+): Promise<void> => {
+  window.localStorage["leaderboardKeys"] = JSON.stringify(leaderboardKeys);
+};
+
+export const loadLeaderboardKeys = async (): Promise<
+  Record<number, string>
+> => {
+  const leaderboardKeys = window.localStorage["leaderboardKeys"];
+
+  if (!leaderboardKeys) {
+    return {};
+  }
+
+  return JSON.parse(leaderboardKeys);
+};
+/**
  * COLLECTED TIME UTILITIES
  */
 export const loadCollectedTimes = (): Record<number, number> => {

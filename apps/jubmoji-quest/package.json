@@ -18,6 +18,7 @@
     "@tw-classed/react": "^1.5.2",
     "@types/react-datepicker": "^4.19.1",
     "babyjubjub-ecdsa": "^1.1.2",
+    "circomlibjs": "^0.1.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cross-env": "5.0.5",
