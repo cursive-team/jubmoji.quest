@@ -47,6 +47,7 @@ model Quest {
   collectionCards           Card[] @relation("CollectionCards")   // cards needed to complete the quest
   powers                    Power[] // powers granted upon completion
   leaderboardNullifiers     LeaderboardNullifiers[]
+  leaderboardPseudonyms     LeaderboardPseudonym[]
   teamLeaderboardNullifiers TeamLeaderboardNullifiers[]
 }
 
@@ -110,6 +111,23 @@ model LeaderboardNullifiers {
   // Relationships
   questId   Int
   quest     Quest  @relation(fields: [questId], references: [id])
+}
+
+model LeaderboardPseudonym {
+  id                            Int    @id @default(autoincrement())
+  pseudonym                     String
+  pubKeyNullifierRandomnessHash String
+  createdAt                     DateTime @default(now())
+  
+  // Relationships
+  questId   Int   
+  quest     Quest  @relation(fields: [questId], references: [id])
+
+  // Indexes
+  @@index([questId], name: "questId_idx") 
+
+  // Constraints
+  @@unique([pubKeyNullifierRandomnessHash, questId])
 }
 
 model LeaderboardProofLog {

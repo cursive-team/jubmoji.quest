@@ -44,6 +44,7 @@ import { Leaderboard } from "@/components/ui/Leaderboard";
 import { hexToBigInt } from "babyjubjub-ecdsa";
 // @ts-ignore
 import { buildPoseidonOpt as buildPoseidon } from "circomlibjs";
+import { Input } from "@/components/ui/Input";
 
 const PagePlaceholder = () => {
   return (
@@ -69,6 +70,14 @@ export default function QuestDetailPage() {
     questId as string
   );
 
+  const updateLeaderboardMutation = useUpdateLeaderboardMutation();
+  const {
+    isLoading: isLoadingLeaderboard,
+    data: { scoreMap, pseudonymMap } = { scoreMap: {}, pseudonymMap: {} },
+    refetch: refetchLeaderboard,
+  } = useGetLeaderboard(questId as string);
+
+  const [pseudonym, setPseudonym] = useState<string>();
   const [userLeaderboardPublicKey, setUserLeaderboardPublicKey] =
     useState<string>();
   useEffect(() => {
@@ -86,18 +95,15 @@ export default function QuestDetailPage() {
             16
           );
           setUserLeaderboardPublicKey(publicKey);
+
+          if (pseudonymMap[publicKey]) {
+            setPseudonym(pseudonymMap[publicKey]);
+          }
         }
       }
     };
     fetchUserLeaderboardPublicKey();
-  }, [quest]);
-
-  const updateLeaderboardMutation = useUpdateLeaderboardMutation();
-  const {
-    isLoading: isLoadingLeaderboard,
-    data: scoreMapping = {},
-    refetch: refetchLeaderboard,
-  } = useGetLeaderboard(questId as string);
+  }, [quest, pseudonymMap]);
 
   const updateTeamLeaderboardMutation = useUpdateTeamLeaderboardMutation();
   const {
@@ -180,6 +186,7 @@ export default function QuestDetailPage() {
       updateLeaderboardMutation.mutateAsync({
         pubKeyNullifierRandomness,
         jubmojis: unnullifiedCollectionJubmojis,
+        pseudonym,
         quest,
         onUpdateProvingState,
       }),
@@ -466,8 +473,9 @@ export default function QuestDetailPage() {
         {showLeaderboard && (
           <>
             <Leaderboard
-              items={scoreMapping}
+              items={scoreMap}
               currentUserKey={userLeaderboardPublicKey}
+              pseudonymMap={pseudonymMap}
               loading={isLoadingLeaderboard}
             />
             {provingState && (
@@ -476,6 +484,14 @@ export default function QuestDetailPage() {
                 progressPercentage={proofProgressPercentage}
               />
             )}
+            <Input
+              type="text"
+              placeholder="Enter a pseudonym..."
+              value={pseudonym}
+              onChange={(e) => setPseudonym(e.target.value)}
+            >
+              Pseudonym
+            </Input>
             <Button
               variant="secondary"
               onClick={onUpdateLeaderboardScore}

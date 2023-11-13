@@ -9,6 +9,7 @@ type LeaderboardProps = {
   // Items is a mapping from leaderboard public key (which represents a user) to the user's score
   items: Record<string, number>;
   currentUserKey?: string;
+  pseudonymMap?: Record<string, string>;
   loading?: boolean;
 };
 
@@ -48,6 +49,7 @@ const LoadingContent = () => {
 const Leaderboard = ({
   items,
   currentUserKey,
+  pseudonymMap,
   loading = false,
 }: LeaderboardProps) => {
   // Sort the items by score
@@ -97,11 +99,20 @@ const Leaderboard = ({
                 const variant =
                   currentUserKey === userPublicKey ? "active" : "secondary";
 
+                const userName =
+                  pseudonymMap && pseudonymMap[userPublicKey]
+                    ? pseudonymMap[userPublicKey]
+                    : userPublicKey;
+                const userDisplayName =
+                  userName.length > 15
+                    ? `${userName.slice(0, 15)}...`
+                    : userName;
+
                 return (
                   <LeaderboardContent key={userPublicKey}>
                     <RankLabel variant={variant}>{rank}</RankLabel>
                     <RankLabel variant={variant}>
-                      <span>{userPublicKey}</span>
+                      <span>{userDisplayName}</span>
                     </RankLabel>
                     <RankLabel variant={variant}>{score}</RankLabel>
                   </LeaderboardContent>
