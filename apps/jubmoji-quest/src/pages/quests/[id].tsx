@@ -45,6 +45,7 @@ import { hexToBigInt } from "babyjubjub-ecdsa";
 // @ts-ignore
 import { buildPoseidonOpt as buildPoseidon } from "circomlibjs";
 import { Input } from "@/components/ui/Input";
+import { Message } from "@/components/Message";
 
 const PagePlaceholder = () => {
   return (
@@ -477,21 +478,19 @@ export default function QuestDetailPage() {
               pseudonymMap={pseudonymMap}
               loading={isLoadingLeaderboard}
             />
+            <Message>Pseudonym</Message>
+            <Input
+              type="text"
+              placeholder="Enter a pseudonym..."
+              value={pseudonym}
+              onChange={(e) => setPseudonym(e.target.value)}
+            />
             {provingState && (
               <ProofProgressBar
                 displayText={proofProgressDisplayText}
                 progressPercentage={proofProgressPercentage}
               />
             )}
-            <span>Pick a pseudonym:</span>
-            <Input
-              type="text"
-              placeholder="Enter a pseudonym..."
-              value={pseudonym}
-              onChange={(e) => setPseudonym(e.target.value)}
-            >
-              Pseudonym
-            </Input>
             <Button
               variant="secondary"
               onClick={onUpdateLeaderboardScore}
