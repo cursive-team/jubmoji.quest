@@ -483,6 +483,7 @@ export default function QuestDetailPage() {
                 progressPercentage={proofProgressPercentage}
               />
             )}
+            <span>Pick a pseudonym:</span>
             <Input
               type="text"
               placeholder="Enter a pseudonym..."
