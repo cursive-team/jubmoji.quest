@@ -364,7 +364,6 @@ export default function QuestDetailPage() {
         <QuestCard
           title={quest.name}
           description={quest.description}
-          showProgress
           image={quest.imageLink || ""}
           spacing="sm"
           numPowersCompleted={numPowersCompleted}
