@@ -39,16 +39,30 @@ export default async function handler(
       }
     });
 
+    const leaderboardPseudonyms = await prisma.leaderboardPseudonym.findMany({
+      where: { questId: Number(questId) },
+      select: { pseudonym: true, pubKeyNullifierRandomnessHash: true },
+    });
+
+    const pseudonymMap = leaderboardPseudonyms.reduce(
+      (map, { pseudonym, pubKeyNullifierRandomnessHash }) => {
+        map[pubKeyNullifierRandomnessHash] = pseudonym;
+        return map;
+      },
+      {} as Record<string, string>
+    );
+
     return res
       .status(200)
-      .json({ scoreMap: Object.fromEntries(userKeyToCount) });
+      .json({ scoreMap: Object.fromEntries(userKeyToCount), pseudonymMap });
 
     // Post endpoint is used for submitting a leaderboard proof
     // Will return a 200 only if proof is successful, and will return parameter
     // scoreAdded equal to the number of points added to the user's score
   } else if (req.method === "POST") {
     try {
-      const { questId, serializedProof, proofGenerationTime } = req.body;
+      const { questId, serializedProof, pseudonym, proofGenerationTime } =
+        req.body;
 
       const quest: JubmojiQuest | null = await prisma.quest.findUnique({
         where: { id: Number(questId) },
@@ -181,6 +195,7 @@ export default async function handler(
           .json({ message: "All the submitted signatures have been used" });
       }
 
+      // Add score to leaderboard
       const scoreAdded = newlyConsumedNullifiers.length;
       await prisma.leaderboardNullifiers.createMany({
         data: newlyConsumedNullifiers.map(
@@ -196,6 +211,36 @@ export default async function handler(
           })
         ),
       });
+
+      // Update user pseudonym
+      if (pseudonym) {
+        const pseudonymQueryResult = await prisma.leaderboardPseudonym.findMany(
+          {
+            where: {
+              pubKeyNullifierRandomnessHash,
+              questId: Number(questId),
+            },
+          }
+        );
+        if (pseudonymQueryResult.length === 1) {
+          await prisma.leaderboardPseudonym.update({
+            where: {
+              id: pseudonymQueryResult[0].id,
+            },
+            data: {
+              pseudonym,
+            },
+          });
+        } else {
+          await prisma.leaderboardPseudonym.create({
+            data: {
+              pseudonym,
+              pubKeyNullifierRandomnessHash,
+              questId: Number(questId),
+            },
+          });
+        }
+      }
 
       // Log client side proof timing
       try {

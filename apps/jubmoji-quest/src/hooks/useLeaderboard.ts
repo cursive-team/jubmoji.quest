@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "react-query";
 type UpdateLeaderboardMutationProps = {
   pubKeyNullifierRandomness: string;
   jubmojis?: Jubmoji[];
+  pseudonym?: string;
   quest?: JubmojiQuest | null;
   onUpdateProvingState: (provingState: ProvingState) => void;
 };
@@ -16,7 +17,10 @@ type UpdateLeaderboardMutationProps = {
 export const useGetLeaderboard = (questId: string | number) => {
   return useQuery({
     queryKey: ["leaderboard", questId],
-    queryFn: async (): Promise<Record<string, number>> => {
+    queryFn: async (): Promise<{
+      scoreMap: Record<string, number>;
+      pseudonymMap: Record<string, string>;
+    }> => {
       // After successful update, re-fetch the leaderboard
       const url = new URL("/api/leaderboard", window.location.origin);
       url.searchParams.append("questId", `${questId}`);
@@ -29,11 +33,10 @@ export const useGetLeaderboard = (questId: string | number) => {
 
       if (!leaderboardResponse.ok) {
         console.error("Could not fetch new leaderboard");
-        return {};
+        return { scoreMap: {}, pseudonymMap: {} };
       }
 
-      const { scoreMap } = await leaderboardResponse.json();
-      return scoreMap;
+      return await leaderboardResponse.json();
     },
   });
 };
@@ -45,6 +48,7 @@ export const useUpdateLeaderboardMutation = () => {
     mutationFn: async ({
       pubKeyNullifierRandomness,
       jubmojis,
+      pseudonym,
       quest,
       onUpdateProvingState,
     }: UpdateLeaderboardMutationProps) => {
@@ -78,6 +82,7 @@ export const useUpdateLeaderboardMutation = () => {
         body: JSON.stringify({
           questId: quest.id,
           serializedProof: leaderboardProof,
+          pseudonym,
           proofGenerationTime,
         }),
       });
