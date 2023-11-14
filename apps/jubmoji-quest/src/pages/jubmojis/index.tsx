@@ -267,7 +267,7 @@ export default function JubmojisPage() {
           <div
             className={cn(
               "grid justify-between gap-2 duration-200",
-              isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr]"
+              isSearchMode ? "grid-cols-[1fr_70px]" : "grid-cols-[1fr_110px]"
             )}
           >
             <Input
