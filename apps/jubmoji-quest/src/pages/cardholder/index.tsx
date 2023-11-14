@@ -216,7 +216,7 @@ const CardholderTapModal = ({
   );
   const [pubKeyIndex, setPubKeyIndex] = useState<number>();
   const [meaning, setMeaning] = useState<string>();
-  const [telegramLink, setTelegramLink] = useState<string>();
+  const [telegramLink, setTelegramLink] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
 
   const [deviceImage, setDeviceImage] = useState<string>(

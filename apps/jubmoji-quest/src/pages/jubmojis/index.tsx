@@ -278,13 +278,24 @@ export default function JubmojisPage() {
               onFocus={() => setIsSearchMode(true)}
               disabled={!hasSelectedJubmoji}
             />
-            {isSearchMode && (
+            {isSearchMode ? (
               <button
                 onClick={() => setIsSearchMode(false)}
                 className="font-dm-sans text-[13px]"
               >
                 Cancel
               </button>
+            ) : (
+              <Button
+                icon={<Icons.download className="text-black" />}
+                size="tiny"
+                variant="blue"
+                onClick={() => setBackupModalOpen(true)}
+                className="!font-semibold"
+                disabled={!hasSelectedJubmoji}
+              >
+                Back up!
+              </Button>
             )}
           </div>
         </AppHeader>
