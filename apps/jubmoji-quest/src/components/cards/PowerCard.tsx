@@ -73,7 +73,9 @@ const PowerCard = ({
                   disabled={disabled}
                   truncate={shortDescription}
                 >
-                  {shortDescription ? description.slice(0, 15) : description}
+                  {shortDescription && description.length > 20
+                    ? description.slice(0, 20) + "..."
+                    : description}
                 </Card.Description>
               )}
             </div>
