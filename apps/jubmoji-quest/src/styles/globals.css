@@ -96,3 +96,9 @@ input[type="search"] {
 #nav-wrapper .slick-slide {
   @apply duration-200 first:ml-0 mx-[1px] last:mr-0 only-of-type:!ml-[50%] only-of-type:translate-x-[-8px];
 }
+
+#nav-wrapper .slider-container {
+  max-width: 100vw;
+  width: 100%;
+  overflow: hidden;
+}

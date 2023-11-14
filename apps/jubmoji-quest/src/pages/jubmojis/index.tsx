@@ -3,7 +3,7 @@ import { Icons } from "@/components/Icons";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/Placeholder";
@@ -99,6 +99,10 @@ export default function JubmojisPage() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
 
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const lastIndex = useRef(0);
+
   const [navigatorSliderConfig, setNavigatorSliderConfig] =
     useState<SliderSettings>({
       slidesToShow: 1,
@@ -111,6 +115,10 @@ export default function JubmojisPage() {
       arrows: false,
       initialSlide: 0,
       centerPadding: "0px",
+      touchMove: false,
+      afterChange: (index: number) => {
+        lastIndex.current = index;
+      },
     });
 
   const [jubmojiSliderConfig, setJubmojiSliderConfig] =
@@ -237,6 +245,24 @@ export default function JubmojisPage() {
       ...prev,
       initialSlide: index,
     }));
+  };
+
+  const handleSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
+    const MIN_SWIPE_DISTANCE = 60; // min distance to swipe
+    const clientX = event.touches[0].clientX;
+
+    const distance = clientX - startX.current;
+    const swipeIndex = Math.min(
+      Math.round(distance / MIN_SWIPE_DISTANCE),
+      collectedJubmojis.length
+    );
+
+    const newIndex = lastIndex.current + swipeIndex;
+
+    if (newIndex < 0 || newIndex > collectedJubmojis.length) return;
+
+    navigatorSlider?.slickGoTo(newIndex);
+    handleIndexChange(newIndex);
   };
 
   const isLoadingPage =
@@ -391,6 +417,15 @@ export default function JubmojisPage() {
           <div
             id="nav-wrapper"
             className="mt-auto fixed-bottom z-1 h-[50px] xs:h-[70px] my-1 -ml-[17px]"
+            onTouchMove={handleSwipe}
+            onTouchStart={(event) => {
+              startX.current = event.touches[0].clientX;
+              startY.current = event.touches[0].clientY;
+            }}
+            onTouchEnd={() => {
+              startX.current = 0;
+              startY.current = 0;
+            }}
           >
             <Slider
               {...navigatorSliderConfig}
@@ -408,6 +443,9 @@ export default function JubmojisPage() {
                   <JubmojiNavItem
                     key={index}
                     active={isActive}
+                    style={{
+                      width: `32px`,
+                    }}
                     onClick={() => {
                       handleIndexChange(index);
                     }}
