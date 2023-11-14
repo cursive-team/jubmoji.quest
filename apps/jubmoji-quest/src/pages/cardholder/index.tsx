@@ -23,6 +23,7 @@ import {
 import { bigIntToHex } from "babyjubjub-ecdsa";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/Textarea";
+import { useFetchCards } from "@/hooks/useFetchCards";
 
 enum CardholderActions {
   EDIT_CARD_DETAILS,
@@ -205,16 +206,10 @@ const CardholderTapModal = ({
   isOpen,
   setIsOpen,
 }: CardholderTapModalProps) => {
-  const [deviceImage, setDeviceImage] = useState<string>(
-    "/images/tap-phone-android.png"
-  );
-
-  useEffect(() => {
-    const md = new MobileDetect(window.navigator.userAgent);
-    if (md.is("iPhone")) {
-      setDeviceImage("/images/tap-phone-ios.png");
-    }
-  }, []);
+  const {
+    isLoading: isLoadingJubmojiCards,
+    data: jubmojiCollectionCards = [],
+  } = useFetchCards();
 
   const [modalState, setModalState] = useState(
     CardholderTapModalState.UNLOCKING
@@ -223,6 +218,16 @@ const CardholderTapModal = ({
   const [meaning, setMeaning] = useState<string>();
   const [telegramLink, setTelegramLink] = useState<string>();
   const [website, setWebsite] = useState<string>("");
+
+  const [deviceImage, setDeviceImage] = useState<string>(
+    "/images/tap-phone-android.png"
+  );
+  useEffect(() => {
+    const md = new MobileDetect(window.navigator.userAgent);
+    if (md.is("iPhone")) {
+      setDeviceImage("/images/tap-phone-ios.png");
+    }
+  }, []);
 
   const initialTap = async () => {
     const initMessage = getRandomNullifierRandomness();
@@ -265,7 +270,18 @@ const CardholderTapModal = ({
 
       if (verified) {
         toast.success("Cardholder verified!");
+
         setPubKeyIndex(pubKeyIndex);
+        setMeaning(jubmojiCollectionCards[pubKeyIndex].name);
+        const cardTelegramLink =
+          jubmojiCollectionCards[pubKeyIndex].telegramChatInviteLink;
+        if (cardTelegramLink !== null) {
+          setTelegramLink(cardTelegramLink);
+        }
+        const cardWebsite = jubmojiCollectionCards[pubKeyIndex].websiteLink;
+        if (cardWebsite !== null) {
+          setWebsite(cardWebsite);
+        }
 
         const redirectAfterTap = cardholderActionDetails[action].redirect;
         if (redirectAfterTap) {
@@ -420,15 +436,17 @@ const CardholderTapModal = ({
               Meaning*
             </span>
             <Textarea
+              value={meaning}
               onChange={(event) => setMeaning(event.target.value)}
               placeholder="Edit your jubmoji's meaning"
               rows={1}
             />
 
             <span className=" font-dm-sans text-[13px] font-semibold text-shark-50">
-              Telegram link*
+              Telegram link
             </span>
             <Textarea
+              value={telegramLink}
               onChange={(event) => setTelegramLink(event.target.value)}
               placeholder="t.me/username or chat link"
               rows={1}
@@ -438,6 +456,7 @@ const CardholderTapModal = ({
               Website
             </span>
             <Textarea
+              value={website}
               onChange={(event) => setWebsite(event.target.value)}
               placeholder="Enter relevant website, Twitter, or Github"
               rows={1}
@@ -447,10 +466,10 @@ const CardholderTapModal = ({
               <Button
                 variant="secondary"
                 onClick={() => {
-                  if (meaning && telegramLink) {
+                  if (meaning) {
                     setModalState(CardholderTapModalState.CONFIRMING);
                   } else {
-                    toast.error("Please fill in all fields correctly.");
+                    toast.error("Please fill in required fields.");
                   }
                 }}
               >
