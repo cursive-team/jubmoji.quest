@@ -450,6 +450,7 @@ export default function QuestDetailPage() {
               disabled={powerIsLocked}
               numCardsCollected={numCardsCollected}
               numCardsTotal={numCardsTotal}
+              shortDescription
               showProgress
             />
           ) : (
