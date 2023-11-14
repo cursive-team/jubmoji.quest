@@ -499,7 +499,16 @@ const CardholderTapModal = ({
               className="mx-auto py-12"
             />
             <div className="flex flex-col gap-8">
-              <Button variant="secondary" onClick={sendTap}>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  toast.promise(sendTap(), {
+                    loading: "Sending update...",
+                    success: "Update sent!",
+                    error: "Update failed, please try again or exit.",
+                  })
+                }
+              >
                 Confirm
               </Button>
               <span className=" font-dm-sans ">
