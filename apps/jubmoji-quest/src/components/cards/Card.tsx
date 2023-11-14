@@ -5,7 +5,7 @@ const CardBase = classed.div(
   {
     variants: {
       disabled: {
-        true: "opacity-30",
+        true: "opacity-60",
       },
       centred: {
         true: "text-center",
