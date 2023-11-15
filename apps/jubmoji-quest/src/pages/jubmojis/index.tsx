@@ -100,7 +100,7 @@ export default function JubmojisPage() {
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
-  const [defaultIndex, setDefaultIndex] = useState<number | null>(null);
+  const [defaultIndex, setDefaultIndex] = useState<number | null>(0);
   const [jubmojiSlider, setJubmojiSlider] = useState<any>(null);
   const [navigatorSlider, setNavigatorSlider] = useState<any>(null);
 
