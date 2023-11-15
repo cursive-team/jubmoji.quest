@@ -3,7 +3,7 @@ import { Icons } from "@/components/Icons";
 import { Input } from "@/components/ui/Input";
 import { useJubmojis } from "@/hooks/useJubmojis";
 import { classed } from "@tw-classed/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { getJubmojiCardByPubIndex, useFetchCards } from "@/hooks/useFetchCards";
 import { Button } from "@/components/ui/Button";
 import { Placeholder } from "@/components/Placeholder";
@@ -20,7 +20,7 @@ import Slider, { Settings as SliderSettings } from "react-slick";
 import { useQuery } from "react-query";
 
 const JubmojiNavItem = classed.div(
-  "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-200",
+  "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-75",
   {
     variants: {
       size: {
@@ -124,8 +124,8 @@ export default function JubmojisPage() {
       initialSlide: 0,
     });
 
-  const [jubmojiSlider, setJubmojiSlider] = useState<any>(null);
-  const [navigatorSlider, setNavigatorSlider] = useState<any>(null);
+  const navigatorSliderRef = useRef<any>(null);
+  const jubmojiSliderRef = useRef<any>(null);
 
   const calculateCardSize = () => {
     const footer = document.getElementById("footer")?.clientHeight ?? 0;
@@ -355,10 +355,10 @@ export default function JubmojisPage() {
             </div>
           ) : (
             <Slider
-              asNavFor={navigatorSlider}
+              asNavFor={navigatorSliderRef.current}
               ref={(slider: any) => {
                 if (!slider) return;
-                setJubmojiSlider(slider);
+                jubmojiSliderRef.current = slider;
               }}
               className={`min-[${cardSize}px] h-full`}
               afterChange={handleIndexChange}
@@ -405,10 +405,10 @@ export default function JubmojisPage() {
           >
             <Slider
               {...navigatorSliderConfig}
-              asNavFor={jubmojiSlider}
+              asNavFor={jubmojiSliderRef.current}
               ref={(slider: any) => {
                 if (!slider) return;
-                setNavigatorSlider(slider);
+                navigatorSliderRef.current = slider;
               }}
             >
               {collectedJubmojis?.map((jubmoji, index) => {
