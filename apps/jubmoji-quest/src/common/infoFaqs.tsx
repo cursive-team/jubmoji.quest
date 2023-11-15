@@ -45,7 +45,7 @@ export const FAQS: InfoProps[] = [
       <div>
         {"Give us a shout in "}
         <u>
-          <a href={URLS.ZUCONNECT_TELEGRAM} target="_blank">
+          <a href={"https://t.me/+7p-gdrMts6gxMmRh"} target="_blank">
             Telegram
           </a>
         </u>

@@ -22,7 +22,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
 const JubmojiNavItem = classed.div(
-  "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-200",
+  "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-75",
   {
     variants: {
       size: {
@@ -101,7 +101,6 @@ export default function JubmojisPage() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
   const [defaultIndex, setDefaultIndex] = useState<number | null>(null);
-
   const [jubmojiSlider, setJubmojiSlider] = useState<any>(null);
   const [navigatorSlider, setNavigatorSlider] = useState<any>(null);
 
