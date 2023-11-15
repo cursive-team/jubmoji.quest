@@ -340,6 +340,7 @@ export default function JubmojisPage() {
                 slidesPerView={1}
                 centeredSlides={true}
                 loop={false}
+                speed={150}
               >
                 {collectedJubmojis.map((jubmoji, index) => {
                   if (!jubmoji) return null;
