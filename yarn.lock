@@ -5743,6 +5743,7 @@ __metadata:
     react-query: ^3.39.3
     react-slick: ^0.29.0
     slick-carousel: ^1.8.1
+    swiper: ^11.0.4
     tailwind-merge: ^1.14.0
     tailwindcss: ^3
     typescript: ^5
@@ -7983,6 +7984,13 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 53b1e247e68e05db7b3808b99b892bd36fb096e6fba213a06da7fab22045e97597db425c724f2bbd6c99a3c295e1e73f3e4de78592289f38431049e1277ca0ae
+  languageName: node
+  linkType: hard
+
+"swiper@npm:^11.0.4":
+  version: 11.0.4
+  resolution: "swiper@npm:11.0.4"
+  checksum: 520a4c0c1aeb94eadc5c2cf52ae4a479a2c7fc416ed15a7623135c4f1b0dc9ad255c2d0c1ec8e7a138e685ac37e95668aebfbd5a8d86887326a08e8b683bed51
   languageName: node
   linkType: hard
 

@@ -16,8 +16,10 @@ import { Message } from "@/components/Message";
 import { InfoModal } from "@/components/modals/InfoModal";
 import Image from "next/image";
 import Link from "next/link";
-import Slider, { Settings as SliderSettings } from "react-slick";
 import { useQuery } from "react-query";
+import { Controller } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 const JubmojiNavItem = classed.div(
   "!flex items-center justify-center p-2 rounded cursor-pointer h-[50px] xs:h-[70px] duration-75",
@@ -98,34 +100,9 @@ export default function JubmojisPage() {
   const [search, setSearch] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [cardSize, setCardSize] = useState<number>(0);
-
-  const [navigatorSliderConfig, setNavigatorSliderConfig] =
-    useState<SliderSettings>({
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      centerMode: true,
-      variableWidth: true,
-      focusOnSelect: true,
-      infinite: false,
-      dots: false,
-      arrows: false,
-      initialSlide: 0,
-      centerPadding: "0px",
-    });
-
-  const [jubmojiSliderConfig, setJubmojiSliderConfig] =
-    useState<SliderSettings>({
-      adaptiveHeight: true,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      dots: false,
-      arrows: false,
-      infinite: false,
-      initialSlide: 0,
-    });
-
-  const navigatorSliderRef = useRef<any>(null);
-  const jubmojiSliderRef = useRef<any>(null);
+  const [defaultIndex, setDefaultIndex] = useState<number | null>(0);
+  const [jubmojiSlider, setJubmojiSlider] = useState<any>(null);
+  const [navigatorSlider, setNavigatorSlider] = useState<any>(null);
 
   const calculateCardSize = () => {
     const footer = document.getElementById("footer")?.clientHeight ?? 0;
@@ -169,15 +146,8 @@ export default function JubmojisPage() {
         const selectedPubKey = collectedJubmojis[defaultIndex]?.pubKeyIndex;
 
         setSelectedPubKeyIndex(selectedPubKey);
-
-        setJubmojiSliderConfig((prev) => ({
-          ...prev,
-          initialSlide: defaultIndex,
-        }));
-        setNavigatorSliderConfig((prev) => ({
-          ...prev,
-          initialSlide: defaultIndex,
-        }));
+        setDefaultIndex(defaultIndex);
+        return defaultIndex;
       },
     }
   );
@@ -221,28 +191,30 @@ export default function JubmojisPage() {
   };
 
   const handleSearchItem = (pubKeyIndex: number) => {
-    setSearch(""); // clear search to show selected item
-    setIsSearchMode(false);
-    setSelectedPubKeyIndex(pubKeyIndex);
     const index = collectedJubmojis.findIndex(
       (jubmoji) => jubmoji?.pubKeyIndex === pubKeyIndex
     );
+    setSearch(""); // clear search to show selected item
+    setIsSearchMode(false);
 
-    if (!index) return;
-    setNavigatorSliderConfig((prev) => ({
-      ...prev,
-      initialSlide: index,
-    }));
-    setJubmojiSliderConfig((prev) => ({
-      ...prev,
-      initialSlide: index,
-    }));
+    if (selectedPubKeyIndex !== pubKeyIndex) {
+      setSelectedPubKeyIndex(pubKeyIndex);
+    }
+    setSelectedPubKeyIndex(pubKeyIndex);
+    if (index !== defaultIndex) {
+      setDefaultIndex(index);
+    }
   };
 
   const isLoadingPage =
     isLoadingJubmojiCards || isLoadingDefaultIndex || isLoadingJubmojis;
   const showNav =
     collectedJubmojis.length > 0 && !isSearchMode && !isLoadingPage;
+
+  useEffect(() => {
+    if (isLoadingPage && defaultIndex !== 0) return;
+    jubmojiSlider?.slideTo(defaultIndex, 100);
+  }, [defaultIndex, isLoadingPage, jubmojiSlider]);
 
   return (
     <>
@@ -301,7 +273,7 @@ export default function JubmojisPage() {
         </AppHeader>
         <div
           id="jubmoji-slider"
-          className={cn("flex flex-col xs:mt-0")}
+          className="flex flex-col xs:mt-0"
           style={{
             height: `${cardSize}px`,
           }}
@@ -354,80 +326,91 @@ export default function JubmojisPage() {
               </div>
             </div>
           ) : (
-            <Slider
-              asNavFor={navigatorSliderRef.current}
-              ref={(slider: any) => {
-                if (!slider) return;
-                jubmojiSliderRef.current = slider;
+            <div
+              className="mt-5"
+              style={{
+                maxWidth: `${window?.innerWidth - 36}px`,
               }}
-              className={`min-[${cardSize}px] h-full`}
-              afterChange={handleIndexChange}
-              {...jubmojiSliderConfig}
             >
-              {collectedJubmojis.map((jubmoji, index) => {
-                if (!jubmoji) return null;
+              <Swiper
+                modules={[Controller]}
+                onSwiper={setJubmojiSlider}
+                controller={{ control: navigatorSlider }}
+                spaceBetween={25}
+                slidesPerView={1}
+                centeredSlides={true}
+                loop={false}
+                speed={150}
+              >
+                {collectedJubmojis.map((jubmoji, index) => {
+                  if (!jubmoji) return null;
 
-                const jubmojiQuests = [
-                  ...(jubmoji.prerequisitesFor || []),
-                  ...(jubmoji.collectsFor || []),
-                ];
+                  const jubmojiQuests = [
+                    ...(jubmoji.prerequisitesFor || []),
+                    ...(jubmoji.collectsFor || []),
+                  ];
 
-                const msgNonce = jubmojis.find((jubmojiItem: Jubmoji) => {
-                  return jubmojiItem.pubKeyIndex === jubmoji?.pubKeyIndex;
-                })?.msgNonce;
+                  const msgNonce = jubmojis.find((jubmojiItem: Jubmoji) => {
+                    return jubmojiItem.pubKeyIndex === jubmoji?.pubKeyIndex;
+                  })?.msgNonce;
 
-                return (
-                  <CollectionCard
-                    key={jubmoji.pubKeyIndex}
-                    height={cardSize}
-                    label={jubmoji.name}
-                    icon={jubmoji.emoji}
-                    edition={msgNonce ? msgNonce - 1 : ""}
-                    owner={jubmoji.owner}
-                    pubKeyIndex={jubmoji.pubKeyIndex}
-                    cardBackImage={jubmoji.imagePath}
-                    telegramChatInviteLink={jubmoji.telegramChatInviteLink}
-                    actions={null}
-                    quests={jubmojiQuests}
-                    onBackup={() => setBackupModalOpen(true)}
-                    className={`min-[${cardSize}px] h-full`}
-                  />
-                );
-              })}
-            </Slider>
+                  return (
+                    <SwiperSlide className="w-full" key={jubmoji.pubKeyIndex}>
+                      <CollectionCard
+                        height={cardSize}
+                        label={jubmoji.name}
+                        icon={jubmoji.emoji}
+                        edition={msgNonce ? msgNonce - 1 : ""}
+                        owner={jubmoji.owner}
+                        pubKeyIndex={jubmoji.pubKeyIndex}
+                        cardBackImage={jubmoji.imagePath}
+                        telegramChatInviteLink={jubmoji.telegramChatInviteLink}
+                        actions={null}
+                        quests={jubmojiQuests}
+                        onBackup={() => setBackupModalOpen(true)}
+                        className={`min-[${cardSize}px] h-full`}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            </div>
           )}
         </div>
 
         {showNav && (
           <div
             id="nav-wrapper"
-            className="mt-auto fixed-bottom z-1 h-[50px] xs:h-[70px] my-1 -ml-[17px]"
+            className="mt-auto fixed-bottom z-1 h-[50px] xs:h-[70px] my-1"
           >
-            <Slider
-              {...navigatorSliderConfig}
-              asNavFor={jubmojiSliderRef.current}
-              ref={(slider: any) => {
-                if (!slider) return;
-                navigatorSliderRef.current = slider;
-              }}
+            <Swiper
+              modules={[Controller]}
+              slidesPerView={"auto"}
+              onSwiper={setNavigatorSlider}
+              controller={{ control: jubmojiSlider }}
+              spaceBetween={1}
+              centeredSlides={true}
+              loop={false}
+              slideToClickedSlide={true}
             >
               {collectedJubmojis?.map((jubmoji, index) => {
-                const isActive = jubmoji?.pubKeyIndex === selectedPubKeyIndex;
-
                 if (!jubmoji) return null;
                 return (
-                  <JubmojiNavItem
-                    key={index}
-                    active={isActive}
-                    onClick={() => {
-                      handleIndexChange(index);
-                    }}
-                  >
-                    {jubmoji?.emoji!}
-                  </JubmojiNavItem>
+                  <SwiperSlide className="!w-8" key={index}>
+                    {({ isActive }) => (
+                      <JubmojiNavItem
+                        active={isActive}
+                        onClick={() => {
+                          handleIndexChange(index);
+                        }}
+                      >
+                        {jubmoji?.emoji!}
+                      </JubmojiNavItem>
+                    )}
+                  </SwiperSlide>
                 );
               })}
-            </Slider>
+            </Swiper>
           </div>
         )}
       </div>
