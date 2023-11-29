@@ -27,8 +27,8 @@ export const QuestTagMapping: Record<
   "ACTIVE" | "ALL" | "OFFICIAL" | "EXPIRED",
   string
 > = {
-  ACTIVE: "Active",
   ALL: "All",
+  ACTIVE: "Active",
   OFFICIAL: "Official",
   EXPIRED: "Expired",
 };
@@ -214,7 +214,7 @@ export default function Home() {
         <div className="flex flex-col gap-2 mt-4">
           <div className="grid grid-cols-1 gap-6">
             <Filters
-              defaultValue="ACTIVE"
+              defaultValue="ALL"
               object={QuestTagMapping}
               onChange={setSelectedOption}
               disabled={isLoadingQuests}
