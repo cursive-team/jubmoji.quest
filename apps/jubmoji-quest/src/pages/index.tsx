@@ -34,7 +34,7 @@ export const QuestTagMapping: Record<
 };
 
 export default function Home() {
-  const [selectedOption, setSelectedOption] = useState("ACTIVE");
+  const [selectedOption, setSelectedOption] = useState("ALL");
   const [infoModalOpen, setIsModalOpen] = useState(false);
   const [assistedTapModal, setAssistedTapModal] = useState(false);
   const { data: jubmojis = [] } = useJubmojis();
