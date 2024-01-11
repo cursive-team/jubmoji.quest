@@ -5,6 +5,7 @@ import AppFooter from "@/components/AppFooter";
 import { Toaster } from "react-hot-toast";
 import Head from "next/head";
 import { APP_CONFIG } from "@/constants";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 

@@ -8,6 +8,7 @@
   ],
   "packageManager": "yarn@3.6.4",
   "dependencies": {
+    "next-pwa": "^5.6.0",
     "react-hot-toast": "^2.4.1"
   }
 }
