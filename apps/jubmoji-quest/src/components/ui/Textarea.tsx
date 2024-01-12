@@ -33,13 +33,13 @@ interface TextareaProps
     >,
     TextareaComponentVariants {
   loading?: boolean;
-  label?: string;
+  title?: string;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, variant, size, children, loading, label, ...props }, ref) => {
+  ({ className, variant, size, children, loading, title, ...props }, ref) => {
     return (
-      <InputWrapper label={label}>
+      <InputWrapper label={title}>
         <TextareaComponent ref={ref} variant={variant} size={size} {...props} />
       </InputWrapper>
     );

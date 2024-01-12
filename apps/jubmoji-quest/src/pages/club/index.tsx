@@ -185,14 +185,14 @@ export default function InfoPage() {
         <ContentDescription></ContentDescription>
         <div className="flex flex-col gap-6">
           <Textarea
-            label="Tweet / Manifestation*"
+            title="Tweet / Manifestation*"
             placeholder="type here"
             cols={5}
             value={tweetManifest}
             onChange={(e) => setTweetManifest(e?.target?.value)}
           />
           <Input
-            label="Tweet to reply to"
+            title="Tweet to reply to"
             placeholder="Tweet link"
             value={tweetReplyTo}
             onChange={(e) => setTweetReplyTo(e?.target?.value)}

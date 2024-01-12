@@ -36,7 +36,7 @@ interface InputProps
     InputComponentVariants {
   loading?: boolean;
   icon?: React.ReactNode;
-  label?: string;
+  title?: string;
 }
 
 type InputWrapperProps = {
@@ -69,7 +69,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       icon,
       loading,
       disabled,
-      label,
+      title,
       ...props
     },
     ref
@@ -77,7 +77,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const isSearch = props.type === "search";
 
     return (
-      <InputWrapper label={label}>
+      <InputWrapper label={title}>
         <div className="relative flex items-center gap-2 rounded-[4px]">
           {isSearch && (
             <Icons.search className={cn(disabled ? "opacity-50" : "")} />
