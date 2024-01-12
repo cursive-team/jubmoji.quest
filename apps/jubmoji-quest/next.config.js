@@ -1,5 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  cacheOnFrontEndNav: true,
+})
+
+module.exports = withPWA({
   reactStrictMode: true,
   webpack: (config) => {
     // Needed to make snarkJs work client side
@@ -53,6 +58,4 @@ const nextConfig = {
       },
     ];
   },
-};
-
-module.exports = nextConfig;
+});
