@@ -1,6 +1,7 @@
 import { DerivedComponentType, classed } from "@tw-classed/react";
 import React, { TextareaHTMLAttributes, forwardRef } from "react";
 import type * as Classed from "@tw-classed/react";
+import { InputWrapper } from "./Input";
 
 const TextareaComponent = classed(
   "textarea",
@@ -32,12 +33,15 @@ interface TextareaProps
     >,
     TextareaComponentVariants {
   loading?: boolean;
+  label?: string;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, variant, size, children, loading, ...props }, ref) => {
+  ({ className, variant, size, children, loading, label, ...props }, ref) => {
     return (
-      <TextareaComponent ref={ref} variant={variant} size={size} {...props} />
+      <InputWrapper label={label}>
+        <TextareaComponent ref={ref} variant={variant} size={size} {...props} />
+      </InputWrapper>
     );
   }
 ) as DerivedComponentType<typeof TextareaComponent, TextareaComponentVariants>;
