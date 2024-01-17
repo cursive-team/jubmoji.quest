@@ -65,26 +65,30 @@ export default async function handler(
               in_reply_to_tweet_id: replyId.toString(),
             },
           });
-
-          if (
-            postTweet &&
-            postTweet.data &&
-            typeOfTweet === "reveal-manifestation"
-          ) {
-            await twitterClient.tweets.createTweet({
-              text: `Verify this reveal at https://emn178.github.io/online-tools/sha256.html`,
-              reply: {
-                in_reply_to_tweet_id: postTweet.data.id,
-              },
-            });
-          }
         } else {
           postTweet = await twitterClient.tweets.createTweet({
             text: finalText.toString(),
           });
         }
 
-        return res.status(200).json(postTweet);
+        if (!postTweet || !postTweet.data) {
+          return res.status(500).json({ message: "Internal Server Error" });
+        }
+
+        // follow up with verification tweet
+        if (typeOfTweet === "reveal-manifestation") {
+          await twitterClient.tweets.createTweet({
+            text: `Verify this reveal at https://emn178.github.io/online-tools/sha256.html`,
+            reply: {
+              in_reply_to_tweet_id: postTweet.data.id,
+            },
+          });
+        }
+
+        return res.status(200).json({
+          postTweet,
+          link: `https://twitter.com/${process.env.TWITTER_CLUBNAME}/status/${postTweet.data.id}`,
+        });
       }
 
       return res.status(404).json({ message: "Club not found" });

@@ -137,6 +137,7 @@ export default function InfoPage() {
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [typeOfTweet, setTypeOfTweet] = useState<TypeOfTweet | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [tweetLink, setTweetLink] = useState<string>();
 
   const [tweetManifest, setTweetManifest] = useState("");
   const [tweetReplyTo, setTweetReplyTo] = useState("");
@@ -250,12 +251,14 @@ export default function InfoPage() {
               value={tweetManifest}
               onChange={(e) => setTweetManifest(e?.target?.value)}
             />
-            <Input
-              title="Tweet to reply to"
-              placeholder="Paste optional link..."
-              value={tweetReplyTo}
-              onChange={(e) => setTweetReplyTo(e?.target?.value)}
-            />
+            {typeOfTweet !== "reveal-manifestation" && (
+              <Input
+                title="Tweet to reply to"
+                placeholder="Paste optional link..."
+                value={tweetReplyTo}
+                onChange={(e) => setTweetReplyTo(e?.target?.value)}
+              />
+            )}
             {typeOfTweet === "new-manifestation" && tweetManifest && (
               <Input
                 size="sm"
@@ -273,7 +276,13 @@ export default function InfoPage() {
             >
               Confirm
             </Button>
-            <Button onClick={() => setCurrentStepIndex(1)}>
+            <Button
+              onClick={() => {
+                setCurrentStepIndex(1);
+                setTweetManifest("");
+                setTweetReplyTo("");
+              }}
+            >
               <div className="flex items-center gap-4">
                 <Icons.arrowLeft />
                 Back
@@ -367,12 +376,13 @@ export default function InfoPage() {
         }
         toast.success("Tweet sent!");
 
-        setTweetManifest("");
+        const tweetInfo = await response.json();
+
+        setTweetLink(tweetInfo.link);
         setSignTweetModal(false);
         setTweetPosted(true);
         setTweetReplyTo("");
         setCurrentStepIndex(0);
-        setTypeOfTweet(null);
         setIdentity(null);
       } else {
         toast.error("Cardholder verification failed, please try again.");
@@ -418,9 +428,33 @@ export default function InfoPage() {
             <ContentWrapper>
               <ContentDescription>Tweet posted!</ContentDescription>
               <div className="flex flex-col gap-6">
-                <CardOption label="View tweet" />
-                <CardOption label="Post again" />
-                <CardOption label="Leave feedback" />
+                <CardOption
+                  label="👀 View tweet"
+                  onClick={() =>
+                    window.open(tweetLink ?? "https://twitter.com", "_blank")
+                  }
+                />
+                {typeOfTweet === "new-manifestation" && (
+                  <CardOption
+                    label="💾 Copy & save manifestation"
+                    onClick={() => {
+                      navigator.clipboard.writeText(tweetManifest);
+                      toast.success("Copied!");
+                    }}
+                  />
+                )}
+                <CardOption
+                  label="📮 Post again"
+                  onClick={() => {
+                    setTweetManifest("");
+                    setTypeOfTweet(null);
+                    setTweetPosted(false);
+                  }}
+                />
+                <CardOption
+                  label="📝 Leave feedback"
+                  onClick={() => window.open("https://t.me/vivboop", "_blank")}
+                />
               </div>
             </ContentWrapper>
           )}
