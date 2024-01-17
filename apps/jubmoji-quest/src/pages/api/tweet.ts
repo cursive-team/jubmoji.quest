@@ -52,10 +52,14 @@ export default async function handler(
 
         // Add emoji addition
         let finalText = tweetText.toString();
-        if (typeOfTweet !== "reveal-manifestation") {
+        if (typeOfTweet === "normal-tweet") {
           finalText = `${
             cardPubKeys[pubKeyIndex].emoji
           }: ${tweetText.toString()}`;
+        } else if (typeOfTweet === "new-manifestation") {
+          finalText = `${
+            cardPubKeys[pubKeyIndex].emoji
+          } manifested ${tweetText.toString()} !`;
         }
 
         if (replyId) {
@@ -67,7 +71,7 @@ export default async function handler(
           });
         } else {
           postTweet = await twitterClient.tweets.createTweet({
-            text: finalText.toString(),
+            text: finalText,
           });
         }
 
@@ -75,10 +79,21 @@ export default async function handler(
           return res.status(500).json({ message: "Internal Server Error" });
         }
 
-        // follow up with verification tweet
+        await prisma.clubPost.create({
+          data: {
+            cardIndex: pubKeyIndex,
+            tweetId: postTweet.data.id,
+            postText: tweetText.toString(),
+            typeOfTweet: typeOfTweet.toString(),
+            proof: req.body,
+            clubName: club.clubName,
+          },
+        });
+
+        // follow up with verification tweet if it's a reveal
         if (typeOfTweet === "reveal-manifestation") {
           await twitterClient.tweets.createTweet({
-            text: `Verify this reveal at https://emn178.github.io/online-tools/sha256.html`,
+            text: `Self-verify this reveal at https://emn178.github.io/online-tools/sha256.html`,
             reply: {
               in_reply_to_tweet_id: postTweet.data.id,
             },

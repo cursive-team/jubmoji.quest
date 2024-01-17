@@ -23,6 +23,7 @@ import {
   getMessageHash,
 } from "jubmoji-api";
 import toast from "react-hot-toast";
+import { ClubPost } from "@prisma/client";
 
 const ContentWrapper = classed.div("flex flex-col gap-6 mt-3");
 const ContentDescription = classed.div("font-dm-sans text-center");
@@ -72,8 +73,8 @@ const tweetInputTextMap: Record<TypeOfTweet, string> = {
 };
 
 const tweetPlaceholderTextMap: Record<TypeOfTweet, string> = {
-  "new-manifestation": "Dreams, goals, resolutions, confessions...",
-  "reveal-manifestation": "Exact pre-image of prior manifestation...",
+  "new-manifestation": "Commit to a dream, goal, or resolution.",
+  "reveal-manifestation": "Type exact manifestation to reveal!",
   "normal-tweet": "What's on your mind?",
 };
 
@@ -138,13 +139,32 @@ export default function InfoPage() {
   const [typeOfTweet, setTypeOfTweet] = useState<TypeOfTweet | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [tweetLink, setTweetLink] = useState<string>();
+  const [manifestations, setManifestations] = useState<Map<string, string>>(
+    new Map()
+  );
 
   const [tweetManifest, setTweetManifest] = useState("");
-  const [tweetReplyTo, setTweetReplyTo] = useState("");
+  const [tweetReplyLink, setTweetReplyLink] = useState("");
 
   const [tweetPosted, setTweetPosted] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const getManifestations = async () => {
+      const response = await fetch("/api/clubManifestations");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const posts = await response.json();
+      const manifestations = new Map();
+      for (const clubPost of posts) {
+        manifestations.set(clubPost.postText, clubPost.tweetId);
+      }
+      setManifestations(manifestations);
+    };
+    getManifestations();
+  });
 
   const standardSHAHash = (msg: string): string => {
     const hasher = sha256.create();
@@ -238,15 +258,26 @@ export default function InfoPage() {
       setSignTweetModal(true);
     };
 
-    const confirmDisabled = tweetManifest?.length === 0;
+    const confirmDisabled =
+      tweetManifest?.length === 0 ||
+      (typeOfTweet === "reveal-manifestation" &&
+        !manifestations.get(standardSHAHash(tweetManifest)));
+
     return (
       typeOfTweet && (
         <ContentWrapper>
-          <ContentDescription></ContentDescription>
+          <ContentDescription>
+            {tweetManifest.length !== 0 &&
+            typeOfTweet === "reveal-manifestation"
+              ? manifestations.get(standardSHAHash(tweetManifest))
+                ? "Matching manifestation found!"
+                : "No matching manifestation found!"
+              : tweetPlaceholderTextMap[typeOfTweet]}
+          </ContentDescription>
           <div className="flex flex-col gap-6">
             <Textarea
               title={tweetInputTextMap[typeOfTweet] + "*"}
-              placeholder={tweetPlaceholderTextMap[typeOfTweet]}
+              placeholder={"Type here..."}
               cols={5}
               value={tweetManifest}
               onChange={(e) => setTweetManifest(e?.target?.value)}
@@ -255,11 +286,11 @@ export default function InfoPage() {
               <Input
                 title="Tweet to reply to"
                 placeholder="Paste optional link..."
-                value={tweetReplyTo}
-                onChange={(e) => setTweetReplyTo(e?.target?.value)}
+                value={tweetReplyLink}
+                onChange={(e) => setTweetReplyLink(e?.target?.value)}
               />
             )}
-            {typeOfTweet === "new-manifestation" && tweetManifest && (
+            {typeOfTweet !== "normal-tweet" && tweetManifest && (
               <Input
                 size="sm"
                 title="Tweet output"
@@ -280,7 +311,7 @@ export default function InfoPage() {
               onClick={() => {
                 setCurrentStepIndex(1);
                 setTweetManifest("");
-                setTweetReplyTo("");
+                setTweetReplyLink("");
               }}
             >
               <div className="flex items-center gap-4">
@@ -297,13 +328,18 @@ export default function InfoPage() {
   const steps = [ChooseIdentity, ChooseTypeOfTweet, Tweet];
 
   const onSignTweet = async () => {
-    // parse the reply ID
     let replyId = undefined;
-    if (tweetReplyTo) {
-      const match = tweetReplyTo.match(/\/status\/(\d+)/);
+    if (tweetReplyLink) {
+      const match = tweetReplyLink.match(/\/status\/(\d+)/);
       if (match) {
         replyId = match[1];
       }
+    }
+    if (
+      typeOfTweet === "reveal-manifestation" &&
+      manifestations.get(standardSHAHash(tweetManifest))
+    ) {
+      replyId = manifestations.get(standardSHAHash(tweetManifest));
     }
 
     // make the right tweet text
@@ -357,36 +393,30 @@ export default function InfoPage() {
         rawSig: res.signature.raw,
         pubKeyIndex: retrievedPubKeyIndex,
       });
-      const { verified } = await proofInstance.verify(proof);
-
-      if (verified) {
-        const response = await fetch("/api/tweet", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            signedData,
-            rawSig: res.signature.raw,
-            pubKeyIndex: retrievedPubKeyIndex,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        toast.success("Tweet sent!");
-
-        const tweetInfo = await response.json();
-
-        setTweetLink(tweetInfo.link);
-        setSignTweetModal(false);
-        setTweetPosted(true);
-        setTweetReplyTo("");
-        setCurrentStepIndex(0);
-        setIdentity(null);
-      } else {
-        toast.error("Cardholder verification failed, please try again.");
+      const response = await fetch("/api/tweet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          signedData,
+          rawSig: res.signature.raw,
+          pubKeyIndex: retrievedPubKeyIndex,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
+      toast.success("Tweet sent!");
+
+      const tweetInfo = await response.json();
+
+      setTweetLink(tweetInfo.link);
+      setSignTweetModal(false);
+      setTweetPosted(true);
+      setTweetReplyLink("");
+      setCurrentStepIndex(0);
+      setIdentity(null);
     } catch (error) {
       console.error(error);
       toast.error("Update failed, please try again or exit.");

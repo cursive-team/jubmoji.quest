@@ -36,6 +36,7 @@ export default async function handler(
         },
         data: {
           serializedTwitterToken: JSON.stringify(authClient.token),
+          updatedAt: new Date(),
         },
       });
     }

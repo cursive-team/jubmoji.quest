@@ -169,6 +169,7 @@ model Club {
   clubName               String   @id
   serializedTwitterToken String?
   createdAt              DateTime @default(now())
+  updatedAt              DateTime? 
 
   members Card[] @relation("ClubCards")
   posts   ClubPost[]
@@ -181,7 +182,7 @@ model ClubPost {
   postText      String
   tweetId       String?
   createdAt     DateTime @default(now())
-  manifestation Boolean  @default(false)
+  typeOfTweet   String
   proof         Json // signature or anon proof
 
   club Club  @relation(fields: [clubName], references: [clubName])
