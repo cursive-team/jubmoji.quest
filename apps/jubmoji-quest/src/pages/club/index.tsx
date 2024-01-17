@@ -421,6 +421,7 @@ export default function ClubPage() {
       setTweetReplyLink("");
       setCurrentStepIndex(0);
       setIdentity(null);
+      setManifestations(undefined); // force refresh of internal hash table
     } catch (error) {
       console.error(error);
       toast.error("Update failed, please try again or exit.");
