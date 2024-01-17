@@ -401,7 +401,7 @@ export default function InfoPage() {
               width={120}
               height={120}
               alt="logo"
-              className="mx-auto mt-14"
+              className="mx-auto mt-8"
             />
             <span className="text-[28px] font-giorgio text-center">
               JUBMOJI-CLUB
