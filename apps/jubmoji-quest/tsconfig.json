@@ -5,20 +5,11 @@
     "moduleResolution": "bundler",
     "jsx": "preserve",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "incremental": true
   },
-  "include": [
-    "next-env.d.ts",
-    "tailwind.config.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "tailwind.config.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

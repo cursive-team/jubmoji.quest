@@ -1,3 +1,5 @@
+// @ts-ignore
+import { execHaloCmdWeb } from "@arx-research/libhalo/api/web.js";
 import Image from "next/image";
 import { Modal, ModalProps } from "@/components/modals/Modal";
 import { useRouter } from "next/navigation";
@@ -11,6 +13,16 @@ import { Button } from "@/components/ui/Button";
 import MobileDetect from "mobile-detect";
 import Head from "next/head";
 import { sha256 } from "js-sha256";
+import { cn } from "@/lib/utils";
+import { bigIntToHex } from "babyjubjub-ecdsa";
+import {
+  NfcCardRawSignature,
+  PublicMessageSignature,
+  cardPubKeys,
+  createProofInstance,
+  getMessageHash,
+} from "jubmoji-api";
+import toast from "react-hot-toast";
 
 const ContentWrapper = classed.div("flex flex-col gap-6 mt-3");
 const ContentDescription = classed.div("font-dm-sans text-center");
@@ -20,13 +32,21 @@ type CardOptionProps = {
   label: string;
   description?: string;
   onClick?: () => void;
+  disabled?: boolean;
 };
 
-const CardOption = ({ label, description, onClick }: CardOptionProps) => {
+const CardOption = ({
+  label,
+  description,
+  disabled,
+  onClick,
+}: CardOptionProps) => {
   return (
     <Card.Base
       onClick={onClick}
-      className="p-4 !items-start !flex-row justify-between"
+      className={cn("p-4 !items-start !flex-row justify-between", {
+        "opacity-50": disabled,
+      })}
     >
       <div>
         <Card.Title>{label}</Card.Title>
@@ -34,7 +54,7 @@ const CardOption = ({ label, description, onClick }: CardOptionProps) => {
           {description}
         </Card.Description>
       </div>
-      <Icons.arrowRight />
+      {disabled ? <>🔜™️</> : <Icons.arrowRight />}
     </Card.Base>
   );
 };
@@ -81,7 +101,7 @@ const SignTweetModal = ({
       <div className="text-center my-auto">
         <div className="w-[331px] leading-tight">
           <Card.Title centred size="md" className="!font-giorgio mt-16 mb-2">
-            Hold your card to phone to sign tweet
+            Hold your card to phone to sign-in
           </Card.Title>
           <span className="font-dm-sans text-[16px] text-shark-400"></span>
         </div>
@@ -95,7 +115,7 @@ const SignTweetModal = ({
 
         <div className="flex flex-col gap-8">
           <Button variant="blue" onClick={onSign}>
-            Ready to sign
+            Sign-in & post
           </Button>
           <span className=" font-dm-sans ">
             {`If you still can't tap, check out our `}
@@ -111,9 +131,9 @@ const SignTweetModal = ({
     </Modal>
   );
 };
+
 export default function InfoPage() {
   const [signTweetModal, setSignTweetModal] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [typeOfTweet, setTypeOfTweet] = useState<TypeOfTweet | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -157,10 +177,14 @@ export default function InfoPage() {
             description="Tweet as a jubmoji owner"
             onClick={() => onSelectIdentity("collector")}
           /> */}
+          {/* <CardOption
+            label="🦤 Jubmoji team"
+            description="Anon member of jubmoji team"
+          /> */}
           <CardOption
             label="💨 Vapor"
             description="Anon cardholder, 1 day expiry"
-            onClick={() => onSelectIdentity("vapor")}
+            disabled
           />
         </div>
         <ButtonWrapper>
@@ -210,7 +234,6 @@ export default function InfoPage() {
 
   const Tweet = () => {
     const onConfirmTweet = () => {
-      setIsOpen(false);
       setSignTweetModal(true);
     };
 
@@ -265,18 +288,99 @@ export default function InfoPage() {
   const steps = [ChooseIdentity, ChooseTypeOfTweet, Tweet];
 
   const onSignTweet = async () => {
-    // todo: sign tweet
+    // parse the reply ID
+    let replyId = undefined;
+    if (tweetReplyTo) {
+      const match = tweetReplyTo.match(/\/status\/(\d+)/);
+      if (match) {
+        replyId = match[1];
+      }
+    }
 
-    // show tweet posted buttons
-    setTweetPosted(true);
-    setSignTweetModal(false);
+    // make the right tweet text
+    let tweetText = tweetManifest;
+    if (typeOfTweet === "new-manifestation") {
+      tweetText = standardSHAHash(tweetManifest);
+    }
 
-    // clear all field that we set before
-    setTweetManifest("");
-    setTweetReplyTo("");
-    setCurrentStepIndex(0);
-    setTypeOfTweet(null);
-    setIdentity(null);
+    // taking correct hash
+    const signedData = JSON.stringify({
+      tweetText,
+      replyId,
+      typeOfTweet,
+    });
+    const messageHash = bigIntToHex(getMessageHash(signedData));
+
+    // sign tweet
+    let command = {
+      name: "sign",
+      keyNo: 1,
+      digest: messageHash,
+    };
+    let res: {
+      input: { digest: string };
+      signature: { raw: NfcCardRawSignature };
+      publicKey: string;
+    };
+
+    try {
+      // --- request NFC command execution ---
+      res = await execHaloCmdWeb(command, {
+        statusCallback: (cause: any) => {
+          if (cause === "retry") {
+            toast.error("Tapping failed, please try again.");
+          } else {
+            console.log("Tapping status", cause);
+          }
+        },
+      });
+
+      // match public key to index
+      const retrievedPubKeyIndex = cardPubKeys.findIndex(
+        (key) => key.pubKeySlot1 === res.publicKey // Use secp256k1 key here, which is in slot 1
+      );
+
+      const proofInstance = createProofInstance(PublicMessageSignature, {
+        randStr: "",
+      });
+      const proof = await proofInstance.prove({
+        message: signedData,
+        rawSig: res.signature.raw,
+        pubKeyIndex: retrievedPubKeyIndex,
+      });
+      const { verified } = await proofInstance.verify(proof);
+
+      if (verified) {
+        const response = await fetch("/api/tweet", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            signedData,
+            rawSig: res.signature.raw,
+            pubKeyIndex: retrievedPubKeyIndex,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        toast.success("Tweet sent!");
+
+        setTweetManifest("");
+        setSignTweetModal(false);
+        setTweetPosted(true);
+        setTweetReplyTo("");
+        setCurrentStepIndex(0);
+        setTypeOfTweet(null);
+        setIdentity(null);
+      } else {
+        toast.error("Cardholder verification failed, please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Update failed, please try again or exit.");
+    }
   };
 
   return (

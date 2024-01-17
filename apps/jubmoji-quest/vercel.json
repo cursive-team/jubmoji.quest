@@ -3,5 +3,11 @@
     "src/pages/**/*": {
       "maxDuration": 300
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/refreshToken",
+      "schedule": "*/30 * * * *"
+    }
+  ]
 }
