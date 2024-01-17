@@ -27,8 +27,8 @@ const OnlyMobileBanner = () => {
 
         <Card.Base className="!font-dm-sans">
           <Card.Content className="text-sm md:text-lg" spacing="sm">
-            jubmoji.quest is only on mobile Visit on your phone to join the
-            experience
+            jubmoji.quest is only available on mobile devices. Please visit the
+            website on your phone in order to take part in the experience.
           </Card.Content>
         </Card.Base>
       </div>
