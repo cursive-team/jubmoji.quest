@@ -1,8 +1,7 @@
-
-const withPWA = require('next-pwa')({
-  dest: 'public',
+const withPWA = require("next-pwa")({
+  dest: "public",
   cacheOnFrontEndNav: true,
-})
+});
 
 module.exports = withPWA({
   reactStrictMode: true,
@@ -33,6 +32,11 @@ module.exports = withPWA({
       {
         source: "/zuhunt-test",
         destination: "https://www.jubmoji.quest/quests/7",
+        permanent: true,
+      },
+      {
+        source: "/kiba",
+        destination: "https://www.jubmoji.quest/quests/28",
         permanent: true,
       },
       {
