@@ -18,8 +18,6 @@ export default async function handler(
       const clubToken = club.serializedTwitterToken;
       if (!clubToken) continue;
 
-      console.log(JSON.parse(clubToken));
-
       const authClient = new auth.OAuth2User({
         client_id: process.env.TWITTER_CLIENT_ID!,
         client_secret: process.env.TWITTER_CLIENT_SECRET!,
@@ -28,14 +26,14 @@ export default async function handler(
         token: JSON.parse(clubToken),
       });
 
-      await authClient.refreshAccessToken();
+      const newToken = await authClient.refreshAccessToken();
 
       await prisma.club.update({
         where: {
           clubName: club.clubName,
         },
         data: {
-          serializedTwitterToken: JSON.stringify(authClient.token),
+          serializedTwitterToken: JSON.stringify(newToken.token),
           updatedAt: new Date(),
         },
       });

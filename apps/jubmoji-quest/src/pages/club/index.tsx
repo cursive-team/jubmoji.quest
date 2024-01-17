@@ -139,9 +139,7 @@ export default function ClubPage() {
   const [typeOfTweet, setTypeOfTweet] = useState<TypeOfTweet | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [tweetLink, setTweetLink] = useState<string>();
-  const [manifestations, setManifestations] = useState<Map<string, string>>(
-    new Map()
-  );
+  const [manifestations, setManifestations] = useState<Map<string, string>>();
 
   const [tweetManifest, setTweetManifest] = useState("");
   const [tweetReplyLink, setTweetReplyLink] = useState("");
@@ -163,8 +161,11 @@ export default function ClubPage() {
       }
       setManifestations(manifestations);
     };
-    getManifestations();
-  });
+
+    if (!manifestations) {
+      getManifestations();
+    }
+  }, [manifestations]);
 
   const standardSHAHash = (msg: string): string => {
     const hasher = sha256.create();
