@@ -18,6 +18,12 @@ const InputComponent = classed(
         primary: "bg-transparent border border-shark-300",
         secondary: "",
       },
+      readOnly: {
+        true: "opacity-50 cursor-not-allowed",
+      },
+      disabled: {
+        true: "opacity-50 cursor-not-allowed",
+      },
     },
     defaultVariants: {
       size: "md",
@@ -31,7 +37,7 @@ type InputComponentVariants = Classed.VariantProps<typeof InputComponent>;
 interface InputProps
   extends Omit<
       InputHTMLAttributes<HTMLInputElement>,
-      "size" | "ref" | "value" | "onChange"
+      "size" | "ref" | "value" | "onChange" | "readOnly" | "disabled"
     >,
     InputComponentVariants {
   loading?: boolean;
@@ -70,6 +76,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       loading,
       disabled,
       title,
+      readOnly,
       ...props
     },
     ref
@@ -87,6 +94,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             variant={variant}
             size={size}
             disabled={disabled}
+            readOnly={readOnly}
             {...props}
           />
         </div>

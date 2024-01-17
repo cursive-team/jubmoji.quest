@@ -133,8 +133,8 @@ const SignTweetModal = ({
   );
 };
 
-export default function InfoPage() {
-  const [signTweetModal, setSignTweetModal] = useState(true);
+export default function ClubPage() {
+  const [signTweetModal, setSignTweetModal] = useState(false);
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [typeOfTweet, setTypeOfTweet] = useState<TypeOfTweet | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -433,63 +433,65 @@ export default function InfoPage() {
         setIsOpen={setSignTweetModal}
         onSign={onSignTweet}
       />
-      <Modal isOpen={true} setIsOpen={() => {}} closable={false}>
-        <div className="flex flex-col">
-          <div className="flex flex-col gap-8">
-            <Image
-              src="/images/logo.svg"
-              width={120}
-              height={120}
-              alt="logo"
-              className="mx-auto mt-8"
-            />
-            <span className="text-[28px] font-giorgio text-center">
-              JUBMOJI-CLUB
-            </span>
+      <div className="flex flex-col grow h-full p-4">
+        <div className="flex flex-col gap-8">
+          <Image
+            src="/images/logo.svg"
+            width={120}
+            height={120}
+            alt="logo"
+            className="mx-auto mt-8"
+          />
+          <span className="text-[28px] font-giorgio text-center">
+            JUBMOJI-CLUB
+          </span>
+        </div>
+        {!tweetPosted ? (
+          <div>
+            {steps?.map((step, stepIndex) => {
+              const showStep = currentStepIndex === stepIndex;
+              return <>{showStep && step()}</>;
+            })}
           </div>
-          {!tweetPosted ? (
-            <div>
-              {steps?.map((step, stepIndex) => {
-                const showStep = currentStepIndex === stepIndex;
-                return <>{showStep && step()}</>;
-              })}
-            </div>
-          ) : (
-            <ContentWrapper>
-              <ContentDescription>Tweet posted!</ContentDescription>
-              <div className="flex flex-col gap-6">
+        ) : (
+          <ContentWrapper>
+            <ContentDescription>Tweet posted!</ContentDescription>
+            <div className="flex flex-col gap-6">
+              <CardOption
+                label="👀 View tweet"
+                onClick={() =>
+                  window.open(tweetLink ?? "https://twitter.com", "_blank")
+                }
+              />
+              {typeOfTweet === "new-manifestation" && (
                 <CardOption
-                  label="👀 View tweet"
-                  onClick={() =>
-                    window.open(tweetLink ?? "https://twitter.com", "_blank")
-                  }
-                />
-                {typeOfTweet === "new-manifestation" && (
-                  <CardOption
-                    label="💾 Copy & save manifestation"
-                    onClick={() => {
-                      navigator.clipboard.writeText(tweetManifest);
-                      toast.success("Copied!");
-                    }}
-                  />
-                )}
-                <CardOption
-                  label="📮 Post again"
+                  label="💾 Copy & save manifestation"
                   onClick={() => {
-                    setTweetManifest("");
-                    setTypeOfTweet(null);
-                    setTweetPosted(false);
+                    navigator.clipboard.writeText(tweetManifest);
+                    toast.success("Copied!");
                   }}
                 />
-                <CardOption
-                  label="📝 Leave feedback"
-                  onClick={() => window.open("https://t.me/vivboop", "_blank")}
-                />
-              </div>
-            </ContentWrapper>
-          )}
-        </div>
-      </Modal>
+              )}
+              <CardOption
+                label="📮 Post again"
+                onClick={() => {
+                  setTweetManifest("");
+                  setTypeOfTweet(null);
+                  setTweetPosted(false);
+                }}
+              />
+              <CardOption
+                label="📝 Leave feedback"
+                onClick={() => window.open("https://t.me/vivboop", "_blank")}
+              />
+            </div>
+          </ContentWrapper>
+        )}
+      </div>
     </>
   );
 }
+
+ClubPage.getInitialProps = () => {
+  return { showFooter: false };
+};
