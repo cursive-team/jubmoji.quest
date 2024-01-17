@@ -50,7 +50,8 @@ export default async function handler(
         const twitterClient = new Client(authClient);
         let postTweet;
 
-        let finalText: string;
+        // Add emoji addition
+        let finalText = tweetText.toString();
         if (typeOfTweet !== "reveal-manifestation") {
           finalText = `${
             cardPubKeys[pubKeyIndex].emoji
@@ -59,14 +60,27 @@ export default async function handler(
 
         if (replyId) {
           postTweet = await twitterClient.tweets.createTweet({
-            text: tweetText.toString(),
+            text: finalText,
             reply: {
               in_reply_to_tweet_id: replyId.toString(),
             },
           });
+
+          if (
+            postTweet &&
+            postTweet.data &&
+            typeOfTweet === "reveal-manifestation"
+          ) {
+            await twitterClient.tweets.createTweet({
+              text: `Verify this reveal at https://emn178.github.io/online-tools/sha256.html`,
+              reply: {
+                in_reply_to_tweet_id: postTweet.data.id,
+              },
+            });
+          }
         } else {
           postTweet = await twitterClient.tweets.createTweet({
-            text: tweetText.toString(),
+            text: finalText.toString(),
           });
         }
 
