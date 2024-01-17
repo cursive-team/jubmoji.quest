@@ -262,6 +262,7 @@ export default function ClubPage() {
     const confirmDisabled =
       tweetManifest?.length === 0 ||
       (typeOfTweet === "reveal-manifestation" &&
+        manifestations &&
         !manifestations.get(standardSHAHash(tweetManifest)));
 
     return (
@@ -269,6 +270,7 @@ export default function ClubPage() {
         <ContentWrapper>
           <ContentDescription>
             {tweetManifest.length !== 0 &&
+            manifestations &&
             typeOfTweet === "reveal-manifestation"
               ? manifestations.get(standardSHAHash(tweetManifest))
                 ? "Matching manifestation found!"
@@ -338,6 +340,7 @@ export default function ClubPage() {
     }
     if (
       typeOfTweet === "reveal-manifestation" &&
+      manifestations &&
       manifestations.get(standardSHAHash(tweetManifest))
     ) {
       replyId = manifestations.get(standardSHAHash(tweetManifest));
