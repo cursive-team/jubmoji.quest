@@ -24,6 +24,7 @@ import { bigIntToHex } from "babyjubjub-ecdsa";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/Textarea";
 import { useFetchCards } from "@/hooks/useFetchCards";
+import { useRouter } from "next/navigation";
 
 enum CardholderActions {
   EDIT_CARD_DETAILS,
@@ -78,6 +79,7 @@ const cardholderActionDetails: Record<
 };
 
 export default function CardholderEditPage() {
+  const router = useRouter();
   const [infoModalOpen, setIsModalOpen] = useState(false);
   const [cardholderAction, setCardholderAction] = useState<CardholderActions>();
 
@@ -135,20 +137,15 @@ export default function CardholderEditPage() {
                 />
               </div> */}
 
-              <div
-              // onClick={() =>
-              //   setCardholderAction(CardholderActions.PSEUD_TELEGRAM_POST)
-              // }
-              >
+              <Message>{`Cardholder gated (need 1 tap)`}</Message>
+
+              <div onClick={() => router.push("/club")}>
                 <PowerCard
-                  title="Pseudonymous TG (Soon™)"
-                  description="Cardholders can message on TG using their jubmoji identity"
-                  powerType="TELEGRAM"
-                  disabled
+                  title="JUBMOJI-CLUB"
+                  description="Post on Twitter using your jubmoji identity"
+                  powerType="TWITTER"
                 />
               </div>
-
-              <Message>{`Cardholder gated (need 1 tap)`}</Message>
 
               <div
                 onClick={() =>

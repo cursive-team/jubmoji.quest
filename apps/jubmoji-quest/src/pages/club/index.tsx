@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Modal, ModalProps } from "@/components/modals/Modal";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { classed } from "@tw-classed/react";
 import { Card } from "@/components/cards/Card";
@@ -9,9 +9,12 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import MobileDetect from "mobile-detect";
+import Head from "next/head";
+import { sha256 } from "js-sha256";
 
-const ContentWrapper = classed.div("grid grid-rows-[15px_1fr_50px] gap-6");
-const ContentDescription = classed.span("font-dm-sans text-center");
+const ContentWrapper = classed.div("flex flex-col gap-6 mt-3");
+const ContentDescription = classed.div("font-dm-sans text-center");
+const ButtonWrapper = classed.div("flex flex-col mt-6 gap-6");
 
 type CardOptionProps = {
   label: string;
@@ -41,6 +44,18 @@ type TypeOfTweet =
   | "new-manifestation"
   | "reveal-manifestation"
   | "normal-tweet";
+
+const tweetInputTextMap: Record<TypeOfTweet, string> = {
+  "new-manifestation": "Manfestation",
+  "reveal-manifestation": "Previous manifestation",
+  "normal-tweet": "Tweet",
+};
+
+const tweetPlaceholderTextMap: Record<TypeOfTweet, string> = {
+  "new-manifestation": "Dreams, goals, resolutions, confessions...",
+  "reveal-manifestation": "Exact pre-image of prior manifestation...",
+  "normal-tweet": "What's on your mind?",
+};
 
 const SignTweetModal = ({
   isOpen,
@@ -110,6 +125,11 @@ export default function InfoPage() {
 
   const router = useRouter();
 
+  const standardSHAHash = (msg: string): string => {
+    const hasher = sha256.create();
+    return hasher.update(msg).hex();
+  };
+
   const onSelectIdentity = (selectedIdentity: Identity) => {
     if (!selectedIdentity) return;
     setIdentity(selectedIdentity);
@@ -128,21 +148,29 @@ export default function InfoPage() {
         <ContentDescription>Use a new identity on Twitter!</ContentDescription>
         <div className="flex flex-col gap-6">
           <CardOption
-            label="Cardholder"
+            label="💁‍♀️ Cardholder"
             description="Tweet as your card's emoji"
             onClick={() => onSelectIdentity("cardholder")}
           />
-          <CardOption
+          {/* <CardOption
             label="Collector"
             description="Tweet as a jubmoji owner"
             onClick={() => onSelectIdentity("collector")}
-          />
+          /> */}
           <CardOption
-            label="Vapor"
+            label="💨 Vapor"
             description="Anon cardholder, 1 day expiry"
             onClick={() => onSelectIdentity("vapor")}
           />
         </div>
+        <ButtonWrapper>
+          <Button onClick={() => router.push("/cardholder")}>
+            <div className="flex items-center gap-4">
+              <Icons.arrowLeft />
+              Back to jubmoji.quest
+            </div>
+          </Button>
+        </ButtonWrapper>
       </ContentWrapper>
     );
   };
@@ -153,22 +181,29 @@ export default function InfoPage() {
         <ContentDescription>Choose a type of tweet!</ContentDescription>
         <div className="flex flex-col gap-6">
           <CardOption
-            label="New manifestation"
+            label="✨ Manifest"
             description="Post a hash of a dream or resolution"
             onClick={() => onSelectTypeOfTweet("new-manifestation")}
           />
           <CardOption
-            label="Reveal manifestation"
+            label="💫 Reveal"
             description="Reveal an earlier hash"
             onClick={() => onSelectTypeOfTweet("reveal-manifestation")}
           />
           <CardOption
-            label="Normal tweet"
+            label="🐦 Standard"
             description="Good old 280 characters"
             onClick={() => onSelectTypeOfTweet("normal-tweet")}
           />
         </div>
-        <Button onClick={() => setCurrentStepIndex(0)}>Back</Button>
+        <ButtonWrapper>
+          <Button onClick={() => setCurrentStepIndex(0)}>
+            <div className="flex items-center gap-4">
+              <Icons.arrowLeft />
+              Back
+            </div>
+          </Button>
+        </ButtonWrapper>
       </ContentWrapper>
     );
   };
@@ -181,32 +216,49 @@ export default function InfoPage() {
 
     const confirmDisabled = tweetManifest?.length === 0;
     return (
-      <ContentWrapper>
-        <ContentDescription></ContentDescription>
-        <div className="flex flex-col gap-6">
-          <Textarea
-            title="Tweet / Manifestation*"
-            placeholder="type here"
-            cols={5}
-            value={tweetManifest}
-            onChange={(e) => setTweetManifest(e?.target?.value)}
-          />
-          <Input
-            title="Tweet to reply to"
-            placeholder="Tweet link"
-            value={tweetReplyTo}
-            onChange={(e) => setTweetReplyTo(e?.target?.value)}
-          />
-          <Button
-            variant="blue"
-            disabled={confirmDisabled}
-            onClick={onConfirmTweet}
-          >
-            Confirm
-          </Button>
-        </div>
-        <Button onClick={() => setCurrentStepIndex(1)}>Back</Button>
-      </ContentWrapper>
+      typeOfTweet && (
+        <ContentWrapper>
+          <ContentDescription></ContentDescription>
+          <div className="flex flex-col gap-6">
+            <Textarea
+              title={tweetInputTextMap[typeOfTweet] + "*"}
+              placeholder={tweetPlaceholderTextMap[typeOfTweet]}
+              cols={5}
+              value={tweetManifest}
+              onChange={(e) => setTweetManifest(e?.target?.value)}
+            />
+            <Input
+              title="Tweet to reply to"
+              placeholder="Paste optional link..."
+              value={tweetReplyTo}
+              onChange={(e) => setTweetReplyTo(e?.target?.value)}
+            />
+            {typeOfTweet === "new-manifestation" && tweetManifest && (
+              <Input
+                size="sm"
+                title="Tweet output"
+                value={standardSHAHash(tweetManifest)}
+                readOnly
+              />
+            )}
+          </div>
+          <ButtonWrapper>
+            <Button
+              variant="blue"
+              disabled={confirmDisabled}
+              onClick={onConfirmTweet}
+            >
+              Confirm
+            </Button>
+            <Button onClick={() => setCurrentStepIndex(1)}>
+              <div className="flex items-center gap-4">
+                <Icons.arrowLeft />
+                Back
+              </div>
+            </Button>
+          </ButtonWrapper>
+        </ContentWrapper>
+      )
     );
   };
 
@@ -229,16 +281,15 @@ export default function InfoPage() {
 
   return (
     <>
+      <Head>
+        <title>jubmoji-club</title>
+      </Head>
       <SignTweetModal
         isOpen={signTweetModal}
         setIsOpen={setSignTweetModal}
         onSign={onSignTweet}
       />
-      <Modal
-        isOpen={isOpen || !signTweetModal}
-        setIsOpen={setIsOpen}
-        onClose={() => router.push("/")}
-      >
+      <Modal isOpen={true} setIsOpen={() => {}} closable={false}>
         <div className="flex flex-col">
           <div className="flex flex-col gap-8">
             <Image
@@ -249,7 +300,7 @@ export default function InfoPage() {
               className="mx-auto mt-14"
             />
             <span className="text-[28px] font-giorgio text-center">
-              JUBMOJI.CLUB
+              JUBMOJI-CLUB
             </span>
           </div>
           {!tweetPosted ? (
