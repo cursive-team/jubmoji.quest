@@ -15,7 +15,7 @@ const buttonVariants = cva(
       variant: {
         primary: "primary border border-white text-white ",
         secondary: "secondary bg-white text-black border border-shark-400",
-        blue: "bg-baby-blue-default text-shark-970",
+        blue: "bg-baby-blue-default text-shark-970 border border-baby-blue-default",
         transparent: "bg-transparent",
         dark: "bg-black text-white border border-[#A6A6A6]",
         shark: "bg-shark-970 border border-shark-50 text-white",

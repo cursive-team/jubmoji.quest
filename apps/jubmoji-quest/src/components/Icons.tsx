@@ -149,6 +149,22 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  arrowLeft: (props: any) => (
+    <svg
+      width="15"
+      height="16"
+      viewBox="0 0 15 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M14.5 8H0.5M0.5 8L7.5 15M0.5 8L7.5 1"
+        stroke="#F5F5F6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  ),
   search: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
