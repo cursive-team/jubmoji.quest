@@ -23,7 +23,6 @@ import {
   getMessageHash,
 } from "jubmoji-api";
 import toast from "react-hot-toast";
-import { ClubPost } from "@prisma/client";
 
 const ContentWrapper = classed.div("flex flex-col gap-6 mt-3");
 const ContentDescription = classed.div("font-dm-sans text-center");
