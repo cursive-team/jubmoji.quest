@@ -1105,7 +1105,7 @@ export const cardPubKeys: CardPubKey[] = [
   },
   {
     category: "personal",
-    emoji: "✍️",
+    emoji: "✍🏾",
     cardName: "writing hand",
     unicode: "U+270D",
     pubKeySlot1:
