@@ -4,7 +4,6 @@ import { FAQS } from "@/common/infoFaqs";
 import { Collapse } from "../ui/Collapse";
 import Image from "next/image";
 import Link from "next/link";
-import { Icons } from "../Icons";
 import { URLS } from "@/constants";
 
 const InfoModal = ({ isOpen, setIsOpen, onClose }: ModalProps) => {
