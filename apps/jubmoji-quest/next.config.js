@@ -52,7 +52,7 @@ module.exports = withPWA({
       {
         source: "/about",
         destination:
-          "https://pse-team.notion.site/Jubmojis-One-Pager-c9c9c8e6d8ed4c84a37aaa121d03d03c",
+          "https://cursive-team.notion.site/Jubmoji-Quest-About-d22f93fdc3c74c2a83d4e2b4d7e93d52",
         permanent: true,
       },
       {
