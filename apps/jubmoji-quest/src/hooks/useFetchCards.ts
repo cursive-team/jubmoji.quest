@@ -66,7 +66,13 @@ export const getJubmojiCardByPubIndex = (
   if (!cards[pubKeyIndex]) return;
 
   // The following properties are fixed, and associated with the physical cards
-  const { emoji, imageBlobUrl: imagePath } = cardPubKeys[pubKeyIndex];
+  const {
+    emoji,
+    imageBlobUrl: imagePath,
+    landscapeImage,
+  } = cardPubKeys[pubKeyIndex];
+
+  const rotate = landscapeImage === "checked";
 
   // The following properties are dynamic, and associated with the current cardholder
   const {
@@ -90,6 +96,7 @@ export const getJubmojiCardByPubIndex = (
     imagePath,
     index,
     pubKeyIndex,
+    rotate,
   };
 };
 
@@ -104,4 +111,5 @@ export interface JubmojiCardProps {
   imagePath: string;
   index: number;
   pubKeyIndex: number;
+  rotate: boolean;
 }

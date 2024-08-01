@@ -699,7 +699,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦇",
     cardName: "bat",
     unicode: "U+1F987",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04485521bead936799ddc548e0cfab6ad510d20b702769501c3f2bd4fc8df8519721be313253a9d6d14b2fb1a9e363acffbca1f19dfc55f49d35fd753d98aa177f",
     pubKeySlot2:
@@ -999,7 +999,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🐢",
     cardName: "turtle",
     unicode: "U+1F422",
-    landscapeImage: "checked",
+    landscapeImage: "",
     pubKeySlot1:
       "0411298f213485e0d4ef910577410a0676ec2d33fb8e692fb81226bc70ec919d64e59f9d71d18078896b5209d188b3b671acb6af807b7622881c3ea5987489df00",
     pubKeySlot2:

@@ -21,6 +21,7 @@ interface CollectionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   actions?: React.ReactNode;
   centred?: boolean;
   canFlip?: boolean;
+  rotate?: boolean;
   size?: "sm" | "md";
   disabled?: boolean;
   preview?: boolean;
@@ -110,6 +111,7 @@ const CollectionCard = ({
   disabled = false,
   preview = false,
   height = 250,
+  rotate = false,
   className,
   onSwipe,
   onBackup,
@@ -353,6 +355,8 @@ const CollectionCard = ({
             style={{
               backgroundImage: `url(${cardBackImage})`,
               height: `${CARD_HEIGHT}px`,
+              transform: rotate ? "rotate(-90deg) scale(1.2)" : "none",
+              transformOrigin: "center center",
             }}
           />
 
