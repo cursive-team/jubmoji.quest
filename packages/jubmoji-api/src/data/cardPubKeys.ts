@@ -954,7 +954,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦋",
     cardName: "butterfly",
     unicode: "U+1F98B",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "046bebef2a8fb84d244c8636ef83568d97e8ab5338d7850556a62fa66366bbb0cefefb05080783caa5cfe7eec34cb36f7869728b4da7e4a3d7aa4dbd6bc739d302",
     pubKeySlot2:
@@ -1014,7 +1014,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦫",
     cardName: "beaver",
     unicode: "U+1F9AB",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "042a53a473710dee6348ac8d20d01d303abc8b25e8afe624ff084754a6ac69cc0b94cfb6c845745447523f5cb037ae942bec748f72154fee0dc18a3d0b5b903d9d",
     pubKeySlot2:
@@ -1029,7 +1029,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🕷",
     cardName: "spider",
     unicode: "U+1F577",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "047a920c02b509585fa1460043e5d5a46514c35a216aa94cbfb2faa6c768257861c44847aca235f1391758a455061f1822c3ba37dc292cabd85a4170ccd4597e85",
     pubKeySlot2:
@@ -1059,7 +1059,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "⏳",
     cardName: "hourglass not done",
     unicode: "U+23F3",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04feb8f75609326afd55b1f63a802ad3e719886531762f327d48a1a8b607735d033b46f46ec921478c050b7aae0d6ff98464150cba5cf0befa8dd2cf854a2ad441",
     pubKeySlot2:
@@ -1239,7 +1239,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🌅",
     cardName: "sunrise",
     unicode: "U+1F305",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04de0631dddc317f800797d19e8b554b241f22864fc4bd71552adb892d54b974e533a446855109d156c9b31b696f6bb456ae6f6c85697858db501a81c02620eff9",
     pubKeySlot2:
@@ -1254,7 +1254,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🌈",
     cardName: "rainbow",
     unicode: "U+1F308",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04b9a7739878bb660a66a569080bb3c4a46411c5bbe7dca0a5b13aca122f63eaa6b8ac35c1b14442afebb11afefd25851977d57f5d84e197b0a38c57a92d71a68e",
     pubKeySlot2:
@@ -1404,7 +1404,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🍁",
     cardName: "maple leaf",
     unicode: "U+1F341",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "041c0fa4f9aa2bccbc1ae82c48e7f15dac6b9b0054f0baf6ab9b19ae5758d92b7d9fd5a6ffbc86d6c108dacc85269331c064c48b57f2f77a78c544b256c322a430",
     pubKeySlot2:
@@ -1464,7 +1464,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🍑",
     cardName: "peach",
     unicode: "U+1F351",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "048cc4bed29693044b3a35b0fda9406a9d403d6c1b87643da0eaa98da49c2eff81edee1ee4fdb7b5fe9ec56142630706bf915ef221f4cc562945757dc8964ad61e",
     pubKeySlot2:
@@ -1479,7 +1479,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🍞",
     cardName: "bread",
     unicode: "U+1F35E",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04f6f351e924b96c25f3d717fdb5d4f5660785e950369c25d94e1badba541fcef2afa1c70be78573e7690c336c2430d7c1c488f7eecfa4bbe1511310d3f20e0d91",
     pubKeySlot2:
@@ -1659,7 +1659,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🐍",
     cardName: "snake",
     unicode: "U+1F40D",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04e0d9f8aee2a4f20409b11496758f8cd542fb9c873a8e88c9c9bddeebb33b0e942016fe9e640493615ff69b3ef498f6bae3bf4ea5525be3f841954441eba7a45b",
     pubKeySlot2:
@@ -1674,7 +1674,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🐒",
     cardName: "monkey",
     unicode: "U+1F412",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "049de434366a72a348b1d2c8d7e42c0270f1b904813bda9a7540aa1ad808e56528911f7bd5304d6f4cb448baedb63f043e308a9fc658dfda0d9e8971d40de6621c",
     pubKeySlot2:
@@ -1749,7 +1749,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🐳",
     cardName: "whale",
     unicode: "U+1F40B",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04c5e841b74b30bc32490ea878a547007fb54f97c007012de171be860e095820c9de88d3d2fe1f148c64128e63d165e17a278933da28834e45c4d9b685d6c142d2",
     pubKeySlot2:
@@ -1764,7 +1764,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🐺",
     cardName: "wolf",
     unicode: "U+1F43A",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04f24a275039fb1d5cedac8bba6845e7a10ee6bdc6490e25ccf7540dcf6996d5484b656f68732c089c9c315992daa3fb2941f24a7366bd421b294626e9fe002ecf",
     pubKeySlot2:
@@ -2214,7 +2214,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "💤",
     cardName: "zzz\n",
     unicode: "U+1F4A4",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "040c437a003278cf0e02a2ec03b4d35e6c4ae312e1ebbd80c54ec4f0028aff1fdff601b22890a6795cc8e378605323da0801256f78994571fd4c773059d9e7297f",
     pubKeySlot2:
@@ -2259,7 +2259,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "😴",
     cardName: "sleeping",
     unicode: "U+1F634",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04506f9e665e886d363ee0e5345866ff8a7c896e02220c2fd431d63249b82d78eec6f9a2eedae2f0a092bc02b7ea5077f8e4c108aaef23822779a75601f092d71b",
     pubKeySlot2:
@@ -2274,7 +2274,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "😸",
     cardName: "grinning cat with smiling eyes",
     unicode: "U+1F638",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "046d0ccb82387b6a97ab181e9f0260a03fb625ce82b9c4a0a9de1cc8adfbded929c871f41dbab205f3aff684d472d6a57874a75f0fff08cc0a32428dd556852ea6",
     pubKeySlot2:
@@ -2334,7 +2334,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🙉",
     cardName: "hear no evil monkey",
     unicode: "U+1F649",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "045da152204e219009c2fd4327f36d098ec01851fa76a526d6d1eb3dbd83fb0e084c11ad43d7e2e79c6a04d8acc5f3dd90e3e411174d43dd5415e6f8cc78f98c48",
     pubKeySlot2:
@@ -2394,7 +2394,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🛶",
     cardName: "canoe",
     unicode: "U+1F6F6",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04ff8fd6c3cd75ef2159506ab224cc60467cfa6d74bd2ccd8d3a2d1f71590ab5b66a555942fd71bb3662895dab71a67e5b85ce5078eac2ed743e663460556995ba",
     pubKeySlot2:
@@ -2439,7 +2439,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🤗",
     cardName: "smiling face with open hands",
     unicode: "U+1F917",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "048a31f757ccefa82ef23fbf8100a90a7c4f151bde888ce9fcac64a34b97a544268da68be4c1a9d7f3e5cdfcc21857787986360fd88ea4c940fe6c939c87c42d3d",
     pubKeySlot2:
@@ -2574,7 +2574,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🥊",
     cardName: "boxing glove",
     unicode: "U+1F94A",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04e9d5b010cf87979245ed926ef034f4eb11f2940387e3f8f9ec0d8ef7ac9a09c577396d064c491b79cbfa858a36a968a4fc6af451f47b053776fab2faf3f482bd",
     pubKeySlot2:
@@ -2604,7 +2604,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🥐 ",
     cardName: "croissant",
     unicode: "U+1F950",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "049814e8565eb5bdb75a959e12a783451eb3bc741e28fb17fb87863e5c46da0dd918e61159618788230c6c09af6734b7f0eb8667cd482763a7d4c5672cff36c72e",
     pubKeySlot2:
@@ -2649,7 +2649,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🥜",
     cardName: "peanuts",
     unicode: "U+1F955",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04925014ed034e6a61331883848d408c9b35b3a21a987244b20fef69a3a8885bb852ffa45f9899af740a48135a56dc766c304c989e42e30803cbf23b16a7e0553b",
     pubKeySlot2:
@@ -2664,7 +2664,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🥞",
     cardName: "pancakes",
     unicode: "U+1F95E",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "044d5d251c76cf5ae8d430d6fa8415cef92a1f3ba67bb91692da48d29f96565f29cc0a30252d2aeec635bfa934ee7cb2077a8f7a4b4b75771dbd1695a24df8af88",
     pubKeySlot2:
@@ -2679,7 +2679,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🥨",
     cardName: "pretzel",
     unicode: "U+1F968",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "0451310c06eb9a12c8f5685ffeed162862b97ca4975aa6c0830dd1bd23a353f31e1e23d5a0837cfd1c1afe4db69ebcb68357204ed41a200fbe449583f2f46ba44f",
     pubKeySlot2:
@@ -2694,7 +2694,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🥬",
     cardName: "leafy green",
     unicode: "U+1F96C",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04cd3e7d3b1f03f45c49f133d172eb31a396069c3dd897b34a0cd953f7dbd83a11437c6b9bd8207f708f952e38b219970af6c396e6dc9f8239342c4fe46f0d6c1e",
     pubKeySlot2:
@@ -2754,7 +2754,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦈",
     cardName: "shark",
     unicode: "U+1F988",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04a652456a06342b06f9e187e500f97e63895ca8be4cb376dc355ca29c27dfc2cae4fce5548399f0c617fbc6360f0830d0b416e9ad1a278a39ca21f5222d14abc6",
     pubKeySlot2:
@@ -2769,7 +2769,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦊",
     cardName: "fox",
     unicode: "U+1F98A",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "0496392c0b10e95d4ef89e3734eabce24a30c403371fcc12d076ecdf91699fedb12ae3ec205691c1b22f930b86a7afb4c5568be52f1d6955545627d4a95654348f",
     pubKeySlot2:
@@ -2784,7 +2784,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦌",
     cardName: "deer",
     unicode: "U+1F98C",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04300ac4cb72ec642a17d9682297532151600018d9c1068b0f0252fc10ae0643c3e9f9969045c84ce8e22f1d2be6b92e29e67f73c80b71a736c6f42c67dac9e7f7",
     pubKeySlot2:
@@ -2799,7 +2799,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦔",
     cardName: "hedgehog",
     unicode: "U+1F994",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04a528fcc71324eb4d750a21a0c8d15bdc50f2db3217e9f005b13ef90d8f45b2129d7282c06b569f1a710f8edef52739d71570d5fa933fc9e94c826919f89a33df",
     pubKeySlot2:
@@ -2829,7 +2829,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦜",
     cardName: "parrot",
     unicode: "U+1F99C",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "043db7bdffd8a8c50f61ac2582a6278578439d9fc557d0c3b563108061239f15a7c29c753c2db3a16880d4fd3d26d0a37bb8a60534472de4860549536bc929542b",
     pubKeySlot2:
@@ -2844,7 +2844,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🦢",
     cardName: "swan",
     unicode: "U+1F9A2",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "043ecf17b8e7d730d96d75ff26aa09cabcb7f48a6492563b602d01108c49e6819423f7df5101548834ebf267f4550b93c5366fa0ed91c92f7fd9a82c6dde356bd0",
     pubKeySlot2:
@@ -2889,7 +2889,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🫛\n",
     cardName: "pea pod",
     unicode: "U+1FADB",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "042a3e60bb42eb7deac7e97c583e44bbbd286df74ce262e86d9e6f9ec0d52060eec7bec47dc9cdeea9b89ad1c057df1fd022e4fd97fba516298906d7e591ef11fe",
     pubKeySlot2:
@@ -2904,7 +2904,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🧛",
     cardName: "vampire",
     unicode: "U+1F9DB",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04a51f3cd1034a510d99552302ea261be7f915536eb5af5850433f19985d0113f2dfbd9737b338252f89a78f277d025e89cf53269c130761191c34fbbef33ce075",
     pubKeySlot2:
@@ -2949,7 +2949,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🧸",
     cardName: "teddy bear",
     unicode: "U+1F9F8",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "04d442c88f74291788a90ea3ab87edd41c20fb66acf14a06b84295af6f2e8531726069350839c6ff637c47219decf7bc2b99bec799bca05570b7df569c3647f359",
     pubKeySlot2:
@@ -2964,7 +2964,7 @@ export const cardPubKeys: OriginalCardPubKey[] = [
     emoji: "🧽",
     cardName: "sponge",
     unicode: "U+1F9FD",
-    landscapeImage: "",
+    landscapeImage: "checked",
     pubKeySlot1:
       "041896c0e43b8e04951d58c2e9ac8113a5fb30d4b352b654dbf82568898f0833fa360d9d9632df5107b74d94bd26cb537166494caf041cc7af51219a8ec1c8666a",
     pubKeySlot2:

@@ -426,6 +426,10 @@ const CardholderTapModal = ({
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
+                transform:
+                  cardPubKeys[pubKeyIndex!].landscapeImage === "checked"
+                    ? "rotate(-90deg)"
+                    : "none",
               }}
             ></div>
 
