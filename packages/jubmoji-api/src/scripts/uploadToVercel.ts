@@ -1,13 +1,13 @@
 import fs from "fs";
-import { cardPubKeys, CardPubKey } from "../data/cardPubKeys";
+import {
+  cardPubKeys,
+  CardPubKey,
+  OriginalCardPubKey,
+} from "../data/cardPubKeys";
 // import { put } from "@vercel/blob";
 
-interface CardPubKeyWithImage extends CardPubKey {
-  imageBlobUrl: string;
-}
-
 const setupImageLink = async () => {
-  let newPubKeys: CardPubKeyWithImage[] = [];
+  let newPubKeys: CardPubKey[] = [];
   let ct = 0;
 
   for (const cardPubKey of cardPubKeys) {
@@ -28,12 +28,11 @@ const setupImageLink = async () => {
     // const { url: blobUrl } = await put(cardPubKey.cardName, blob, {
     //   access: "public",
     //   contentType: "image/jpeg",
-    //   token: process.env.BLOB_READ_WRITE_TOKEN,
+    //   token: "vercel_blob_rw_G03pIXCfiBqAYKQ3_Sti5kCfPRMAz0oRq7MU0DPqF2GHCKU",
     // });
 
     // make new JSON
-    let newCardPubKey: CardPubKeyWithImage = { ...cardPubKey };
-    delete newCardPubKey.cardImage;
+    let newCardPubKey: OriginalCardPubKey = { ...cardPubKey };
     // newCardPubKey.imageBlobUrl = blobUrl;
 
     newPubKeys.push(newCardPubKey);

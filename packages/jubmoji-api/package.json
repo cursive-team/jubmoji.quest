@@ -6,6 +6,7 @@
     "build": "tsc --noEmit false --declaration --incremental false",
     "test": "jest"
   },
+  "type": "module",
   "dependencies": {
     "@noble/secp256k1": "^2.0.0",
     "babyjubjub-ecdsa": "^1.1.2",
