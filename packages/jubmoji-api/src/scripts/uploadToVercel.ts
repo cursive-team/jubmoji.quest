@@ -28,7 +28,7 @@ const setupImageLink = async () => {
     // const { url: blobUrl } = await put(cardPubKey.cardName, blob, {
     //   access: "public",
     //   contentType: "image/jpeg",
-    //   token: "vercel_blob_rw_G03pIXCfiBqAYKQ3_Sti5kCfPRMAz0oRq7MU0DPqF2GHCKU",
+    //   token: process.env.BLOB_READ_WRITE_TOKEN,
     // });
 
     // make new JSON
