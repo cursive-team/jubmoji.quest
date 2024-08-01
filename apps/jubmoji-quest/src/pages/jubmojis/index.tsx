@@ -367,6 +367,7 @@ export default function JubmojisPage() {
                         telegramChatInviteLink={jubmoji.telegramChatInviteLink}
                         actions={null}
                         quests={jubmojiQuests}
+                        rotate={jubmoji.rotate}
                         onBackup={() => setBackupModalOpen(true)}
                         className={`min-[${cardSize}px] h-full`}
                       />

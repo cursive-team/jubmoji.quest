@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "es2015",
-    "moduleResolution": "node",    
+    "moduleResolution": "node",
     "rootDir": "./src",
-    "outDir": "./build",
+    "outDir": "./build"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "build"]
