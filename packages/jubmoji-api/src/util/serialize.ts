@@ -6,8 +6,8 @@ export const serializeJumboji = (jubmoji: Jubmoji): string => {
   return JSON.stringify(jubmoji);
 };
 
-export const deserializeJubmoji = (seralized: string): Jubmoji => {
-  return JSON.parse(seralized);
+export const deserializeJubmoji = (serialized: string): Jubmoji => {
+  return JSON.parse(serialized);
 };
 
 export const serializeJubmojiList = (jubmojis: Jubmoji[]): string => {
